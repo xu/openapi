@@ -222,7 +222,7 @@ commit+push() {
   if [ $GH_TOKEN ]; then
     # deploy by Travis CI
     # add github token
-    repo="https://"$GH_TOKEN"@github.com/huobiapi/docs.git"
+    repo="https://"$GH_TOKEN"@github.com/HelloKittySay/test-slate.git"
     git remote add origin-pages $repo
     git push --quiet origin-pages $deploy_branch
   else
