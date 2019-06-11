@@ -9,10 +9,6 @@ branches:
   only:
     - v1_cn
     - v1_en
-    - v2_cn
-    - v2_en
-    - dm_cn
-    - dm_en
 
 cache: bundler
 
