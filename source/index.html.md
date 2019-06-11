@@ -1,250 +1,187 @@
 ---
-title: 火币 API 文档
+title: Huobi API Reference v1.0
 
 language_tabs: # must be one of https://git.io/vQNgJ
   - shell
 
 toc_footers:
-  - <a href='https://www.hbg.com/zh-cn/apikey/'>创建 API Key </a>
+  - <a href='https://www.huobi.pro/apikey/'>Sign Up for a Huobi API key </a>
+  - Login is required for creating an API key
+
 includes:
 
-search: False
+search: true
 ---
 
-# 简介
+# Introduction
 
-## API 简介
+## Documentation Summary
 
-欢迎使用火币 API！ 你可以使用此 API 获得市场行情数据，进行交易，并且管理你的账户。
+Welcome to the Huobi API! You can use our API to access all market data, trading, and account management endpoints.
 
-在文档的右侧是代码示例，目前我们仅提供针对 `shell` 的代码示例。
+We have code example in Shell! You can view code examples in the dark area to the right.
 
-你可以通过选择上方下拉菜单的版本号来切换文档对应的 API 版本，也可以通过点击右上方的语言按钮来切换文档语言。
+You can use the drop down list above to change the API version. You can also use the language option at the top right to switch documentation language.
 
-<aside class="notice">
-在使用中如果遇到问题，请加技术讨论 QQ 群: 火币网API交流群(5) 778160723（加群时请注明 UID 和编程语言），我们将尽力帮您答疑解惑。
-</aside>
+## Market Maker Program
 
-## 做市商项目
+Market maker program gives clients with good market making strategy an opportunity to access customized trading fee structure.
 
 <aside class="notice">
-做市商项目不支持点卡抵扣、VIP、交易量相关活动以及任何形式的返佣活动。
+Market makers will not be able to use point cards, VIP rate, rebate or any other fee promotion.
 </aside>
 
-欢迎有优秀 maker 策略且交易量大的用户参与长期做市商项目。如果您的火币现货账户或者合约账户中有折合大于20BTC资产（币币和合约账户分开统计），请提供以下信息发送邮件至：
+### Eligibility Criteria as a Market Maker on Huobi Global
 
-- [MM_service@huobi.com](mailto:MM_service@huobi.com) Huobi Global（现货 / 杠杆）做市商申请；
-- [dm_mm@huobi.com](mailto:dm_mm@huobi.com) HBDM（合约）做市商申请。
+1. You should possess good market strategy
+2. You must have at least 20 BTC or equivalent assets, not including rebates in your account with Huobi Global
 
+### Application Process as Market Maker on Huobi Global
 
-1. 提供 UID （需不存在返佣关系的 UID）；
-2. 提供其他交易平台 maker 交易量截图证明（比如30天内成交量，或者 VIP 等级等）；
-3. 请简要阐述做市方法，不需要细节。
+If you satisfied our eligibility criteria and is interested to participate in our market-making project, please email to MM_service@huobi.com with following information:
 
-<aside class="notice">
-其他接口子账号不可访问，如果尝试访问，系统会返回 “error-code 403”。
-</aside>
-
-# 更新日志
-
-|  生效时间（北京时间 UTC+8) | 接口 | 新增 / 修改 | 摘要 |
-|-----|-----|-----|-----|
-|                           |      |             |      |
-|                           |      |             |      |
-|                           |      |             |      |
+1. UIDs (not linked to any rebate program in any accounts)
+2. Provide screenshot of trading volume for the past 30 days or VIP/corporate status with other Exchanges
+3. A brief description in writing of your market-making strategy
 
 
+# Changelog
 
-# 接入说明
+| Live Date Time (UTC+8) | Change Detail |
+|-----                   | -----         |
+|  ||
 
-## 接入 URLs
+
+# API Access
+
+## Access URLs
 
 **REST API**
 
-**`https://api-cloud.huobi.co.kr`** 
-
-**Websocket Feed（行情）**
-
-**`wss://api-cloud.huobi.co.kr/ws`**
-
-**Websocket Feed（资产和订单）**
-
-**`wss://api-cloud.huobi.co.kr/ws/v1`**
+**`https://api-cloud.huobi.co.kr`**
 
 <aside class="notice">
-请使用中国大陆以外的 IP 访问火币韩国 API。
+Please initiate API calls with non-China IP.
 </aside>
-<aside class="notice">
-鉴于延迟高和稳定性差等原因，不建议通过代理的方式访问火币韩国 API。
-</aside>
-
-
-## 限频规则
-
-- 现货 （api-cloud.huobi.co.kr）：10秒100次
 
 <aside class="notice">
-单个 API Key 维度限制。行情 API 访问无需签名。
+It is not recommended to use proxy to access Huobi API because it will introduce high latency and low stability.
 </aside>
 
+<aside class="notice">In this document, only the fields under "data" will be explained and shown in query example.</aside>
 
-## 签名认证
+## Endpoint Rate Limit
 
-### 签名说明
+Each API Key can send maximum of 100 https requests within 10 seconds. Please contact customer support if you believe you need higher limit rate.
 
-API 请求在通过 internet 传输的过程中极有可能被篡改，为了确保请求未被更改，除公共接口（基础信息，行情数据）外的私有接口均必须使用您的 API Key 做签名认证，以校验参数或参数值在传输途中是否发生了更改。每一个API Key需要有适当的权限才能访问相应的接口。每个新创建的API Key都需要分配权限。权限类型分为：读取，交易，提币。在使用接口前，请查看每个接口的权限类型，并确认你的API Key有相应的权限。
+## Authentication
 
-一个合法的请求由以下几部分组成：
+To protect API communication from unauthorized change, all non-public API calls are required to be signed.
 
-- 方法请求地址：即访问服务器地址 api-cloud.huobi.co.kr，比如 api-cloud.huobi.co.kr/v1/order/orders。
+### Create API Key
 
-- API 访问密钥（AccessKeyId）：您申请的 API Key 中的 Access Key。
+To be able to create signature you should first acquire an API key and the corresponding secret key. You can manage you API keys by login to your account at huobi.com and go to "API Management" under "Account" section. On June 5th, 2019, Huobi introduced API Key permission management, allow user to assign 3 permissions to each of their API Keys: Read-only, Withdraw, and Trade. Please check each endpoint below for its permission type. Only the API Key with proper permission could access the respective endpoints requiring authentication.
 
-- 签名方法（SignatureMethod）：用户计算签名的基于哈希的协议，此处使用 HmacSHA256。
+<aside class="notice">You can bind an API key with an IP to prevent the key from expiring, otherwise a key will expire in 90 days</aside>
 
-- 签名版本（SignatureVersion）：签名协议的版本，此处使用2。
+<aside class="warning">You should never disclose your key to others</aside>
 
-- 时间戳（Timestamp）：您发出请求的时间 (UTC 时区) (UTC 时区) (UTC 时区) 。如：2017-05-11T16:22:06。在查询请求中包含此值有助于防止第三方截取您的请求。
+### Signature Method
 
-- 必选和可选参数：每个方法都有一组用于定义 API 调用的必需参数和可选参数。可以在每个方法的说明中查看这些参数及其含义。 请一定注意：对于 GET 请求，每个方法自带的参数都需要进行签名运算； 对于 POST 请求，每个方法自带的参数不进行签名认证，即 POST 请求中需要进行签名运算的只有 AccessKeyId、SignatureMethod、SignatureVersion、Timestamp 四个参数，其它参数放在 body 中。
+To sign a call, you need to a few key components of the call to generate a query string, and then a hash is generated with this string, finally the hash is added to the call.
 
-- 签名：签名计算得出的值，用于确保签名有效和未被篡改。
+In order to successfully sign a request, you need to follow below steps
 
+1. Generate the "Query String" for your query
 
-### 创建 API Key
+2. Use "Query String" and your secret key to to created a signature
 
-您可以在 <a href='<https://www.huobi.co.kr/zh-CN/api/>/'>这里 </a> 创建 API Key。
+3. Add the signature as a path parameter to your query
 
-API Key 包括以下两部分
+### Generate the "Query String" for your query
 
-- `Access Key`  API 访问密钥
-  
-- `Secret Key`  签名认证加密所使用的密钥（仅申请时可见）
+> Add the query path section of the query string
+
+```shell
+[HTTP Method]\n[URL Root]\n[Query Path]\n
+```
+
+> For example below
+
+```shell
+GET\napi.huobi.pro\n/v1/order/orders\n
+```
+
+> Add the authentication section of the query string
+
+```shell
+AccessKeyId=[Your API key]&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=[Your Request Timestamp]
+```
+
+> For example below
+
+```shell
+AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2017-05-11T15%3A19%3A30
+```
+
+> Add the parameter section of the query string, for example
+
+```shell
+&order-id=1234567890
+```
+
+> The final query string will be this
+
+```shell
+GET\napi.huobi.pro\n/v1/order/orders\nAccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2017-05-11T15%3A19%3A30&order-id=1234567890
+```
+
+1. Add the query path to the query string
+
+2. Add mandatory authentication parameters to the query string
+
+3. Add other path parameters to the query string ordered by parameter name (asc)
 
 <aside class="notice">
-创建 API Key 时可以选择绑定 IP 地址，未绑定 IP 地址的 API Key 有效期为90天。
-</aside>
-<aside class="notice">
-API Key 具有包括交易、借贷和充提币等所有操作权限。
-</aside>
-<aside class="warning">
-这两个密钥与账号安全紧密相关，无论何时都请勿向其它人透露。
+The timestamp should be in YYYY-MM-DDThh:mm:ss format with URL encoding.
 </aside>
 
+### Use "Query String" and your secret key to to created a signature
 
-### 签名步骤
+> The result signature will look like
 
-规范要计算签名的请求 因为使用 HMAC 进行签名计算时，使用不同内容计算得到的结果会完全不同。所以在进行签名计算前，请先对请求进行规范化处理。下面以查询某订单详情请求为例进行说明：
+```shell
+4F65x5A2bLyMWVQj3Aqp+B4w+ivaA7n5Oi2SuYtCJ9o=
+```
 
-查询某订单详情
+1. Apply HmacSHA256 hash function with inputs (query string, secret key) to get the hashed string
 
-`https://api-cloud.huobi.co.kr/v1/order/orders?`
+2. Encode the hashed string with base-64
 
-`AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx`
+### Add the signature as a path parameter to your query
 
-`&SignatureMethod=HmacSHA256`
+> The final request with signature will look like
 
-`&SignatureVersion=2`
+```shell
+https://api.huobi.pro/v1/order/orders?AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx&order-id=1234567890&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2017-05-11T15%3A19%3A30&Signature=4F65x5A2bLyMWVQj3Aqp%2BB4w%2BivaA7n5Oi2SuYtCJ9o%3D
 
-`&Timestamp=2017-05-11T15:19:30`
+```
 
-`&order-id=1234567890`
+1. Add all mandatory authentication parameters to your path parameter
 
-#### 1. 请求方法（GET 或 POST），后面添加换行符 “\n”
+2. Add "&Signature=[Your request signature with URL encode]" to your path parameter
 
+## Request Format
 
-`GET\n`
+All API requests are in either GET or POST method. For GET request, all parameters are path parameters. For POST request, all parameters are in POST body and in JSON format.
 
-#### 2. 添加小写的访问地址，后面添加换行符 “\n”
+## Response Format
 
-`
-api-cloud.huobi.co.kr\n
-`
+All response will be returned in JSON format. The top level JSON is a wrapper object which provides three metadata in "status", "ch", and "ts". The actual per API response data is in "data" field.
 
-#### 3. 访问方法的路径，后面添加换行符 “\n”
+### Response JSON Wrapper Content
 
-`
-/v1/order/orders\n
-`
-
-#### 4. 按照ASCII码的顺序对参数名进行排序。例如，下面是请求参数的原始顺序，进行过编码后
-
-
-`AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx`
-
-`order-id=1234567890`
-
-`SignatureMethod=HmacSHA256`
-
-`SignatureVersion=2`
-
-`Timestamp=2017-05-11T15%3A19%3A30`
-
-<aside class="notice">
-使用 UTF-8 编码，且进行了 URI 编码，十六进制字符必须大写，如 “:” 会被编码为 “%3A” ，空格被编码为 “%20”。
-</aside>
-<aside class="notice">
-时间戳（Timestamp）需要以YYYY-MM-DDThh:mm:ss格式添加并且进行 URI 编码。
-</aside>
-
-
-#### 5. 经过排序之后
-
-`AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx`
-
-`SignatureMethod=HmacSHA256`
-
-`SignatureVersion=2`
-
-`Timestamp=2017-05-11T15%3A19%3A30`
-
-`order-id=1234567890`
-
-#### 6. 按照以上顺序，将各参数使用字符 “&” 连接
-
-
-`AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2017-05-11T15%3A19%3A30&order-id=1234567890`
-
-#### 7. 组成最终的要进行签名计算的字符串如下
-
-`GET\n`
-
-`api-cloud.huobi.co.kr\n`
-
-`/v1/order/orders\n`
-
-`AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2017-05-11T15%3A19%3A30&order-id=1234567890`
-
-
-#### 8. 用上一步里生成的 “请求字符串” 和你的密钥 (Secret Key) 生成一个数字签名
-
-`4F65x5A2bLyMWVQj3Aqp+B4w+ivaA7n5Oi2SuYtCJ9o=`
-
-1. 将上一步得到的请求字符串和 API 私钥作为两个参数，调用HmacSHA256哈希函数来获得哈希值。
-
-2. 将此哈希值用base-64编码，得到的值作为此次接口调用的数字签名。
-
-#### 9. 将生成的数字签名加入到请求的路径参数里
-
-最终，发送到服务器的 API 请求应该为
-
-`https://api-cloud.huobi.co.kr/v1/order/orders?AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx&order-id=1234567890&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2017-05-11T15%3A19%3A30&Signature=4F65x5A2bLyMWVQj3Aqp%2BB4w%2BivaA7n5Oi2SuYtCJ9o%3D`
-
-1. 把所有必须的认证参数添加到接口调用的路径参数里
-
-2. 把数字签名在URL编码后加入到路径参数里，参数名为“Signature”。
-
-## 请求格式
-
-所有的API请求都以GET或者POST形式发出。对于GET请求，所有的参数都在路径参数里；对于POST请求，所有参数则以JSON格式发送在请求主体（body）里。
-
-## 返回格式
-
-所有的接口返回都是JSON格式。在JSON最上层有几个表示请求状态和属性的字段："status", "ch", 和 "ts". 实际的接口返回内容在"data"字段里.
-
-### 返回内容格式
-
-> 返回内容将会是以下格式:
+> Response wrapper content example:
 
 ```json
 {
@@ -255,58 +192,60 @@ api-cloud.huobi.co.kr\n
 }
 ```
 
-参数名称| 数据类型 | 描述
+Field     | Data Type | Description
 --------- | --------- | -----------
-status    | string    | API接口返回状态
-ch        | string    | 接口数据对应的数据流。部分接口没有对应数据流因此不返回此字段
-ts        | int       | 接口返回的调整为北京时间的时间戳，单位毫秒
-data      | object    | 接口返回数据主体
+status    | string    | The overall API call result status
+ch        | string    | The data channel this response was originated from. Some API return does not have this field.
+ts        | int       | The timestamp in milliseconds for when the response is created
+data      | object    | The actual response content per API
 
-## 错误信息
+## Error Information
 
-### 行情 API 错误信息
+Each error will have a code and err-msg which explain the details of the error.
 
-| 错误码  |  描述 |
+### Market Data API Error Message
+
+| Error Code  | Description |
 |-----|-----|
-| bad-request | 错误请求 |
-| invalid-parameter | 参数错误 |
-| invalid-command | 指令错误 |
-code 的具体解释, 参考对应的 `err-msg`.
+| bad-request | Bad request |
+| invalid-parameter | Request parameter is invalid |
+| invalid-command | Request options are wrong |
 
-### 交易 API 错误信息
+### Trading API Error Message
 
-| 错误码  |  描述 |
-|-----|-----|
-| base-symbol-error |  交易对不存在 |
-| base-currency-error |  币种不存在 |
-| base-date-error | 错误的日期格式 |
-| account for id `12,345` and user id `6,543,210` does not exist| `account-id` 错误，请使用GET `/v1/account/accounts` 接口查询 |
-| account-frozen-balance-insufficient-error | 余额不足 |
-| account-transfer-balance-insufficient-error | 余额不足无法冻结 |
-| bad-argument | 无效参数 |
-| api-signature-not-valid | API签名错误 |
-| gateway-internal-error | 系统繁忙，请稍后再试|
-| ad-ethereum-addresss| 请输入有效的以太坊地址|
-| order-accountbalance-error| 账户余额不足|
-| order-limitorder-price-error|限价单下单价格超出限制 |
-|order-limitorder-amount-error|限价单下单数量超出限制 |
-|order-orderprice-precision-error|下单价格超出精度限制 |
-|order-orderamount-precision-error|下单数量超过精度限制|
-|order-marketorder-amount-error|下单数量超出限制|
-|order-queryorder-invalid|查询不到此条订单|
-|order-orderstate-error|订单状态错误|
-|order-datelimit-error|查询超出时间限制|
-|order-update-error|订单更新出错|
+| Error Code  | Description |
+|-----        | -----|
+| base-symbol-error |  trading symbol does not exist |
+| base-currency-error |  Trading currency does not exist |
+| base-date-error | Bad date format |
+| account-frozen-balance-insufficient-error | Insufficient balance |
+| account-transfer-balance-insufficient-error | Insufficient balance for transfer |
+| bad-argument | Bad arguments |
+| api-signature-not-valid | API signature not valid |
+| gateway-internal-error | System is busy |
+| ad-ethereum-addresss| Ethereum address is needed |
+| order-accountbalance-error| Account balance insufficient |
+| order-limitorder-price-error| Price of limit order is invalid |
+|order-limitorder-amount-error| Amount of limit order is invalid |
+|order-orderprice-precision-error| Price precision not supported |
+|order-orderamount-precision-error| Amount prevision not supported |
+|order-marketorder-amount-error| Market order amount is invalid|
+|order-queryorder-invalid| Cannot find queried order|
+|order-orderstate-error|Order status is invalid|
+|order-datelimit-error|Order query timeout|
+|order-update-error| Order update error|
 
-##  SDK 与代码示例 ——TODO
+## SDK & Code Demo
 
-**SDK（推荐）**
+**SDK(recommended)**
 
 [Java](https://github.com/huobiapi/huobi_Java)
 
 [Python3](https://github.com/huobiapi/huobi_Python)
 
 [C++](https://github.com/huobiapi/huobi_Cpp)
+
+
 
 **Websocket**
 
@@ -342,55 +281,46 @@ code 的具体解释, 参考对应的 `err-msg`.
 
 [易语言](https://github.com/huobiapi/REST-YiYuyan-demo)
 
-## 常见问题 Q & A
+## Issue and Solution
 
-### 经常断线或者丢数据
+### Unstable Connection to API Service
 
-* 请确认是否使用 api-cloud.huobi.co.kr 域名访问火币韩国 API
-* 请使用日本云服务器
+* Make sure you are using api.huobi.pro as the URL root to access the API
+* Choose to use AWS Tokyo as your hosting server should help
 
-### 签名失败
+### Fail to Sign API Request
 
-* 检查 API Key 是否有效，是否复制正确，是否有绑定 IP 白名单
-* 检查时间戳是否是 UTC 时间
-* 检查参数是否按字母排序
-* 检查编码
-* 检查签名是否有 base64 编码
-* 检查 GET 是否以表单方式提交
-* 检查 POST 的 url 是否带着签名字段，POST 的数据格式是否是 json 格式
-* 检查签名结果是否有进行 URI 编码
+* Check if API key is correct and is still valid (not expired)
+* Check if you have previously set whitelist with your API key and your hosting server is in the whitelist
+* Check if you are using the correct timestamp in your signature
+* Check if you are using the correct encoding in your signature, e.g. base64 for initial signature and URI for final request
+* Check if you added parameters in ASCII order when creating the signature string
 
-### 返回 login-required
+### Receive "login-required"
 
-* 检查参数 `account-id` 是否是由 GET `/v1/account/accounts` 接口返回的，而不是填的 UID
-* 检查是否 POST 请求是否把业务参数也计算进签名
-* 检查 GET 请求是否将参数按照 ASCII 码表顺序排序
+* Check for parameter `account-id` if you are using account-id from `/v1/account/accounts`. Make sure you are using those id not your UID.
 
-### 返回 gateway-internal-error
+### Receive "gateway-internal-error"
 
-* 检查 POST 请求是否在 header 中声明 Content-Type:application/json
+* Check if your post request have set header `Content-Type:application/json`
 
+# Reference Data
 
+## Get all Supported Trading Symbol
 
-
-# 基础信息
-
-## 获取所有交易对
-
-此接口返回所有火币全球站支持的交易对。
+This endpoint returns all Huobi's supported trading symbol.
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/v1/common/symbols"
 ```
 
+### HTTP Request
 
-### HTTP 请求
+`GET /v1/common/symbols`
 
-- GET `/v1/common/symbols`
+### Request Parameters
 
-### 请求参数
-
-此接口不接受任何参数。
+No parameter is needed for this endpoint.
 
 > Responds:
 
@@ -415,34 +345,31 @@ curl "https://api-cloud.huobi.co.kr/v1/common/symbols"
   ]
 ```
 
-### 返回字段
+### Response Content
 
-字段名称            | 数据类型 | 描述
+Field           | Data Type | Description
 ---------       | --------- | -----------
-base-currency   | string    | 交易对中的基础币种
-quote-currency  | string    | 交易对中的报价币种
-price-precision | integer   | 交易对报价的精度（小数点后位数）
-amount-precision| integer   | 交易对基础币种计数精度（小数点后位数）
-symbol-partition| string    | 交易区，可能值: [main，innovation，bifurcation]
+base-currency   | string    | Base currency in a trading symbol
+quote-currency  | string    | Quote currency in a trading symbol
+price-precision | integer   | Quote currency precision when quote price(decimal places)
+amount-precision| integer   | Base currency precision when quote amount(decimal places)
+symbol-partition| string    | Trading section, possible values: [main，innovation，bifurcation]
 
-## 获取所有币种
+## Get all Supported Currencies
 
-此接口返回所有火币全球站支持的币种。
-
+This endpoint returns all Huobi's supported trading currencies.
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/v1/common/currencys"
 ```
 
-### HTTP 请求
+### HTTP Request
 
-- GET `/v1/common/currencys`
+`GET /v1/common/currencys`
 
+### Request Parameters
 
-### 请求参数
-
-此接口不接受任何参数。
-
+No parameter is needed for this endpoint.
 
 > Response:
 
@@ -454,27 +381,25 @@ curl "https://api-cloud.huobi.co.kr/v1/common/currencys"
   ]
 ```
 
-### 返回字段
+### Response Content
 
+<aside class="notice">The returned "data" field contains a list of string with each string represents a suppported currency.</aside>
 
-<aside class="notice">返回的“data”对象是一个字符串数组，每一个字符串代表一个支持的币种。</aside>
+## Get Current System Time
 
-
-## 获取当前系统时间
-
-此接口返回当前的系统时间，时间是调整为北京时间的时间戳，单位毫秒。
+This endpoint returns the current system time in milliseconds adjusted to Beijing time zone.
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/v1/common/timestamp"
 ```
 
-### HTTP 请求
+### HTTP Request
 
-- GET `/v1/common/timestamp`
+`GET /v1/common/timestamp`
 
-### 请求参数
+### Request Parameters
 
-此接口不接受任何参数。
+No parameter is needed for this endpoint.
 
 > Response:
 
@@ -482,40 +407,38 @@ curl "https://api-cloud.huobi.co.kr/v1/common/timestamp"
   "data": 1494900087029
 ```
 
-### 响应数据
+### Response Content
 
-返回的“data”对象是一个整数表示返回的调整为北京时间的时间戳，单位毫秒。
+The returned "Data" field contains an integer represents the timestamp in milliseconds adjusted to Beijing time.
 
-# 行情数据
+# Market Data
 
-## K 线数据（蜡烛图）
+## Get Klines(Candles)
 
-此接口返回历史K线数据。
+This endpoint retrieves all klines in a specific range.
 
-### HTTP 请求
+### HTTP Request
 
-- GET `/market/history/kline`
+`GET https://api-cloud.huobi.co.kr/market/history/kline`
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/market/history/kline?period=1day&size=200&symbol=btcusdt"
 ```
 
-### 请求参数
+### Query Parameters
 
-参数       | 数据类型 | 是否必须 | 默认值 | 描述 | 取值范围
---------- | --------- | -------- | ------- | ------ | ------
-symbol    | string    | true     | NA      | 交易对 | btcusdt, ethbtc...
-period    | string    | true     | NA      | 返回数据时间粒度，也就是每根蜡烛的时间区间 | 1min, 5min, 15min, 30min, 60min, 1day, 1mon, 1week, 1year
-size      | integer   | false    | 150     | 返回 K 线数据条数 | [1, 2000]
+Parameter | Data Type | Required | Default | Description                 | Value Range
+--------- | --------- | -------- | ------- | -----------                 | -----------
+symbol    | string    | true     | NA      | The trading symbol to query | All trading symbol supported, e.g. btcusdt, bccbtc
+period    | string    | true     | NA      | The period of each candle   | 1min, 5min, 15min, 30min, 60min, 1day, 1mon, 1week, 1year
+size      | integer   | false    | 150     | The number of data returns  | [1, 2000]
 
-<aside class="notice">当前 REST API 不支持自定义时间区间，如需要历史固定时间范围的数据，请参考 Websocket API 中的 K 线接口。</aside>
+<aside class="notice">To query hb10, put "hb10" at symbol position.</aside>
 
-<aside class="notice">获取 hb10 净值时， symbol 请填写 “hb10”。</aside>
-
-> Response:
+> The above command returns JSON structured like this:
 
 ```json
-[
+"data": [
   {
     "id": 1499184000,
     "amount": 37593.0266,
@@ -529,44 +452,41 @@ size      | integer   | false    | 150     | 返回 K 线数据条数 | [1, 2000
 ]
 ```
 
-### 响应数据
+### Response Content
 
-字段名称      | 数据类型 | 描述
+Field     | Data Type | Description
 --------- | --------- | -----------
-id        | integer   | 调整为北京时间的时间戳，单位秒，并以此作为此K线柱的id
-amount    | float     | 以基础币种计量的交易量
-count     | integer   | 交易次数
-open      | float     | 本阶段开盘价
-close     | float     | 本阶段收盘价
-low       | float     | 本阶段最低价
-high      | float     | 本阶段最高价
-vol       | float     | 以报价币种计量的交易量
+id        | integer   | The UNIX timestamp in seconds as response id
+amount    | float     | The aggregated trading volume in USDT
+count     | integer   | The number of completed trades
+open      | float     | The opening price
+close     | float     | The closing price
+low       | float     | The low price
+high      | float     | The high price
+vol       | float     | The trading volume in base currency
 
+## Get Latest Aggregated Ticker
 
+This endpoint retrieves the latest ticker with some important 24h aggregated market data.
 
-## 聚合行情（Ticker）
+### HTTP Request
 
-此接口获取ticker信息同时提供最近24小时的交易聚合信息。
-
-### HTTP 请求
-
-- GET `/market/detail/merged`
+`GET https://api-cloud.huobi.co.kr/market/detail/merged`
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/market/detail/merged?symbol=ethusdt"
 ```
 
-### 请求参数
+### Request Parameters
 
-参数      | 数据类型   | 是否必须  | 默认值  | 描述 | 取值范围
---------- | --------- | -------- | ------- | ------| -----
-symbol    | string    | true     | NA      | 交易对 | btcusdt, ethbtc
+Parameter | Data Type | Required | Default | Description                  | Value Range
+--------- | --------- | -------- | ------- | -----------                  | --------
+symbol    | string    | true     | NA      | The trading symbol to query  | All supported trading symbol, e.g. btcusdt, bccbtc
 
-
-> Response:
+> The above command returns JSON structured like this:
 
 ```json
-{
+"data": {
   "id":1499225271,
   "ts":1499225271000,
   "close":1885.0000,
@@ -581,51 +501,48 @@ symbol    | string    | true     | NA      | 交易对 | btcusdt, ethbtc
 }
 ```
 
-### 响应数据
+### Response Content
 
-字段名称      | 数据类型 | 描述
+Field     | Data Type | Description
 --------- | --------- | -----------
-id        | integer   | NA
-amount    | float     | 以基础币种计量的交易量
-count     | integer   | 交易次数
-open      | float     | 本阶段开盘价
-close     | float     | 本阶段最新价
-low       | float     | 本阶段最低价
-high      | float     | 本阶段最高价
-vol       | float     | 以报价币种计量的交易量
-bid       | object    | 当前的最高卖价 [price, quote volume]
-ask       | object    | 当前的最低买价 [price, quote volume]
+id        | integer   | The UNIX timestamp in seconds as response id
+amount    | float     | The aggregated trading volume in USDT
+count     | integer   | The number of completed trades
+open      | float     | The opening price of last 24 hours
+close     | float     | The last price of last 24 hours
+low       | float     | The low price of last 24 hours
+high      | float     | The high price of last 24 hours
+vol       | float     | The trading volume in base currency of last 24 hours
+bid       | object    | The current best bid in format [price, quote volume]
+ask       | object    | The current best ask in format [price, quote volume]
 
+## Get Latest Tickers for All Pairs
 
-## 所有交易对的最新 Tickers
+This endpoint retrieves the latest tickers for all supported pairs.
 
-获得所有交易对的 tickers，数据取值时间区间为24小时滚动。
+<aside class="notice">The returned data object can contain large amount of tickers.</aside>
 
-<aside class="notice">此接口返回所有交易对的 ticker，因此数据量较大。</aside>
+### HTTP Request
 
-### HTTP 请求
-
-- GET `/market/tickers`
+`GET https://api-cloud.huobi.co.kr/market/tickers`
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/market/tickers"
 ```
 
+### Request Parameters
 
+No parameters are needed for this endpoint.
 
-### 请求参数
-
-此接口不接受任何参数。
-
-> Response:
+> The above command returns JSON structured like this:
 
 ```json
-[  
+"data": [  
     {  
-        "open":0.044297,      // 开盘价
-        "close":0.042178,     // 收盘价
-        "low":0.040110,       // 最高价
-        "high":0.045255,      // 最低价
+        "open":0.044297,
+        "close":0.042178,
+        "low":0.040110,
+        "high":0.045255,
         "amount":12880.8510,  
         "count":12838,
         "vol":563.0388715740,
@@ -644,67 +561,81 @@ curl "https://api-cloud.huobi.co.kr/market/tickers"
 ]
 ```
 
-### 响应数据
+### Response Content
 
-核心响应数据为一个对象列，每个对象包含下面的字段
+Response content is an array of object, each object has below fields.
 
-字段名称      | 数据类型   | 描述
+Field     | Data Type | Description
 --------- | --------- | -----------
-amount    | float     | 以基础币种计量的交易量
-count     | integer   | 交易笔数
-open      | float     | 开盘价
-close     | float     | 最新价
-low       | float     | 最低价
-high      | float     | 最高价
-vol       | float     | 以报价币种计量的交易量
-symbol    | string    | 交易对，例如btcusdt, ethbtc
+amount    | float     | The aggregated trading volume in USDT of last 24 hours
+count     | integer   | The number of completed trades of last 24 hours
+open      | float     | The opening price of last 24 hours
+close     | float     | The last price of last 24 hours
+low       | float     | The low price of last 24 hours
+high      | float     | The high price of last 24 hours
+vol       | float     | The trading volume in base currency of last 24 hours
+symbol    | string    | The trading symbol of this object, e.g. btcusdt, bccbtc
 
-## 市场深度数据
+## Get Market Depth
 
-此接口返回指定交易对的当前市场深度数据。
+This endpoint retrieves the current order book of a specific pair.
 
-### HTTP 请求
+### HTTP Request
 
-- GET `/market/depth`
+`GET https://api-cloud.huobi.co.kr/market/depth`
 
 ```shell
-curl "https://api-cloud.huobi.co.kr/market/depth?symbol=btcusdt&type=step2"
+curl "https://api-cloud.huobi.co.kr/market/depth?symbol=btcusdt&type=step1"
 ```
 
-### 请求参数
+### Request Parameters
 
-参数      | 数据类型   | 必须     | 默认值 | 描述 | 取值范围 |
---------- | --------- | -------- | ------| ---- | --- |
-symbol    | string    | true     | NA    | 交易对 | btcusdt, ethbtc...|
-depth     | integer   | false    | 20    | 返回深度的数量 | 5，10，20 |
-type      | string    | true     | step0 | 深度的价格聚合度，具体说明见下方 | step0，step1，step2，step3，step4，step5 |
+Parameter | Data Type | Required | Default Value         | Description                                       | Value Range
+--------- | --------- | -------- | -------------         | -----------                                       | -----------
+symbol    | string    | true     | NA                    | The trading symbol to query                       | All supported trading symbols, e.g. btcusdt, bccbtc
+depth     | integer   | false    | 20                    | The number of market depth to return on each side | 5, 10, 20
+type      | string    | true     | step0                 | Market depth aggregation level, details below     | step0, step1, step2, step3, step4, step5
 
-<aside class="notice">当type值为‘step0’时，‘depth’的默认值为150而非20。 </aside>
+<aside class="notice">when type is set to "step0", the default value of "depth" is 150 instead of 20.</aside>
 
-**参数type的各值说明**
+**"type" Details**
 
-取值      | 说明
+Value     | Description
 --------- | ---------
-step0     | 无聚合
-step1     | 聚合度为报价精度*10
-step2     | 聚合度为报价精度*100
-step3     | 聚合度为报价精度*1000
-step4     | 聚合度为报价精度*10000
-step5     | 聚合度为报价精度*100000
+step0     | No market depth aggregation
+step1     | Aggregation level = precision*10
+step2     | Aggregation level = precision*100
+step3     | Aggregation level = precision*1000
+step4     | Aggregation level = precision*10000
+step5     | Aggregation level = precision*100000
 
-> Response:
+> The above command returns JSON structured like this:
 
 ```json
-{
+"tick": {
     "version": 31615842081,
     "ts": 1489464585407,
     "bids": [
-      [7964, 0.0678], // [price, amount]
+      [7964, 0.0678],
       [7963, 0.9162],
       [7961, 0.1],
       [7960, 12.8898],
       [7958, 1.2],
-      ...
+      [7955, 2.1009],
+      [7954, 0.4708],
+      [7953, 0.0564],
+      [7951, 2.8031],
+      [7950, 13.7785],
+      [7949, 0.125],
+      [7948, 4],
+      [7942, 0.4337],
+      [7940, 6.1612],
+      [7936, 0.02],
+      [7935, 1.3575],
+      [7933, 2.002],
+      [7932, 1.3449],
+      [7930, 10.2974],
+      [7929, 3.2226]
     ],
     "asks": [
       [7979, 0.0736],
@@ -712,44 +643,58 @@ step5     | 聚合度为报价精度*100000
       [7981, 5.5652],
       [7986, 0.2416],
       [7990, 1.9970],
-      ...
+      [7995, 0.88],
+      [7996, 0.0212],
+      [8000, 9.2609],
+      [8002, 0.02],
+      [8008, 1],
+      [8010, 0.8735],
+      [8011, 2.36],
+      [8012, 0.02],
+      [8014, 0.1067],
+      [8015, 12.9118],
+      [8016, 2.5206],
+      [8017, 0.0166],
+      [8018, 1.3218],
+      [8019, 0.01],
+      [8020, 13.6584]
     ]
   }
 ```
 
-### 响应数据
+### Response Content
 
-<aside class="notice">返回的JSON顶级数据对象名为'tick'而不是通常的'data'。</aside>
+<aside class="notice">The returned data object is under 'tick' object instead of 'data' object in the top level JSON</aside>
 
-字段名称      | 数据类型    | 描述
+Field     | Data Type | Description
 --------- | --------- | -----------
-ts        | integer   | 调整为北京时间的时间戳，单位毫秒
-version   | integer   | 内部字段
-bids      | object    | 当前的所有买单 [price, quote volume]
-asks      | object    | 当前的所有卖单 [price, quote volume]
+ts        | integer   | The UNIX timestamp in milliseconds adjusted to Beijing time
+version   | integer   | Internal data
+bids      | object    | The current all bids in format [price, quote volume]
+asks      | object    | The current all asks in format [price, quote volume]
 
-## 最近市场成交记录
+## Get the Last Trade
 
-此接口返回指定交易对最新的一个交易记录。
+This endpoint retrieves the latest trade with its price, volume, and direction.
 
-### HTTP 请求
+### HTTP Request
 
-- GET `/market/trade`
+`GET https://api-cloud.huobi.co.kr/market/trade`
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/market/trade?symbol=ethusdt"
 ```
 
-### 请求参数
+### Request Parameters
 
-参数      | 数据类型   | 是否必须  | 默认值   | 描述
---------- | --------- | -------- | ------- | -----------
-symbol    | string    | true     | NA      | 交易对，例如btcusdt, ethbtc
+Parameter | Data Type | Required | Default Value         | Description                                       | Value Range
+--------- | --------- | -------- | -------------         | -----------                                       | -----------
+symbol    | string    | true     | NA                    | The trading symbol to query                       | All supported trading symbols, e.g. btcusdt, bccbtc
 
-> Response:
+> The above command returns JSON structured like this:
 
 ```json
-{
+"tick": {
     "id": 600848670,
     "ts": 1489464451000,
     "data": [
@@ -764,41 +709,41 @@ symbol    | string    | true     | NA      | 交易对，例如btcusdt, ethbtc
 }
 ```
 
-### 响应数据
+### Response Content
 
-<aside class="notice">返回的JSON顶级数据对象名为'tick'而不是通常的'data'。</aside>
+<aside class="notice">The returned data object is under 'tick' object instead of 'data' object in the top level JSON</aside>
 
-字段名称       | 数据类型 | 描述
+Parameter | Data Type | Description
 --------- | --------- | -----------
-id        | integer   | 唯一交易id
-amount    | float     | 以基础币种为单位的交易量
-price     | float     | 以报价币种为单位的成交价格
-ts        | integer   | 调整为北京时间的时间戳，单位毫秒
-direction | string    | 交易方向：“buy” 或 “sell”, “buy” 即买，“sell” 即卖
+id        | integer   | The unique trade id of this trade
+amount    | float     | The trading volume in base currency
+price     | float     | The trading price in quote currency
+ts        | integer   | The UNIX timestamp in milliseconds adjusted to Beijing time
+direction | string    | The direction of the taker trade: 'buy' or 'sell'
 
-## 获得近期交易记录
+## Get the Most Recent Trades
 
-此接口返回指定交易对近期的所有交易记录。
+This endpoint retrieves the most recent trades with their price, volume, and direction.
 
-### HTTP 请求
+### HTTP Request
 
-- GET `/market/history/trade`
+`GET https://api-cloud.huobi.co.kr/market/history/trade`
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/market/history/trade?symbol=ethusdt&size=2"
 ```
 
-### 请求参数
+### Request Parameters
 
-参数       | 数据类型  | 是否必须   | 默认值 | 描述
---------- | --------- | -------- | ------- | -----------
-symbol    | string    | true     | NA      | 交易对，例如 btcusdt, ethbtc
-size      | integer   | false    | 1       | 返回的交易记录数量，最大值2000
+Parameter | Data Type | Required | Default Value    | Description                   | Value Range
+--------- | --------- | -------- | -------------    | ----------                    | -----------
+symbol    | string    | true     | NA               | The trading symbol to query   | All supported trading symbols, e.g. btcusdt, bccbtc
+size      | integer   | false    | 1                | The number of data returns    | [1, 2000]
 
-> Response:
+> The above command returns JSON structured like this:
 
 ```json
-[  
+"data": [  
    {  
       "id":31618787514,
       "ts":1544390317905,
@@ -835,40 +780,40 @@ size      | integer   | false    | 1       | 返回的交易记录数量，最�
 ]
 ```
 
-### 响应数据
+### Response Content
 
-<aside class="notice">返回的数据对象是一个对象数组，每个数组元素为一个调整为北京时间的时间戳（单位毫秒）下的所有交易记录，这些交易记录以数组形式呈现。</aside>
+<aside class="notice">The returned data object is an array represents one recent timestamp; each timestamp object again is an array represents all trades occurred at this timestamp.</aside>
 
-参数      | 数据类型 | 描述
+Field     | Data Type | Description
 --------- | --------- | -----------
-id        | integer   | 唯一交易id
-amount    | float     | 以基础币种为单位的交易量
-price     | float     | 以报价币种为单位的成交价格
-ts        | integer   | 调整为北京时间的时间戳，单位毫秒
-direction | string    | 交易方向：“buy” 或 “sell”, “buy” 即买，“sell” 即卖
+id        | integer   | The unique trade id of this trade
+amount    | float     | The trading volume in base currency
+price     | float     | The trading price in quote currency
+ts        | integer   | The UNIX timestamp in milliseconds adjusted to Beijing time
+direction | string    | The direction of the taker trade: 'buy' or 'sell'
 
-## 最近24小时行情数据
+## Get the Last 24h Market Summary
 
-此接口返回最近24小时的行情数据汇总。
+This endpoint retrieves the summary of trading in the market for the last 24 hours.
 
-### HTTP 请求
+### HTTP Request
 
-- GET `/market/detail`
+`GET https://api-cloud.huobi.co.kr/market/detail/`
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/market/detail?symbol=ethusdt"
 ```
 
-### 请求参数
+### Request Parameters
 
-参数      | 数据类型 | 是否必须 | 默认值 | 描述
---------- | --------- | -------- | ------- | -----------
-symbol    | string    | true     | NA      | 交易对，例如btcusdt, ethbtc
+Parameter | Data Type | Required | Default Value    | Description                   | Value Range
+--------- | --------- | -------- | -------------    | ----------                    | -----------
+symbol    | string    | true     | NA               | The trading symbol to query   | All supported trading symbols, e.g. btcusdt, bccbtc
 
-> Response:
+> The above command returns JSON structured like this:
 
 ```json
-{  
+"tick": {  
    "amount":613071.438479561,
    "open":86.21,
    "close":94.35,
@@ -881,100 +826,91 @@ symbol    | string    | true     | NA      | 交易对，例如btcusdt, ethbtc
 }
 ```
 
-### 响应数据
+### Response Content
 
-<aside class="notice">返回的JSON顶级数据对象名为'tick'而不是通常的'data'。</aside>
+<aside class="notice">The returned data object is under 'tick' object instead of 'data' object in the top level JSON</aside>
 
-字段名称      | 数据类型   | 描述
+Field     | Data Type | Description
 --------- | --------- | -----------
-id        | integer   | 响应id
-amount    | float     | 以基础币种计量的交易量
-count     | integer   | 交易次数
-open      | float     | 本阶段开盘价
-close     | float     | 本阶段收盘价
-low       | float     | 本阶段最低价
-high      | float     | 本阶段最高价
-vol       | float     | 以报价币种计量的交易量
-version   | integer   | 内部数据
+id        | integer   | The UNIX timestamp in seconds as response id
+amount    | float     | The aggregated trading volume in USDT
+count     | integer   | The number of completed trades
+open      | float     | The opening price of last 24 hours
+close     | float     | The last price of last 24 hours
+low       | float     | The low price of last 24 hours
+high      | float     | The high price of last 24 hours
+vol       | float     | The trading volume in base currency of last 24 hours
+version   | integer   | Internal data
 
-# 账户相关
+# Account
 
-<aside class="notice">访问账户相关的接口需要进行签名认证。</aside>
+<aside class="notice">All endpoints in this section require authentication</aside>
 
-## 账户信息 
+## Get all Accounts of the Current User
 
-API Key 权限：读取
+API Key Permission：Read
 
-查询当前用户的所有账户 ID `account-id` 及其相关信息
+This endpoint returns a list of accounts owned by this API user.
 
-### HTTP 请求
+### HTTP Request
 
-- GET `/v1/account/accounts`
+`GET https://api-cloud.huobi.co.kr/v1/account/accounts`
 
-### 请求参数
-
-无
-
-> Response:
-
-```json
-{
-  "data": [
-    {
-      "id": 100001,
-      "type": "spot",
-      "subtype": "",
-      "state": "working"
-    }
-    {
-      "id": 100002,
-      "type": "margin",
-      "subtype": "btcusdt",
-      "state": "working"
-    },
-    {
-      "id": 100003,
-      "type": "otc",
-      "subtype": "",
-      "state": "working"
-    }
-  ]
-}
+```shell
+curl "https://api-cloud.huobi.co.kr/v1/account/accounts"
 ```
 
-### 响应数据
+### Request Parameters
 
-| 参数名称  | 是否必须 | 数据类型 | 描述 | 取值范围 |
-| ----- | ---- | ------ | ----- | ----  |
-| id    | true | long   | account-id |    |
-| state | true | string | 账户状态  | working：正常, lock：账户被锁定 |
-| type  | true | string | 账户类型  | spot：现货账户， margin：杠杆账户，otc：OTC 账户，point：点卡账户  |
+<aside class="notice">No parameter is available for this endpoint</aside>
 
-<aside class="notice">杠杆账户（margin）会在第一次划转资产时创建，如果未划转过资产则不会有杠杆账户。</aside>
-
-## 账户余额
-
-API Key 权限：读取
-
-查询指定账户的余额，支持以下账户：
-
-spot：现货账户， margin：杠杆账户，otc：OTC 账户，point：点卡账户
-
-### HTTP 请求
-
-- GET `/v1/account/accounts/{account-id}/balance`
-
-### 请求参数
-
-| 参数名称   | 是否必须 | 类型   | 描述   | 默认值  | 取值范围 |
-| ---------- | ---- | ------ | --------------- | ---- | ---- |
-| account-id | true | string | account-id，填在 path 中，可用 GET /v1/account/accounts 获取 |  |      |
-
-> Response:
+> The above command returns JSON structured like this:
 
 ```json
-{
-  "data": {
+  "data": [
+    {
+      "id": 100009,
+      "type": "spot",
+      "state": "working",
+      "user-id": 1000
+    }
+  ]
+```
+
+### Response Content
+
+Field               | Data Type | Description              | Value Range
+---------           | --------- | -----------              | -----------
+id                  | integer   | Unique account id        | NA
+state               | string    | Account state            | working, lock
+type                | string    | The type of this account | spot, margin, otc, point
+
+<aside class="notice">Margin account will only be created after the first margin loan order.</aside>
+
+## Get Account Balance of a Specific Account
+
+API Key Permission：Read
+
+This endpoint returns the balance of an account specified by account id.
+
+### HTTP Request
+
+`GET https://api-cloud.huobi.co.kr/v1/account/accounts/{account-id}/balance`
+
+'account-id': The specified account id to get balance for, can be found by query '/account/accounts' endpoint.
+
+```shell
+curl "https://api-cloud.huobi.co.kr/v1/account/accounts/100009/balance"
+```
+
+### Request Parameters
+
+<aside class="notice">No parameter is needed for this endpoint</aside>
+
+> The above command returns JSON structured like this:
+
+```json
+"data": {
     "id": 100009,
     "type": "spot",
     "state": "working",
@@ -982,185 +918,160 @@ spot：现货账户， margin：杠杆账户，otc：OTC 账户，point：点卡
       {
         "currency": "usdt",
         "type": "trade",
-        "balance": "5007.4362872650"
+        "balance": "500009195917.4362872650"
       },
       {
         "currency": "usdt",
         "type": "frozen",
-        "balance": "348.1199920000"
+        "balance": "328048.1199920000"
+      },
+     {
+        "currency": "etc",
+        "type": "trade",
+        "balance": "499999894616.1302471000"
       }
     ],
-    "user-id": 10000
   }
 }
 ```
 
-### 响应数据
+### Response Content
 
-| 参数名称  | 是否必须  | 数据类型   | 描述    | 取值范围   |
-| ----- | ----- | ------ | ----- | ----- |
-| id    | true  | long   | 账户 ID |      |
-| state | true  | string | 账户状态  | working：正常  lock：账户被锁定 |
-| type  | true  | string | 账户类型  | spot：现货账户， margin：杠杆账户，otc：OTC 账户，point：点卡账户 |
-| list  | false | Array  | 子账号数组 |     |
+Field               | Data Type | Description              | Value Range
+---------           | --------- | -----------              | -----------
+id                  | integer   | Unique account id        | NA
+state               | string    | Account state            | working, lock
+type                | string    | The type of this account | spot, margin, otc, point
+list                | object    | The balance details of each currency
 
-list字段说明
+**Per list item content**
 
-| 参数名称   | 是否必须 | 数据类型   | 描述   | 取值范围    |
-| -------- | ---- | ------ | ---- |  ------ |
-| balance  | true | string | 余额   |    |
-| currency | true | string | 币种   |    |
-| type     | true | string | 类型   | trade: 交易余额，frozen: 冻结余额 |
+Field               | Data Type | Description                           | Value Range
+---------           | --------- | -----------                           | -----------
+currency            | string    | The currency of this balance          | NA
+type                | string    | The balance type                      | trade, frozen
+balance             | string    | The balance in the main currency unit | NA
 
-## 资产划转（母子账号之间）
+# Wallet (Deposit and Withdraw)
 
-API Key 权限：交易
+<aside class="notice">All endpoints in this section require authentication</aside>
 
-母账户执行母子账号之间的划转
+## Create a Withdraw Request
 
-### HTTP 请求
+API Key Permission：Withdraw
 
-- POST ` /v1/subuser/transfer`
+This endpoint creates a withdraw request from your spot trading account to an external address.
 
-### 请求参数
+<aside class="notice">Only supported the existed addresses in your withdraw address list</aside>
 
-参数|是否必填 | 数据类型 | 说明 | 取值范围 |
------------|------------|-----------|------------|----------|--
-sub-uid	|true|	long|子账号uid	|-|
-currency|true|	string|币种	|-|
-amount|true|	decimal|划转金额|-|	
-type|true|string|划转类型| master-transfer-in（子账号划转给母账户虚拟币）/ master-transfer-out （母账户划转给子账号虚拟币）/master-point-transfer-in （子账号划转给母账户点卡）/master-point-transfer-out（母账户划转给子账号点卡） |
+### HTTP Request
 
-> Response:
+`POST https://api-cloud.huobi.co.kr/v1/dw/withdraw/api/create`
 
-```json
-{
-  "data":123456,
-  "status":"ok"
-}
-```
-
-### 响应数据
-
-参数|是否必填 | 数据类型 | 长度 | 说明 | 取值范围 |
------------|------------|-----------|------------|----------|--|
-data | true| int | - | 划转订单id|   - |
-status | true|   | - |  状态| "OK" or "Error"    |
-
-### 错误码
-
-error_code|	说明|	类型|
-------------------|------------|-----------|
-account-transfer-balance-insufficient-error|	账户余额不足|	string|
-base-operation-forbidden|	禁止操作（母子账号关系错误时报）	|string|
-
-# 钱包（充值与提现）
-
-<aside class="notice">访问钱包相关的接口需要进行签名认证。</aside>
-
-## 虚拟币提现
-
-API Key 权限：提币
-
-<aside class="notice">仅支持在官网上相应币种 <a href='https://www.huobi.co.kr/zh-CN/address//'>地址列表 </a> 中的地址。</aside>
-
-### HTTP 请求
-
-- POST ` /v1/dw/withdraw/api/create`
-
-```json
-{
+```shell
+curl -X POST -H "Content-Type: application/json" "https://api-cloud.huobi.co.kr/v1/dw/withdraw/api/create" -d
+'{
   "address": "0xde709f2102306220921060314715629080e2fb77",
   "amount": "0.05",
   "currency": "eth",
   "fee": "0.01"
+}'
+```
+
+### Request Parameters
+
+Parameter  | Data Type | Required | Default | Description
+---------  | --------- | -------- | ------- | -----------
+address    | string    | true     | NA      | The desination address of this withdraw
+currency   | string    | true     | NA      | The crypto currency to withdraw
+amount     | string    | true     | NA      | The amount of currency to withdraw
+fee        | string    | false    | NA      | The fee to pay with this withdraw
+chain      | string    | false    | NA      | set "usdterc20" to withdraw USDT(erc20)
+addr-tag   | string    | false    | NA      | A tag specified for this address
+
+> The above command returns JSON structured like this:
+
+```json
+{  
+  "data": 1000
 }
 ```
 
-### 请求参数
+### Response Content
 
-| 参数名称       | 是否必须 | 类型     | 描述     |取值范围 |
-| ---------- | ---- | ------ | ------ | ---- |
-| address | true | string   | 提现地址 |仅支持在官网上相应币种[地址列表](https://www.hbg.com/zh-cn/withdraw_address/) 中的地址  |
-| amount     | true | string | 提币数量   |      |
-| currency | true | string | 资产类型   |  btc, ltc, bch, eth, etc ...(火币全球站支持的币种) |
-| fee     | false | string | 转账手续费  |     |
-| chain   | false | string | 提 USDT-ERC20 时需要设置此参数为 "usdterc20"，其他币种提现不需要设置此参数  |     |
-| addr-tag|false | string | 虚拟币共享地址tag，适用于xrp，xem，bts，steem，eos，xmr | 格式, "123"类的整数字符串|
+<aside class="notice">The return data contains a single value instead of an object</aside>
+
+Field               | Data Type | Description
+---------           | --------- | -----------
+data                | integer   | Transfer id
+
+<aside class="notice">All new transfer id will be incremental to the previous ids. This allows search by transfer id sequences</aside>
 
 
-> Response:
+## Cancel a Withdraw Request
+
+API Key Permission：Withdraw
+
+This endpoint cancels a previously created withdraw request by its transfer id.
+
+### HTTP Request
+
+`POST https://api-cloud.huobi.co.kr/v1/dw/withdraw-virtual/{withdraw-id}/cancel`
+
+```shell
+curl -X POST "https://api-cloud.huobi.co.kr/v1/dw/withdraw-virtual/1000/cancel"
+```
+
+'withdraw-id': the id returned when previously created a withdraw request
+
+### Request Parameters
+
+<aside class="notice">No parameter is needed for this endpoint</aside>
+
+> The above command returns JSON structured like this:
 
 ```json
-{
   "data": 700
-}
 ```
 
-### 响应数据
+### Response Content
+
+<aside class="notice">The return data contains a single value instead of an object</aside>
+
+Parameter           | Data Type | Description
+---------           | --------- | -----------
+data                | integer   | Withdraw cancel id
 
 
-| 参数名称 | 是否必须  | 数据类型 | 描述   | 取值范围 |
-| ---- | ----- | ---- | ---- | ---- |
-| data | false | long | 提现 ID |      |
+## Search for Existed Withdraws and Deposits
 
+API Key Permission：Read
 
-## 取消提现
+This endpoint searches for all existed withdraws and deposits and return their latest status.
 
-API Key 权限：提币
+### HTTP Request
 
-### HTTP 请求
+`GET https://api-cloud.huobi.co.kr/v1/query/deposit-withdraw`
 
-- POST ` /v1/dw/withdraw-virtual/{withdraw-id}/cancel`
-
-### 请求参数
-
-| 参数名称        | 是否必须 | 类型   | 描述 | 默认值  | 取值范围 |
-| ----------- | ---- | ---- | ------------ | ---- | ---- |
-| withdraw-id | true | long | 提现 ID，填在 path 中 |      |      |
-
-
-> Response:
-
-```json
-{
-  "data": 700
-}
+```shell
+curl "https://api-cloud.huobi.co.kr/v1/query/deposit-withdraw?currency=xrp&type=deposit&from=5&size=12"
 ```
 
-### 响应数据
+### Request Parameters
 
+Parameter  | Data Type | Required | Description                     | Value Range | Default Value|
+---------  | --------- | -------- | -----------                     | ------------|------------------|
+currency   | string    | false     | The crypto currency to withdraw | NA |When currency is not specified, the reponse would include the records of ALL currencies. 
+type       | string    | true     | Define transfer type to search  | deposit, withdraw| |
+from       | string    | false    | The transfer id to begin search | 1 ~ latest record ID| When 'from' is not specified, the default value would be 1 if 'direct' is 'prev' with the response in ascending order, the default value would be the ID of latest record if 'direct' is 'next' with the response in descending order.
+size       | string    | false     | The number of items to return   | 1-500 | 100 |
+direct     | string    | false     | the order of response | 'prev' (ascending), 'next' (descending)| 'prev' |
 
-| 参数名称 | 是否必须  | 数据类型 | 描述    | 取值范围 |
-| ---- | ----- | ---- | ----- | ---- |
-| data | false | long | 提现 ID |      |
-
-## 充提记录
-
-API Key 权限：读取
-
-查询充提记录
-
-### HTTP 请求
-
-- GET `/v1/query/deposit-withdraw`
-
-### 请求参数
-
-| 参数名称        | 是否必须 | 类型   | 描述 | 默认值  | 取值范围 |
-| ----------- | ---- | ---- | ------------ | ---- | ---- |
-| currency | false | string | 币种  |  |缺省时，返回所有币种 |
-| type | true | string | 充值或提现 |     |  deposit 或 withdraw |
-| from   | false | string | 查询起始 ID  |缺省时，默认值direct相关。当direct为‘prev’时，from 为1 ，从旧到新升序返回；当direct为’next‘时，from为最新的一条记录的ID，从新到旧降序返回    |     |
-| size   | false | string | 查询记录大小  | 100   |1-500     |
-| direct  | false | string | 返回记录排序方向  | 缺省时，默认为“prev” （升序）  |“prev” （升序）or “next” （降序）    |
-
-> Response:
+> The above command returns JSON structured like this:
 
 ```json
-{
-  "data":
-    [
+{  
+    "data": [
       {
         "id": 1171,
         "type": "deposit",
@@ -1173,191 +1084,128 @@ API Key 权限：读取
         "state": "safe",
         "created-at": 1510912472199,
         "updated-at": 1511145876575
-      },
-      ...
+      }
     ]
 }
 ```
 
-### 响应数据
+### Response Content
 
+Field               | Data Type | Description
+---------           | --------- | -----------
+id                  | integer   | Transfer id
+type                | string    | Define transfer type to search, possible values: [deposit, withdraw]
+currency            | string    | The crypto currency to withdraw
+tx-hash             | string    | The on-chain transaction hash
+amount              | integer   | The number of crypto asset transfered in its minimum unit
+address             | string    | The deposit or withdraw source address
+address-tag         | string    | The user defined address tag
+fee                 | integer   | The amount of fee taken by Huobi in this crypto's minimum unit
+state               | string    | The state of this transfer (see below for details)
+created-at          | integer   | The timestamp in milliseconds for the transfer creation
+updated-at          | integer   | The timestamp in milliseconds for the transfer's latest update
 
-| 参数名称 | 是否必须 | 数据类型 | 描述 | 取值范围 |
-|-----|-----|-----|-----|------|
-|   id  |  true  |  long  |   | |
-|   type  |  true  |  string  | 类型 | 'deposit', 'withdraw' |
-|   currency  |  true  |  string  |  币种 | |
-| tx-hash | true |string | 交易哈希 | |
-| amount | true | long | 个数 | |
-| address | true | string | 地址 | |
-| address-tag | true | string | 地址标签 | |
-| fee | true | long | 手续费 | |
-| state | true | string | 状态 | 状态参见下表 |
-| created-at | true | long | 发起时间 | |
-| updated-at | true | long | 最后更新时间 | |
+**List of possible withdraw state**
 
+State           | Description
+---------       | -----------
+submitted       | Withdraw request submitted successfully
+reexamine       | Under examination for withdraw validation
+canceled        | Withdraw canceled by user
+pass            | Withdraw validation passed
+reject          | Withdraw validation rejected
+pre-transfer    | Withdraw is about to be released
+wallet-transfer | On-chain transfer initiated
+wallet-reject   | Transfer rejected by chain
+confirmed       | On-chain transfer completed with one confirmation
+confirm-error   | On-chain transfer faied to get confirmation
+repealed        | Withdraw terminated by system
 
-- 虚拟币充值状态定义：
+**List of possible deposit state**
 
-|状态|描述|
-|--|--|
-|unknown|状态未知|
-|confirming|确认中|
-|confirmed|确认中|
-|safe|已完成|
-|orphan| 待确认|
+State           | Description
+---------       | -----------
+unknown         | On-chain transfer has not been received
+confirming      | On-chain transfer waits for first confirmation
+confirmed       | On-chain transfer confirmed for at least one block
+safe            | Multiple on-chain confirmation happened
+orphan          | Confirmed but currently in an orphan branch
 
-- 虚拟币提现状态定义：
+# Trading
 
-| 状态 | 描述  |
-|--|--|
-| submitted | 已提交 |
-| reexamine | 审核中 |
-| canceled  | 已撤销 |
-| pass    | 审批通过 |
-| reject  | 审批拒绝 |
-| pre-transfer | 处理中 |
-| wallet-transfer | 已汇出 |
-| wallet-reject   | 钱包拒绝 |
-| confirmed      | 区块已确认 |
-| confirm-error  | 区块确认错误 |
-| repealed       | 已撤销 |
+<aside class="notice">All endpoints in this section require authentication</aside>
 
+<aside class="warning">When trade with margin loan from your margin account, "account-id" parameter should be set to margin account id, "source" parameter should be set to "margin-api".</aside>
 
+## Place a New Order
 
-# 现货 
+API Key Permission：Trade
 
-<aside class="notice">访问交易相关的接口需要进行签名认证。</aside>
+This endpoint place a new order and send to the exchange to be matched.
 
-## 下单
+### HTTP Request
 
-API Key 权限：交易
+`POST https://api-cloud.huobi.co.kr/v1/order/orders/place`
 
-发送一个新订单到火币韩国以进行撮合。
-
-### HTTP 请求
-
-- POST ` /v1/order/orders/place`
-
-```json
-{
-  "account-id": "100009",
-  "amount": "10.1",
-  "price": "100.1",
-  "source": "api",
-  "symbol": "ethusdt",
-  "type": "buy-limit"
-}
-```
-
-### 请求参数
-
-参数名称 | 数据类型 | 是否必需 | 默认值 | 描述
----------  | --------- | -------- | ------- | -----------
-account-id | string    | true     | NA      | 账户 ID，使用 GET /v1/account/accounts 接口查询。现货交易使用 ‘spot’ 账户的 account-id；杠杆交易，请使用 ‘margin’ 账户的 account-id
-symbol     | string    | true     | NA      | 交易对, 例如btcusdt, ethbtc
-type       | string    | true     | NA      | 订单类型，包括buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker（说明见下文）
-amount     | string    | true     | NA      | 订单交易量
-price      | string    | false    | NA      | limit order的交易价格
-source     | string    | false    | api     | 现货交易填写“api”，杠杆交易填写“margin-api”
-
-**buy-limit-maker**
-
-当“下单价格”>=“市场最低卖出价”，订单提交后，系统将拒绝接受此订单；
-
-当“下单价格”<“市场最低卖出价”，提交成功后，此订单将被系统接受。
-
-**sell-limit-maker**
-
-当“下单价格”<=“市场最高买入价”，订单提交后，系统将拒绝接受此订单；
-
-当“下单价格”>“市场最高买入价”，提交成功后，此订单将被系统接受。
-
-> Response:
-
-```json
-{  
-  "data": "59378"
-}
-```
-
-### 响应数据
-
-返回的主数据对象是一个对应下单单号的字符串。
-
-## 撤销订单
-
-API Key 权限：交易
-
-此接口发送一个撤销订单的请求。
-
-<aside class="warning">此接口只提交取消请求，实际取消结果需要通过订单状态，撮合状态等接口来确认。</aside>
-
-
-### HTTP 请求
-
-- POST ` /v1/order/orders/{order-id}/submitcancel`
-
-
-### 请求参数
-
-| 参数名称     | 是否必须 | 类型     | 描述           | 默认值  | 取值范围 |
-| -------- | ---- | ------ | ------------ | ---- | ---- |
-| order-id | true | string | 订单ID，填在path中 |      |      |
-
-
-> Response:
-
-```json
-{  
-  "data": "59378"
-}
-```
-
-### 响应数据
-
-返回的主数据对象是一个对应下单单号的字符串。
-
-
-## 查询当前未成交订单
-
-API Key 权限：读取
-
-查询已提交但是仍未完全成交或未被撤销的订单。
-
-```json
-{
+```shell
+curl -X POST -H "Content-Type: application/json" "https://api-cloud.huobi.co.kr/v1/order/orders/place" -d
+'{
    "account-id": "100009",
    "amount": "10.1",
    "price": "100.1",
    "source": "api",
    "symbol": "ethusdt",
    "type": "buy-limit"
-}
+  }'
 ```
 
-### HTTP 请求
+### Request Parameters
 
-- GET `/v1/order/openOrders`
+Parameter  | Data Type | Required | Default | Description                               | Value Range
+---------  | --------- | -------- | ------- | -----------                               | -----------
+account-id | string    | true     | NA      | The account id used for this trade        | NA
+symbol     | string    | true     | NA      | The trading symbol to trade               | All supported trading symbol, e.g. btcusdt, bccbtc
+type       | string    | true     | NA      | The order type                            | buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker
+amount     | string    | true     | NA      | The amount to buy (quote currency) or to sell (base currency) | NA
+price      | string    | false    | NA      | The limit price of limit order, only needed for limit order   | NA
+source     | string    | false    | api     | When trade with margin use 'margin-api'   | api, margin-api
 
-
-### 请求参数
-
-参数名称 | 数据类型 | 是否必需 | 默认值 | 描述
----------  | --------- | -------- | ------- | -----------
-account-id | string    | true    | NA      | 账户 ID，使用 GET /v1/account/accounts 接口获得。现货交易使用‘spot’账户的 account-id； 
-symbol     | string    | ture    | NA      | 交易对, 例如btcusdt, ethbtc
-side       | string    | false    | both    | 指定只返回某一个方向的订单，可能的值有: buy, sell. 默认两个方向都返回。
-size       | int       | false    | 10      | 返回订单的数量，最大值2000。
-
-
-
-<aside class="warning">“account-id” 和 “symbol” 需同时指定或者二者都不指定。如果二者都不指定，返回最多500条尚未成交订单，按订单号降序排列。</aside>
-
-> Response:
+> The above command returns JSON structured like this:
 
 ```json
-{  
+  "data": "59378"
+```
+
+### Response Content
+
+<aside class="notice">The returned data object is a single string which represents the order id</aside>
+
+## Get All Open Orders
+
+API Key Permission：Read
+
+This endpoint returns all open orders which have not been filled completely.
+
+### HTTP Request
+
+`GET https://api-cloud.huobi.co.kr/v1/order/openOrders`
+
+```shell
+curl "https://api-cloud.huobi.co.kr/v1/order/openOrders?account-id=100009&symbol=btcusdt&side=buy&size=5"
+```
+
+### Request Parameters
+
+Parameter  | Data Type | Required | Default | Description                             | Value Range
+---------  | --------- | -------- | ------- | -----------                             | -----------
+account-id | string    | true    | NA      | The account id used for this trade      | NA
+symbol     | string    | true    | NA      | The trading symbol to trade             | All supported trading symbols, e.g. btcusdt, bccbtc
+side       | string    | false    | NA      | Filter on the direction of the trade    | buy, sell
+size       | int       | false    | 10      | The number of orders to return          | [1, 2000]
+
+> The above command returns JSON structured like this:
+
+```json
   "data": [
     {
       "id": 5454937,
@@ -1374,96 +1222,81 @@ size       | int       | false    | 10      | 返回订单的数量，最大值2
       "state": "submitted"
     }
   ]
-}
 ```
 
-### 响应数据
+### Response Content
 
-字段名称          | 数据类型 | 描述
+Field               | Data Type | Description
 ---------           | --------- | -----------
-id                  | integer   | 订单id
-symbol              | string    | 交易对, 例如btcusdt, ethbtc
-price               | string    | limit order的交易价格
-created-at          | int       | 订单创建的调整为北京时间的时间戳，单位毫秒
-type                | string    | 订单类型
-filled-amount       | string    | 订单中已成交部分的数量
-filled-cash-amount  | string    | 订单中已成交部分的总价格
-filled-fees         | string    | 已交交易手续费总额
-source              | string    | 现货交易填写“api”
-state               | string    | 订单状态，包括submitted, partical-filled, cancelling
+id                  | integer   | order id
+symbol              | string    | The trading symbol to trade, e.g. btcusdt, bccbtc
+price               | string    | The limit price of limit order
+created-at          | int       | The timestamp in milliseconds when the order was created
+type                | string    | The order type, possible values are: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker
+filled-amount       | string    | The amount which has been filled
+filled-cash-amount  | string    | The filled total in quote currency
+filled-fees         | string    | Transaction fee paid so far
+source              | string    | The source where the order was triggered, possible values: sys, web, api, app
+state               | string    | submitted, partical-filled, cancelling
 
-## 批量撤销订单（open orders）
+## Submit Cancel for an Order
 
-API Key 权限：交易
+API Key Permission：Trade
 
-此接口发送批量撤销订单的请求。
+This endpoint submit a request to cancel an order.
 
-<aside class="warning">此接口只提交取消请求，实际取消结果需要通过订单状态，撮合状态等接口来确认。</aside>
+<aside class="warning">This only submit the cancel request, the actual result of the canel request needs to be checked by order status or match result endpoints</aside>
 
-### HTTP 请求
+### HTTP Request
 
-- POST ` /v1/order/orders/batchCancelOpenOrders`
+`POST https://api-cloud.huobi.co.kr/v1/order/orders/{order-id}/submitcancel`
 
+'order-id': the previously returned order id when order was created
 
-### 请求参数
-
-| 参数名称     | 是否必须 | 类型     | 描述           | 默认值  | 取值范围 |
-| -------- | ---- | ------ | ------------ | ---- | ---- |
-| account-id | true  | string | 账户ID     |     |      |
-| symbol     | false | string | 交易对     |      |   单个交易对字符串，缺省将返回所有符合条件尚未成交订单  |
-| side | false | string | 主动交易方向 |      |   “buy”或“sell”，缺省将返回所有符合条件尚未成交订单   |
-| size | false | int | 所需返回记录数  |  100 |   [0,100]   |
-
-
-> Response:
-
-```json
-{
-  "status": "ok",
-  "data": {
-    "success-count": 2,
-    "failed-count": 0,
-    "next-id": 5454600
-  }
-}
+```shell
+curl -X POST "https://api-cloud.huobi.co.kr/v1/order/orders/59378/submitcancel"
 ```
 
+### Request Parameters
 
-### 响应数据
+No parameter is needed for this endpoint.
 
-
-| 参数名称 | 是否必须 | 数据类型   | 描述    | 取值范围 |
-| ---- | ---- | ------ | ----- | ---- |
-| success-count | true | int | 成功取消的订单数 |     |
-| failed-count | true | int | 取消失败的订单数 |     |
-| next-id | true | long | 下一个符合取消条件的订单号 |    |
-
-## 批量撤销订单
-
-API Key 权限：交易
-
-此接口同时为多个订单（基于id）发送取消请求。
-
-### HTTP 请求
-
-- POST ` /v1/order/orders/batchcancel`
+> The above command returns JSON structured like this:
 
 ```json
-{
+  "data": "59378"
+```
+
+### Response Content
+
+<aside class="notice">The returned data object is a single string which represents the order id</aside>
+
+## Submit Cancel for Multiple Orders by IDs
+
+API Key Permission：Trade
+
+This endpoint submit cancellation for multiple orders at once with given ids.
+
+### HTTP Request
+
+`POST https://api-cloud.huobi.co.kr/v1/order/orders/batchcancel`
+
+```shell
+curl -X POST -H 'Content-Type: application/json' "https://api-cloud.huobi.co.kr/v1/order/orders/batchcancel" -d
+'{
   "order-ids": [
     "1", "2", "3"
   ]
-}
+}'
 ```
 
-### 请求参数
+### Request Parameters
 
-| 参数名称  | 是否必须 | 类型   | 描述   | 默认值  | 取值范围 |
-| ---- | ---- | ---- | ----  | ---- | ---- |
-| order-ids | true | list | 撤销订单ID列表 |  |单次不超过50个订单id|
+Parameter  | Data Type | Required | Description
+---------  | --------- | -------- | -----------
+order-ids  | list      | true     | The order ids to cancel. Max list size is 50.
 
-
-> Response:
+> The above command returns JSON structured like this:
 
 ```json
 {  
@@ -1483,36 +1316,83 @@ API Key 权限：交易
 }
 ```
 
-### 响应数据
+### Response Content
 
-| 字段名称 | 数据类型 | 描述|
-| ---- | ----- | ---- |
-| data | map | 撤单结果
+Field           | Data Type | Description
+---------       | --------- | -----------
+success         | list      | The order ids with thier cancel request sent successfully
+failed          | list      | The details of the failed cancel request
 
-## 查询订单详情
+## Submit Cancel for Multiple Orders by Criteria
 
-API Key 权限：读取
+API Key Permission：Trade
 
-此接口返回指定订单的最新状态和详情。
+This endpoint submit cancellation for multiple orders at once with given criteria.
 
-### HTTP 请求
+### HTTP Request
 
-- GET `/v1/order/orders/{order-id}`
+`POST https://api-cloud.huobi.co.kr/v1/order/orders/batchcancelopenorders`
 
+```shell
+curl -X POST -H 'Content-Type: application/json' "https://api-cloud.huobi.co.kr/v1/order/orders/batchcancelopenorders" -d
+'{
+  "account-id": "100009",
+  "symbol": "btcusdt",
+  "side": "buy",
+  "size": 5
+}'
+```
 
-### 请求参数
+Parameter  | Data Type | Required | Default | Description                             | Value Range
+---------  | --------- | -------- | ------- | -----------                             | -----------
+account-id | string    | true    | NA      | The account id used for this cancel     | NA
+symbol     | string    | false    | NA      | The trading symbol to cancel            | All supported trading symbols, e.g. btcusdt, bccbtc
+side       | string    | false    | NA      | Filter on the direction of the trade    | buy, sell
+size       | int       | false    | 100     | The number of orders to cancel          | [1, 100]
 
-| 参数名称     | 是否必须 | 类型  | 描述   | 默认值  | 取值范围 |
-| -------- | ---- | ------ | -----  | ---- | ---- |
-| order-id | true | string | 订单ID，填在path中 |      |      |
+> The above command returns JSON structured like this:
 
+```json
+  "data": {
+    "success-count": 2,
+    "failed-count": 0,
+    "next-id": 5454600
+  }
+```
 
-> Response:
+### Response Content
+
+Field           | Data Type | Description
+---------       | --------- | -----------
+success-count   | integer   | The number of cancel request sent successfully
+failed-count    | integer   | The number of cancel request failed
+next-id         | integer   | the next order id that can be cancelled
+
+## Get the Order Detail of an Order
+
+API Key Permission：Read
+
+This endpoint returns the detail of one order.
+
+### HTTP Request
+
+`GET https://api-cloud.huobi.co.kr/v1/order/orders/{order-id}`
+
+'order-id': the previously returned order id when order was created
+
+```shell
+curl "https://api-cloud.huobi.co.kr/v1/order/orders/59378"
+```
+
+### Request Parameters
+
+No parameter is needed for this endpoint.
+
+> The above command returns JSON structured like this:
 
 ```json
 {  
-  "data": 
-  {
+  "data": {
     "id": 59378,
     "symbol": "ethusdt",
     "account-id": 100009,
@@ -1534,48 +1414,50 @@ API Key 权限：读取
 }
 ```
 
-### 响应数据
+### Response Content
 
-| 字段名称     | 是否必须  | 数据类型   | 描述   | 取值范围     |
-| ----------------- | ----- | ------ | -------  | ----  |
-| account-id        | true  | long   | 账户 ID    |       |
-| amount            | true  | string | 订单数量              |    |
-| canceled-at       | false | long   | 订单撤销时间    |     |
-| created-at        | true  | long   | 订单创建时间    |   |
-| field-amount      | true  | string | 已成交数量    |     |
-| field-cash-amount | true  | string | 已成交总金额     |      |
-| field-fees        | true  | string | 已成交手续费（买入为币，卖出为钱） |     |
-| finished-at       | false | long   | 订单变为终结态的时间，不是成交时间，包含“已撤单”状态    |     |
-| id                | true  | long   | 订单ID    |     |
-| price             | true  | string | 订单价格       |     |
-| source            | true  | string | 订单来源   | api |
-| state             | true  | string | 订单状态   | submitting , submitted 已提交, partial-filled 部分成交, partial-canceled 部分成交撤销, filled 完全成交, canceled 已撤销 |
-| symbol            | true  | string | 交易对   | btcusdt, ethbtc, rcneth ... |
-| type              | true  | string | 订单类型   | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单 |
+Field               | Data Type | Description
+---------           | --------- | -----------
+id                  | integer   | order id
+symbol              | string    | The trading symbol to trade, e.g. btcusdt, bccbtc
+account-id          | string    | The account id which this order belongs to
+amount              | string    | The amount of base currency in this order
+price               | string    | The limit price of limit order
+created-at          | int       | The timestamp in milliseconds when the order was created
+finished-at         | int       | The timestamp in milliseconds when the order was changed to a final state. This is not the time the order is matched.
+canceled-at         | int       | The timestamp in milliseconds when the order was canceled, if not canceled then has value of 0
+type                | string    | The order type, possible values are: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker
+filled-amount       | string    | The amount which has been filled
+filled-cash-amount  | string    | The filled total in quote currency
+filled-fees         | string    | Transaction fee paid so far
+source              | string    | The source where the order was triggered, possible values: sys, web, api, app
+state               | string    | Order state: submitted, partical-filled, cancelling, filled, canceled
+exchange            | string    | Internal data
+batch               | string    | Internal data
 
-## 成交明细
+## Get the Match Result of an Order
 
-API Key 权限：读取
+API Key Permission：Read
 
-此接口返回指定订单的成交明细。
+This endpoint returns the match result of an order.
 
-### HTTP 请求
+### HTTP Request
 
-- GET `/v1/order/orders/{order-id}/matchresults`
+`GET https://api-cloud.huobi.co.kr/v1/order/orders/{order-id}/matchresult`
 
+'order-id': the previously returned order id when order was created
 
+```shell
+curl "https://api-cloud.huobi.co.kr/v1/order/orders/59378/matchresult"
+```
 
-### 请求参数
+### Request Parameters
 
-| 参数名称  | 是否必须 | 类型  | 描述  | 默认值  | 取值范围 |
-| -------- | ---- | ------ | -----  | ---- | ---- |
-| order-id | true | string | 订单ID，填在path中 |      |      |
+No parameter is needed for this endpoint.
 
-
-> Response:
+> The above command returns JSON structured like this:
 
 ```json
-{  
   "data": [
     {
       "id": 29553,
@@ -1589,68 +1471,56 @@ API Key 权限：读取
       "filled-fees": "0.0182310000",
       "created-at": 1494901400435
     }
-    ...
   ]
-}
 ```
 
-### 响应数据
+### Response Content
 
-<aside class="notice">返回的主数据对象为一个对象数组，其中每一个元件代表一个交易结果。</aside>
+<aside class="notice">The return data contains a list and each item in the list represents a match result</aside>
 
-| 字段名称    | 是否必须 | 数据类型   | 描述   | 取值范围     |
-| ------------- | ---- | ------ | -------- | -------- |
-| created-at    | true | long   | 成交时间     |    |
-| filled-amount | true | string | 成交数量     |    |
-| filled-fees   | true | string | 成交手续费    |     |
-| id            | true | long   | 订单成交记录ID |     |
-| match-id      | true | long   | 撮合ID     |     |
-| order-id      | true | long   | 订单 ID    |      |
-| price         | true | string | 成交价格  |    |
-| source        | true | string | 订单来源  | api      |
-| symbol        | true | string | 交易对   | btcusdt, ethbtc, rcneth ...  |
-| type          | true | string | 订单类型   | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单 |
+Parameter           | Data Type | Description
+---------           | --------- | -----------
+id                  | integer   | Internal id
+symbol              | string    | The trading symbol to trade, e.g. btcusdt, bccbtc
+order-id            | string    | The order id of this order
+match-id            | string    | The match id of this match
+price               | string    | The limit price of limit order
+created-at          | int       | The timestamp in milliseconds when the match and fill is done
+type                | string    | The order type, possible values are: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker
+filled-amount       | string    | The amount which has been filled
+filled-fees         | string    | Transaction fee paid so far
+source              | string    | The source where the order was triggered, possible values: sys, web, api, app
 
-## 搜索历史订单
+## Search Past Orders
 
-API Key 权限：读取
+API Key Permission：Read
 
-此接口基于搜索条件查询历史订单。
+This endpoint returns orders based on a specific searching criteria.
 
-### HTTP 请求
+### HTTP Request
 
-- GET `/v1/order/orders`
+`GET https://api-cloud.huobi.co.kr/v1/order/orders`
 
-```json
-{
-   "account-id": "100009",
-   "amount": "10.1",
-   "price": "100.1",
-   "source": "api",
-   "symbol": "ethusdt",
-   "type": "buy-limit"
-}
+```shell
+curl "https://api-cloud.huobi.co.kr/v1/order/orders?symbol=ethusdt&type=buy-limit&staet=filled"
 ```
 
+### Request Parameters
 
-### 请求参数
+Parameter  | Data Type | Required | Default | Description                                   | Value Range
+---------  | --------- | -------- | ------- | -----------                                   | ----------
+symbol     | string    | true     | NA      | The trading symbol to trade                   | All supported trading symbols, e.g. btcusdt, bccbtc
+types      | string    | false    | NA      | The types of order to include in the search   | buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc
+states     | string    | false    | NA      | The states of order to include in the search  | submitted, partial-filled, partial-canceled, filled, canceled
+start-date | string    | false    | -180d    | Search starts date, in format yyyy-mm-dd      | [-180d, end-date] From June 10th, the query window between start-date and end-date will be changed to 2 days. if a request submitted with invalid start-date and/or end-date, an error will be returned. |
+end-date   | string    | false    | today   | Search ends date, in format yyyy-mm-dd        | [start-date, today] From June 10th, the query window between start-date and end-date will be changed to 2 days. if a request submitted with invalid start-date and/or end-date, an error will be returned. |
+from       | string    | false    | NA      | Search order id to begin with                 | NA
+direct     | string    | false    | both    | Search direction when 'from' is used          | next, prev
+size       | int       | false    | 100     | The number of orders to return                | [1, 1000]
 
-| 参数名称   | 是否必须  | 类型     | 描述   | 默认值  | 取值范围   |
-| ---------- | ----- | ------ | ------  | ---- | ----  |
-| symbol     | true  | string | 交易对      |      |btcusdt, ethbtc, rcneth ...  |
-| types      | false | string | 查询的订单类型组合，使用','分割  |      | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单 |
-| start-date | false | string | 查询开始日期, 日期格式yyyy-mm-dd。 以订单生成时间进行查询 | -180 days     | [-180 days, end-date] （自6月10日起， start-date与end-date的查询窗口最大为2天，如果超出范围，接口会返回错误码。 |
-| end-date   | false | string | 查询结束日期, 日期格式yyyy-mm-dd。 以订单生成时间进行查询 | today     | [start-date, today] （自6月10日起， start-date与end-date的查询窗口最大为2天，如果超出范围，接口会返回错误码。   |
-| states     | true  | string | 查询的订单状态组合，使用','分割  |      | submitted 已提交, partial-filled 部分成交, partial-canceled 部分成交撤销, filled 完全成交, canceled 已撤销 |
-| from       | false | string | 查询起始 ID   |      |    |
-| direct     | false | string | 查询方向   |      | prev 向前，时间（或 ID）正序；next 向后，时间（或 ID）倒序）    |
-| size       | false | string | 查询记录大小      | 100     |  [1, 1000]       |
-
-
-> Response:
+> The above command returns JSON structured like this:
 
 ```json
-{  
   "data": [
     {
       "id": 59378,
@@ -1671,48 +1541,48 @@ API Key 权限：读取
       "exchange": "huobi",
       "batch": ""
     }
-    ...
   ]
-}
 ```
 
-### 响应数据
+### Response Content
 
-| 参数名称    | 是否必须  | 数据类型   | 描述   | 取值范围   |
-| ----------------- | ----- | ------ | ----------------- | ----  |
-| account-id        | true  | long   | 账户 ID    |     |
-| amount            | true  | string | 订单数量    |   |
-| canceled-at       | false | long   | 接到撤单申请的时间   |    |
-| created-at        | true  | long   | 订单创建时间   |    |
-| field-amount      | true  | string | 已成交数量   |    |
-| field-cash-amount | true  | string | 已成交总金额    |    |
-| field-fees        | true  | string | 已成交手续费（买入为基础币，卖出为计价币） |       |
-| finished-at       | false | long   | 最后成交时间    |   |
-| id                | true  | long   | 订单ID    |    |
-| price             | true  | string | 订单价格  |    |
-| source            | true  | string | 订单来源   | api  |
-| state             | true  | string | 订单状态    | submitting , submitted 已提交, partial-filled 部分成交, partial-canceled 部分成交撤销, filled 完全成交, canceled 已撤销 |
-| symbol            | true  | string | 交易对    | btcusdt, ethbtc, rcneth ... |
-| type              | true  | string | 订单类型  | submit-cancel：已提交撤单申请  ,buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单 |
+Field               | Data Type | Description
+---------           | --------- | -----------
+id                  | integer   | Order id
+account-id          | integer   | Account id
+user-id             | integer   | User id
+amount              | string    | The amount of base currency in this order
+symbol              | string    | The trading symbol to trade, e.g. btcusdt, bccbtc
+price               | string    | The limit price of limit order
+created-at          | int       | The timestamp in milliseconds when the order was created
+canceled-at         | int       | The timestamp in milliseconds when the order was canceled, or 0 if not canceled
+canceled-at         | int       | The timestamp in milliseconds when the order was finished, or 0 if not finished
+type                | string    | The order type, possible values are: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker
+filled-amount       | string    | The amount which has been filled
+filled-cash-amount  | string    | The filled total in quote currency
+filled-fees         | string    | Transaction fee paid so far
+source              | string    | The source where the order was triggered, possible values: sys, web, api, app
+state               | string    | submitted, partical-filled, cancelling
+exchange            | string    | Internal data
+batch               | string    | Internal data
 
-### start-date, end-date相关错误码 （自6月10日生效）
+### Error code for invalid start-date/end-date
 
-|错误码|对应错误场景|
-|------------|----------------------------------------------|
-|invalid_interval| start date小于end date; 或者 start date 与end date之间的时间间隔大于2天|
-|invalid_start_date|start date是一个180天之前的日期；或者start date是一个未来的日期|
-|invalid_end_date|end date 是一个180天之前的日期；或者end date是一个未来的日期|
+|err-code| scenarios|
+|--------|---------------------------------------------------------------|
+|invalid_interval| Start date is later than end date; the date between start date and end date is greater than 2 days|
+|invalid_start_date| Start date is a future date; or start date is earlier than 180 days ago.|
+|invalid_end_date| end date is a future date; or end date is earlier than 180 days ago.|
 
+## Search Historical Orders within 48 Hours
 
-## 搜索最近48小时内历史订单
+API Key Permission：Read
 
-API Key 权限：读取
+This endpoint returns orders based on a specific searching criteria.
 
-此接口基于搜索条件查询最近48小时内历史订单。
+### HTTP Request
 
-### HTTP 请求
-
-- GET `/v1/order/history`
+`GET https://api-cloud.huobi.co.kr/v1/order/history`
 
 ```json
 {
@@ -1724,20 +1594,19 @@ API Key 权限：读取
 }
 ```
 
+### Request Parameters
 
-### 请求参数
-
-| 参数名称   | 是否必须  | 类型     | 描述   | 默认值  | 取值范围   |
-| ---------- | ----- | ------ | ------  | ---- | ----  |
-| symbol     | false  | string | 交易对      |all      |btcusdt, ethbtc, rcneth ...  |
-| start-time      | false | long | 查询起始时间（含）  |48小时前的时刻      |UTC time in millisecond |
-| end-time | false | long | 查询结束时间（含） | 查询时刻     |UTC time in millisecond |
-| direct   | false | string | 订单查询方向（注：仅在检索出的总条目数量超出size字段限定时起作用；如果检索出的总条目数量在size 字段限定内，direct 字段不起作用。） | next     |prev, next   |
-| size     | false  | int | 每次返回条目数量  |100      | [10,1000] |
-
+Parameter  | Required | Data Type | Description | Default Value                                  | Value Range
+---------  | --------- | -------- | ------- | -----------                                   | ----------
+symbol     | false  | string | The trading symbol to trade      |all      |All supported trading symbols, e.g. btcusdt, bccbtc  |
+start-time      | false | long | Start time (included)   |The time 48 hours ago      |UTC time in millisecond |
+end-time | false | long | End time (included)  | The query time     |UTC time in millisecond |
+direct   | false | string | Direction of the query. (Note: If the total number of items in the search result is within the limitation defined in “size”, this field does not take effect.)| next     |prev, next   |
+size     | false  | int | Number of items in each response  |100      | [10,1000] |
 
 
-> Response:
+
+> The above command returns JSON structured like this:
 
 ```json
 {
@@ -1763,54 +1632,57 @@ API Key 权限：读取
 }
 ```
 
-### 响应数据
+### Response Content
 
-| 参数名称    | 是否必须  | 数据类型   | 描述   | 取值范围   |
-| ----------------- | ----- | ------ | ----------------- | ----  |
-| {account-id        | true  | long   | 账户 ID    |     |
-| amount            | true  | string | 订单数量    |   |
-| canceled-at       | false | long   | 接到撤单申请的时间   |    |
-| created-at        | true  | long   | 订单创建时间   |    |
-| field-amount      | true  | string | 已成交数量   |    |
-| field-cash-amount | true  | string | 已成交总金额    |    |
-| field-fees        | true  | string | 已成交手续费（买入为基础币，卖出为计价币） |       |
-| finished-at       | false | long   | 最后成交时间    |   |
-| id                | true  | long   | 订单ID    |    |
-| price             | true  | string | 订单价格  |    |
-| source            | true  | string | 订单来源   | api  |
-| state             | true  | string | 订单状态    | partial-canceled 部分成交撤销, filled 完全成交, canceled 已撤销 |
-| symbol            | true  | string | 交易对    | btcusdt, ethbtc, rcneth ... |
-| type}              | true  | string | 订单类型  | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单, buy-limit-maker, sell-limit-maker |
-| next-time            | false  | long |下一查询起始时间（当请求字段”direct”为”prev”时有效）, 下一查询结束时间（当请求字段”direct”为”next”时有效）。注：仅在检索出的总条目数量超出size字段限定时，此返回字段存在。 |UTC time in millisecond   |
-
-## 当前和历史成交
-
-API Key 权限：读取
-
-此接口基于搜索条件查询当前和历史成交记录。
-
-### HTTP 请求
-
-- GET `/v1/order/matchresults`
+Field               | Data Type | Description
+---------           | --------- | -----------
+{account-id         | long      | Account ID
+amount              | string    | Order size
+canceled-at             | long   | Order cancellation time
+created-at              | long    | Order creation time
+field-amount              | string    | Executed order amount
+field-cash-amount               | string    | Executed cash amount
+field-fees          | string       | Transaction fee
+finished-at         | long       | Last trade time
+id         | long       | Order ID
+price                | string   | Order price
+source       | string    | Order source
+state  | string    | Order status ( filled, partial-canceled, canceled )
+symbol         | string    | Trading symbol
+type}              | string    | Order type (buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker)
+next-time               | long    | Next query “start-time” (in response of “direct” = prev), Next query “end-time” (in response of “direct” = next). Note: Only when the total number of items in the search result exceeded the limitation defined in “size”, this field exists. UTC time in millisecond
 
 
-### 请求参数
+## Search Match Results
 
-| 参数名称   | 是否必须  | 类型  | 描述   | 默认值  | 取值范围    |
-| ---------- | ----- | ------ | ------ | ---- | ----------- |
-| symbol     | true  | string | 交易对   | NA |  btcusdt, ethbtc, rcneth ...  |
-| types      | false | string | 查询的订单类型组合，使用','分割   |      | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单 |
-| start-date | false | string | 查询开始日期, 日期格式yyyy-mm-dd | -61 days     | [-61day, today] （自6月10日起， start-date与end-date的查询窗口最大为2天，如果超出范围，接口会返回错误码。 ||
-| end-date   | false | string | 查询结束日期, 日期格式yyyy-mm-dd |   today   |  [start-date, today] （自6月10日起， start-date与end-date的查询窗口最大为2天，如果超出范围，接口会返回错误码。 | |
-| from       | false | string | 查询起始 ID    |   订单成交记录ID（最大值）   |     |
-| direct     | false | string | 查询方向    |   默认 next， 成交记录 ID 由大到小排序   | prev 向前，时间（或 ID）正序；next 向后，时间（或 ID）倒序）   |
-| size       | false | string | 查询记录大小    |   100   | [1，100]  |
+API Key Permission：Read
 
+This endpoint returns the match results of past and open orders based on specific search criteria.
 
-> Response:
+### HTTP Request
+
+`GET https://api-cloud.huobi.co.kr/v1/order/matchresults`
+
+```shell
+curl "https://api-cloud.huobi.co.kr/v1/order/matchresults?symbol=ethusdt"
+```
+
+### Request Parameters
+
+Parameter  | Data Type | Required | Default | Description                                   | Value Range
+---------  | --------- | -------- | ------- | -----------                                   | ----------
+symbol     | string    | true     | NA      | The trading symbol to trade                   | All supported trading symbols, e.g. btcusdt, bccbtc
+types      | string    | false    | NA      | The types of order to include in the search   | buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc
+states     | string    | false    | NA      | The states of order to include in the search  | submitted, partial-filled, partial-canceled, filled, canceled
+start-date | string    | false    | -61d    | Search starts date, in format yyyy-mm-dd      |[-61, end-date] From June 10th, the query window between start-date and end-date will be changed to 2 days. if a request submitted with invalid start-date and/or end-date, an error will be returned. |
+end-date   | string    | false    | today   | Search ends date, in format yyyy-mm-dd        | [start-date, today] From June 10th, the query window between start-date and end-date will be changed to 2 days. if a request submitted with invalid start-date and/or end-date, an error will be returned. |
+from       | string    | false    | NA      | Search order id to begin with                 | NA
+direct     | string    | false    | both    | Search direction when 'from' is used          | next, prev
+size       | int       | false    | 100     | The number of orders to return                | [1, 100]
+
+> The above command returns JSON structured like this:
 
 ```json
-{  
   "data": [
     {
       "id": 29553,
@@ -1824,53 +1696,55 @@ API Key 权限：读取
       "filled-fees": "0.0182310000",
       "created-at": 1494901400435
     }
-    ...
   ]
-}
 ```
 
-### 响应数据
+### Response Content
 
-<aside class="notice">返回的主数据对象为一个对象数组，其中每一个元件代表一个交易结果。</aside>
+<aside class="notice">The return data contains a list and each item in the list represents a match result</aside>
 
-| 参数名称   | 是否必须 | 数据类型   | 描述   | 取值范围   |
-| ------------- | ---- | ------ | -------- | ------- |
-| created-at    | true | long   | 成交时间     |    |
-| filled-amount | true | string | 成交数量     |    |
-| filled-fees   | true | string | 成交手续费    |    |
-| id            | true | long   | 订单成交记录 ID |    |
-| match-id      | true | long   | 撮合 ID     |    |
-| order-id      | true | long   | 订单 ID    |    |
-| price         | true | string | 成交价格     |    |
-| source        | true | string | 订单来源     | api   |
-| symbol        | true | string | 交易对      | btcusdt, ethbtc, rcneth ...  |
-| type          | true | string | 订单类型     | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单 |
+Field               | Data Type | Description
+---------           | --------- | -----------
+id                  | integer   | Internal id
+symbol              | string    | The trading symbol to trade, e.g. btcusdt, bccbtc
+order-id            | string    | The order id of this order
+match-id            | string    | The match id of this match
+price               | string    | The limit price of limit order
+created-at          | int       | The timestamp in milliseconds when the match and fill is done
+type                | string    | The order type, possible values are: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker
+filled-amount       | string    | The amount which has been filled
+filled-fees         | string    | Transaction fee paid so far
+source              | string    | The source where the order was triggered, possible values: sys, web, api, app
 
-### start-date, end-date相关错误码
+### Error code for invalid start-date/end-date
 
-|错误码|对应错误场景|
-|------------|----------------------------------------------|
-|invalid_interval| start date小于end date; 或者 start date 与end date之间的时间间隔大于2天|
-|invalid_start_date|start date是一个61天之前的日期；或者start date是一个未来的日期|
-|invalid_end_date|end date 是一个61天之前的日期；或者end date是一个未来的日期|
+|err-code| scenarios|
+|--------|---------------------------------------------------------------|
+|invalid_interval| Start date is later than end date; the date between start date and end date is greater than 2 days|
+|invalid_start_date| Start date is a future date; or start date is earlier than 61 days ago.|
+|invalid_end_date| end date is a future date; or end date is earlier than 61 days ago.|
 
+# ETF (HB10)
 
-# ETF（HB10）
+Huobi's platform allows clients to create ETF holdings with their matching assets, and also allows clients to redempt ETF to comprised assets.
 
-## 基本信息
+## Creation and Redemption Configuration
 
-用户可以通过该接口取得关于 ETF 换入换出的 基本信息，包括一次换入最小量，一次换入最大量，一 次换出最小量，一次换出最大量，换入费率，换出费率，最新 ETF 换入换出状态，以及 ETF 的成分结构。
+This endpoint will return the basic information of ETF creation and redemption, as well as ETF constituents, including max amount of creation, min amount of creation, max amount of redemption, min amount of redemption, creation fee rate, redemption fee rate, eft create/redeem status.
 
-
-### HTTP 请求
+### HTTP Request
 
 - GET `/etf/swap/config`
 
-### 请求参数
+```shell
+curl "https://api-cloud.huobi.co.kr/etf/swap/config?etf_name=hb10"
+```
 
-参数|是否必填|数据类型|长度|说明|取值范围|
------|-----|-----|------|-------|------|
-etf_name| true | string |- | etf基金名称 | hb10|
+### Request Parameter
+
+Parameter   | Data Type | Required | Description
+-----       |-----      |-----     |------
+etf_name    | string    | true     | The name of the ETF, currently only support hb10
 
 > Response:
 
@@ -1902,47 +1776,45 @@ etf_name| true | string |- | etf基金名称 | hb10|
 }
 ```
 
-### 响应数据
+### Response Content
 
-参数|是否必填 | 数据类型 | 长度 | 说明 | 取值范围 |
------------|------------|-----------|------------|----------|--|
-purchase_min_amount | true| int | - | 最小单次换入数量|      |
-purchase_max_amount  | False| int | - | 最大单次换入数量 |      |
-redemption_min_amount  | true| int | - | 最小单次换出数量 |      |
-redemption_max_amount  | False| int | - | 最大单次换出数量 |      |
-purchase_fee_rate  | true| double | (5,4)  | 换入费率 |      |
-redemption_fee_rate  | true| double | (5,4) | 换出费率 |      |
-etf_status  | true| int | - | 换入换出状态 | 状态： 正常 – 1;  由调仓引起的换入换出暂停 - 2; 其他原因引起的换入换出暂停 - 3; 换入暂停 - 4; 换出暂停 – 5  |
-unit_price  | true| Array | - | ETF成分信息，包含成分币代码和对应的数量 | 调仓会引起成分信息发生变化  |
+Field                 | Data Type  | Description |
+-----------           |------------|-----------  |
+purchase_min_amount   | integer    | Minimum creation amounts per request |
+purchase_max_amount   | integer    | Max creation amounts per request |
+redemption_min_amount | integer    | Minimum redemption amounts per request |
+redemption_max_amount | integer    | Max redemption amounts per request |
+purchase_fee_rate     | decimal    | Creation fee rate |
+redemption_fee_rate   | decimal    | Redemption fee rate |
+etf_status            | integer    | status of the ETF: Normal(1), Rebalancing Start(2), Creation and Redemption Suspended(3), Creation Suspended(4), Redemption Suspended(5)  |
+unit_price            | array      | ETF constitution in format of {amount, currency}
 
-- unit_price
+## Order Creation/Redemption
 
-参数|是否必填|数据类型|长度|说明|
------|-----|-----|------|-------|
-currency| true | string |- | 成分币币种 |
-amount| true | double |- | 成分币数量 |
+API Key Permission：Trade
 
+This endpoint allow clients to order creation or redemption of ETF.
 
-## 换入换出
+### HTTP Request
 
-API Key 权限：交易
+- POST `/etf/swap/in`
 
-用户可以通过该接口取得关于 ETF 换入（swap/in）换出（swap/out）的 基本信息，包括一次换入最小量，一次换入最大量，一次换出最小量，一次换出最大量，换入费率，换出费率，最新 ETF 换入换出状态，以及 ETF 的成分结构。
+- POST `/etf/swap/out`
 
+```shell
+curl -X POST -H 'Content-Type: application/json' "https://api-cloud.huobi.co.kr/etf/swap/in" -d
+'{"etf_name": "hb10", "amount": 10000}'
 
-### HTTP 请求
+curl -X POST -H 'Content-Type: application/json' "https://api-cloud.huobi.co.kr/etf/swap/out" -d
+'{"etf_name": "hb10", "amount": 10000}'
+```
 
-- POST ` /etf/swap/in `
+### Request Parameter
 
-- POST ` /etf/swap/out`
-
-### 请求参数
-
-参数|是否必填 | 数据类型 | 长度 | 说明 | 取值范围 |
------------|------------|-----------|------------|----------|--|
-etf_name  | true| string | - | etf基金名称|    hb10  |
-amount  | true| int | - | 换入数量  (POST /etf/swap/in) 或 换出数量 (POST /etf/swap/out) | 换入换出数量的范围请参照接口GET /etf/swap/config 提供的相应范围 |
-
+Parameter  | Required | Data Type |  Description
+---------  |--------- |-----------|------------  
+etf_name   | true     | string    | ETF name, currently only support hb10
+amount     | true     | integer   | The amount to create or redemption
 
 > Response:
 
@@ -1955,53 +1827,54 @@ amount  | true| int | - | 换入数量  (POST /etf/swap/in) 或 换出数量 (PO
 }
 ```
 
+### Response Content
 
-### 响应数据
+Field      | Data Type | Description
+-----------|-----------|-----------
+code       | integer   | The overall status of the order, please find details in below table
+data       | object    | The data content if available
+message    | string    | The message of the order result
+success    | boolean   | If the order is successful
 
+**Response code details**
 
-参数|是否必填 | 数据类型 | 长度 | 说明 | 取值范围 |
------------|------------|-----------|------------|----------|--|
-code | true| int | - | 结果返回码|   请参照返回码解释表 |
-data | true|   | - |  |     |
-message | true|   | - |  |     |
-success | true| Boolean | - | 请求是否成功|  true or false |
+Code  | Description
+--    |--
+200   | Successful
+10404 | Invalid ETF name
+13403 | Insufficient asset to create ETF
+13404 | Create and redemption disabled due to system setup
+13405 | Create and redemption disabled due to configuration issue
+13406 | Invalid API call
+13410 | API authentication fails
+13500 | System error
+13601 | Create and redemption disabled during rebalance
+13603 | Create and redemption disabled due to other reason
+13604 | Create suspended
+13605 | Redemption suspended
+13606 | Amount incorrect. For the cases when creation amount or redemption amount is not in the range of min/max amount, this code will be returned.
 
-* 返回码解释表
+## Show Past Creation/Redemption
 
-返回码|说明
---|--
-200|正常
-10404|基金代码不正确或不存在
-13403|账户余额不足
-13404|基金调整中，不能换入换出
-13405|因配置项问题基金不可换入换出
-13406|非API调用，请求被拒绝
-13410|API签名错误
-13500|系统错误
-13601|调仓期：暂停换入换出
-13603|其他原因，暂停换入和换出
-13604| 暂停换入                         
-13605|暂停换出
-13606|换入或换出的基金份额超过规定范围
+API Key Permission：Read
 
-## 操作记录
+This endpoints allows clients to get past creation and redemption.(up to 100 records)
 
-API Key 权限：读取
-
-用户可以通过该接口取得关于 ETF 换入换出操 作的明细记录。最多返回 100 条记录。
-
-
-### HTTP 请求
+### HTTP Request
 
 - GET `/etf/swap/list `
 
-### 请求参数
+```shell
+curl "https://api-cloud.huobi.co.kr/etf/swap/list"
+```
 
-参数|是否必填 | 数据类型 | 长度 | 说明 | 取值范围 |
------------|------------|-----------|------------|----------|--|
-etf_name | true| string | - | etf基金名称|   hb10 |
-offset | true|  int | - | 开始位置 | >=0. 比如，当offset=0, 开始位置就 是最新的这一条记录。 |
-limit | true|  int  | - |最大返回记录条数|  [1, 100]  |
+### Request Parameter
+
+Parameter  | Required | Data Type |  Description |
+---------  |--------- |-----------|------------  |
+etf_name   | true     | string    | ETF name, currently only support hb10
+offset     | true     | integer   | The offset of the records, set to 0 for the latest records
+limit      | true     | integer   | The number of records to return, max is 100  
 
 > Response:
 
@@ -2016,41 +1889,9 @@ limit | true|  int  | - |最大返回记录条数|  [1, 100]  |
       "amount": 11.5,
       "type": 1,
       "status": 2,
-      "detail": 
+      "detail":
       {
-        "used_ currency_list": 
-        [
-          {
-            "currency": "btc",
-            "amount": 0.666
-          },
-          {
-            "currency": "eth",
-            "amount": 0.666
-          }
-        ],
-        "rate": 0.002,
-        "fee": 100.11,
-        "point_card_amount":1.0,
-        "obtain_ currency_list": 
-        [
-          {
-            "currency": "hb10",
-            "amount": 1000
-          }
-        ]
-      }
-    },
-    {
-      "id": 112223,
-      "gmt_created": 1528855872323,
-      "currency": "hb10",
-      "amount": 11.5,
-      "type": 2,
-      "status": 1,
-      "detail": 
-      {
-        "used_ currency_list": 
+        "used_ currency_list":
         [
           {
             "currency": "btc",
@@ -2079,67 +1920,57 @@ limit | true|  int  | - |最大返回记录条数|  [1, 100]  |
 }
 ```
 
-### 响应数据
+### Response Content
 
+Field       | Data Type | Description
+----------- |-----------|-----------
+id          | integer   | Creation/Redemption id
+gmt_created | integer   | Operation timestamp
+currency    | string    | ETF name
+amount      | decimal   | Creation/Redmption amount
+type        | integer   | Creation(1), Redemption(2)
+status      | integer   | Operation result
+detail      | array     | Please find details below
 
-参数|是否必填 | 数据类型 | 长度 | 说明 | 取值范围 |
----|------- |------   |---- |-----|--------|
-id | true| long | - |操作ID |     |
-gmt_created | true| long | - |操作时间（毫秒） |     |
-currency | true| string | - |基金名称 |     |
-amount | true| double | - |基金数量 |     |
-type | true| int | - |操作类型 |    换入-1；换出-2 |
-status | true| int | - |操作结果状态 |     成功-2|
-detail | true| Detail[] | - |详情 |     |
+**Fields under "Detail"**
 
-Detail
+Field                 | Data Type | Description |
+-----                 |-----      |-----        |
+used_currency_list    | array     | For creation this is the list and amount of underlying assets used for ETF creation. For redemption this is the amount of ETF used for redemption.
+rate                  | decimal   | Fee rate
+fee                   | decimal   | The actual fee amount
+point_card_amount     | decimal   | Discount from point card
+obtain_currency_list  | array     | For creation this is the amount for ETF created. For redemption this is the list and amount of underlying assets obtained.
 
-参数|是否必填|数据类型|长度|说明|
------|-----|-----|------|-------|
-used_ currency_list| ture| Currency[]| -| 换出的资产列表。如果是换入，该参数包括的是用于换入的成分币详情。如果是换出，该参数则是用于换出的基金详情。|
-rate|ture| double| -|费率|
-fee|ture| double| -|实际收取的手续费|
-point_card_amount| ture| double|-|用点卡折扣的手续费|
-obtain_ currency_list| ture| Currency[]| -|换回的资产列表。如果是换入，该参数包括的是用 于换出的基金详情。如果是换出，该参数则是用于 换入的成分币详情。 |
+# Websocket Market Data
 
-Currency
+## General
 
-参数|是否必填|数据类型|长度|说明|
------|-----|-----|------|-------|
-currency| true | string |- | 成分币名称或基金名称 |
-amount| true | double |- | 数量 |
+### Websocket URL
 
-# Websocket行情数据
-
-## 简介
-
-### 接入URL
-
-**火币韩国站行情请求地址**
+**Websocket Market Feed**
 
 **`wss://api-cloud.huobi.co.kr/ws`**
 
-请使用中国大陆以外的服务器访问火币韩国 API
+### Data Format
 
-### 数据压缩
+All return data of websocket APIs are compressed with GZIP so they need to be unzipped.
 
-WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在收到数据之后解压。
+### Heartbeat and Connection
 
-### 心跳消息
-
-当用户的Websocket客户端连接到火币Websocket服务器后，服务器会定期（当前设为5秒）向其发送`ping`消息并包含一整数值如下：
+After connected to Huobi's Websocket server, the server will send heartbeat periodically (currently at 5s interval). The heartbeat message will have an integer in it, e.g.
 
 > {"ping": 1492420473027}
 
-当用户的Websocket客户端接收到此心跳消息后，应返回`pong`消息并包含同一整数值：
+When client receives this heartbeat message, it should response with a matching "pong" message which has the same integer in it, e.g.
 
 > {"pong": 1492420473027}
 
-<aside class="warning">当Websocket服务器连续两次发送了`ping`消息却没有收到任何一次`pong`消息返回后，服务器将主动断开与此客户端的连接。</aside>
+<aside class="warning">After the server sent two consecutive heartbeat messages without receiving at least one matching "pong" response from a client, then right before server sends the next "ping" heartbeat, the server will disconnect this client</aside>
 
-### 订阅主题
+### Subscribe to Topic
 
-成功建立与Websocket服务器的连接后，Websocket客户端发送如下请求以订阅特定主题：
+To receive data you have to send a "sub" message first.
 
 ```json
 {
@@ -2153,7 +1984,7 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
   "id": "id generate by client"
 }
 
-成功订阅后，Websocket客户端将收到确认：
+After successfully subscribed, you will receive a response to confirm subscription
 
 ```json
 {
@@ -2164,7 +1995,7 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 }
 ```
 
-之后, 一旦所订阅的主题有更新，Websocket客户端将收到服务器推送的更新消息（push）：
+Then, you will received message when there is update in this topic
 
 ```json
 {
@@ -2183,9 +2014,9 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 }
 ```
 
-### 取消订阅
+### Unsubscribe
 
-取消订阅的格式如下：
+To unsubscribe, you need to send below message
 
 ```json
 {
@@ -2199,7 +2030,7 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
   "id": "id generate by client"
 }
 
-取消订阅成功确认：
+And you will receive a message to confirm the unsubscribe
 
 ```json
 {
@@ -2210,11 +2041,11 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 }
 ```
 
-### 请求数据
+### Pull Data
 
-Websocket服务器同时支持一次性请求数据（pull）。
+While connected to websocket, you can also use it in pull style by sending message to the server.
 
-请求数据的格式如下：
+To request pull style data, you send below message
 
 ```json
 {
@@ -2228,7 +2059,7 @@ Websocket服务器同时支持一次性请求数据（pull）。
   "id": "id generate by client"
 }
 
-一次性返回的数据：
+You will receive a response accordingly and immediately
 
 ```json
 {
@@ -2259,15 +2090,15 @@ Websocket服务器同时支持一次性请求数据（pull）。
 }
 ```
 
-## K线数据
+## Market Candlestick
 
-### 主题订阅
+This topic sends a new candlestick whenever it is available.
 
-一旦K线数据产生，Websocket服务器将通过此订阅主题接口推送至客户端：
+### Topic
 
 `market.$symbol$.kline.$period$`
 
-> 订阅请求
+> Subscribe request
 
 ```json
 {
@@ -2276,12 +2107,12 @@ Websocket服务器同时支持一次性请求数据（pull）。
 }
 ```
 
-### 参数
+### Topic Parameter
 
-参数 | 数据类型 | 是否必需 | 描述                      | 取值范围
+Parameter | Data Type | Required | Description                      | Value Range
 --------- | --------- | -------- | -----------                      | -----------
-symbol    | string    | true     | 交易代码     | All supported trading symbols, e.g. btcusdt, bccbtc
-period     | string    | true     | K线周期   | 1min, 5min, 15min, 30min, 60min, 1day, 1mon, 1week, 1year
+symbol    | string    | true     | Trading symbol     | All supported trading symbols, e.g. btcusdt, bccbtc
+period     | string    | true     | Candlestick interval   | 1min, 5min, 15min, 30min, 60min, 1day, 1mon, 1week, 1year
 
 > Response
 
@@ -2313,24 +2144,24 @@ period     | string    | true     | K线周期   | 1min, 5min, 15min, 30min, 60m
 }
 ```
 
-### 数据更新字段列表
+### Update Content
 
-字段     | 数据类型 | 描述
+Field     | Data Type | Description
 --------- | --------- | -----------
-id        | integer   | unix时间，同时作为K线ID
-amount    | float     | 成交量
-count     | integer   | 成交笔数
-open      | float     | 开盘价
-close     | float     | 收盘价（当K线为最晚的一根时，是最新成交价）
-low       | float     | 最低价
-high      | float     | 最高价
-vol       | float     | 成交额, 即 sum(每一笔成交价 * 该笔的成交量)
+id        | integer   | UNIX epoch timestamp in second as response id
+amount    | float     | Aggregated trading volume during the interval (in base currency)
+count     | integer   | Number of trades during the interval
+open      | float     | Opening price during the interval
+close     | float     | Closing price during the interval
+low       | float     | Low price during the interval
+high      | float     | High price during the interval
+vol       | float     | Aggregated trading value during the interval (in quote currency)
 
-<aside class="notice">当symbol被设为“hb10”或“huobi10”时，amount，count，vol均为零值。</aside>
+<aside class="notice">When symbol is set to "hb10" or "huobi10", amount, count, and vol will always have the value of 0</aside>
 
-### 数据请求
+### Pull Request
 
-用请求方式一次性获取K线数据需要额外提供以下参数：
+Pull request is supported with extra parameters to define the range.
 
 ```json
 {
@@ -2341,16 +2172,16 @@ vol       | float     | 成交额, 即 sum(每一笔成交价 * 该笔的成交�
 }
 ```
 
-参数 | 数据类型 | 是否必需 | 缺省值                          | 描述      | 取值范围
+Parameter | Data Type | Required | Default Value                          | Description      | Value Range
 --------- | --------- | -------- | -------------                          | -----------      | -----------
-from      | integer   | false    | 1501174800(2017-07-28T00:00:00+08:00)  | 起始时间 (epoch time in second)   | [1501174800, 2556115200]
-to        | integer   | false    | 2556115200(2050-01-01T00:00:00+08:00)  | 结束时间 (epoch time in second)      | [1501174800, 2556115200] or ($from, 2556115200] if "from" is set
+from      | integer   | false    | 1501174800(2017-07-28T00:00:00+08:00)  | "From" time (epoch time in second)   | [1501174800, 2556115200]
+to        | integer   | false    | 2556115200(2050-01-01T00:00:00+08:00)  | "To" time (epoch time in second)      | [1501174800, 2556115200] or ($from, 2556115200] if "from" is set
 
-## 市场深度行情数据
+## Market Depth
 
-当市场深度发生变化时，此主题发送最新市场深度更新数据。
+This topic sends the latest market depth when it is updated.
 
-### 主题订阅
+### Topic
 
 `market.$symbol.depth.$type`
 
@@ -2363,18 +2194,18 @@ to        | integer   | false    | 2556115200(2050-01-01T00:00:00+08:00)  | 结�
 }
 ```
 
-### 参数
+### Topic Parameter
 
-参数 | 数据类型 | 是否必需 | 缺省值         | 描述                                       | 取值范围
+Parameter | Data Type | Required | Default Value         | Description                                       | Value Range
 --------- | --------- | -------- | -------------         | -----------                                       | -----------
-symbol    | string    | true     | NA                    | 交易代码                   | All supported trading symbols, e.g. btcusdt, bccbtc
-type      | string    | true     | step0                 | 合并深度类型     | step0, step1, step2, step3, step4, step5
+symbol    | string    | true     | NA                    | Trading symbol                   | All supported trading symbols, e.g. btcusdt, bccbtc
+type      | string    | true     | step0                 | Market depth aggregation level, details below     | step0, step1, step2, step3, step4, step5
 
-**"type" 合并深度类型**
+**"type" Details**
 
 Value     | Description
 --------- | ---------
-step0     | 不合并深度
+step0     | No market depth aggregation
 step1     | Aggregation level = precision*10
 step2     | Aggregation level = precision*100
 step3     | Aggregation level = precision*1000
@@ -2413,20 +2244,20 @@ step5     | Aggregation level = precision*100000
 }
 ```
 
-### 数据更新字段列表
+### Update Content
 
-<aside class="notice">在'tick'object下方呈现买盘卖盘深度列表</aside>
+<aside class="notice">Under 'tick' object there is a list of bids and a list of asks</aside>
 
-字段     | 数据类型 | 描述
+Field     | Data Type | Description
 --------- | --------- | -----------
 bids      | object    | The current all bids in format [price, quote volume]
 asks      | object    | The current all asks in format [price, quote volume]
 
-<aside class="notice">当symbol被设为"hb10"时，amount, count, vol均为零值 </aside>
+<aside class="notice">When symbol is set to "hb10" amount, count, and vol will always have the value of 0</aside>
 
-### 数据请求
+### Pull Request
 
-支持数据请求方式一次性获取市场深度数据：
+Pull request is supported.
 
 ```json
 {
@@ -2435,11 +2266,11 @@ asks      | object    | The current all asks in format [price, quote volume]
 }
 ```
 
-## 成交明细
+## Trade Detail
 
-### 主题订阅
+This topic sends the latest completed trade.
 
-此主题提供市场最新成交明细。
+### Topic
 
 `market.$symbol.trade.detail`
 
@@ -2452,11 +2283,11 @@ asks      | object    | The current all asks in format [price, quote volume]
 }
 ```
 
-### 参数
+### Topic Parameter
 
-参数 | 数据类型 | 是否必需 | 缺省值         | 描述                                       | 取值范围
+Parameter | Data Type | Required | Default Value         | Description                                       | Value Range
 --------- | --------- | -------- | -------------         | -----------                                       | -----------
-symbol    | string    | true     | NA                    | 交易代码                     | All supported trading symbols, e.g. btcusdt, bccbtc
+symbol    | string    | true     | NA                    | Trading symbol                     | All supported trading symbols, e.g. btcusdt, bccbtc
 
 > Response
 
@@ -2492,19 +2323,19 @@ symbol    | string    | true     | NA                    | 交易代码         
 }
 ```
 
-### 数据更新字段列表
+### Update Content
 
-字段      | 数据类型 | 描述
+Field     | Data Type | Description
 --------- | --------- | -----------
-id        | integer   | 唯一成交ID
-amount    | float     | 成交量
-price     | float     | 成交价
-ts        | integer   | 成交时间 (UNIX epoch time in millisecond)
-direction | string    | 成交主动方 (taker的订单方向) : 'buy' or 'sell'
+id        | integer   | Unique trade id
+amount    | float     | Last trade volume
+price     | float     | Last trade price
+ts        | integer   | Last trade time (UNIX epoch time in millisecond)
+direction | string    | Aggressive order side (taker's order side) of the trade: 'buy' or 'sell'
 
-### 数据请求
+### Pull Request
 
-支持数据请求方式一次性获取成交明细数据（仅能获取最多最近300个成交记录）：
+Pull request (of maximum latest 300 trade records) is supported.
 
 ```json
 {
@@ -2513,11 +2344,11 @@ direction | string    | 成交主动方 (taker的订单方向) : 'buy' or 'sell'
 }
 ```
 
-## 市场概要
+## Market Details
 
-### 主题订阅
+This topic sends the latest market stats with 24h summary
 
-此主题提供24小时内最新市场概要。
+### Topic
 
 `market.$symbol.detail`
 
@@ -2530,11 +2361,11 @@ direction | string    | 成交主动方 (taker的订单方向) : 'buy' or 'sell'
 }
 ```
 
-### 参数
+### Topic Parameter
 
-参数 | 数据类型 | 是否必需 | 缺省值         | 描述                                       | 取值范围
+Parameter | Data Type | Required | Default Value         | Description                                       | Value Range
 --------- | --------- | -------- | -------------         | -----------                                       | -----------
-symbol    | string    | true     | NA                    | 交易代码                     | All supported trading symbols, e.g. btcusdt, bccbtc
+symbol    | string    | true     | NA                    | Trading symbol                     | All supported trading symbols, e.g. btcusdt, bccbtc
 
 > Response
 
@@ -2563,23 +2394,23 @@ symbol    | string    | true     | NA                    | 交易代码         
   }
 ```
 
-### 数据更新字段列表
+### Update Content
 
-字段     | 数据类型 | 描述
+Field     | Data Type | Description
 --------- | --------- | -----------
-id        | integer   | unix时间，同时作为消息ID
-ts        | integer   | unix系统时间
-amount    | float     | 24小时成交量
-count     | integer   | 24小时成交笔数
-open      | float     | 24小时开盘价
-close     | float     | 最新价
-low       | float     | 24小时最低价
-high      | float     | 24小时最高价
-vol       | float     | 24小时成交额
+id        | integer   | UNIX epoch timestamp in second as response id
+ts        | integer   | UNIX epoch timestamp in millisecond of this tick
+amount    | float     | Aggregated trading volume in past 24H (in base currency)
+count     | integer   | Number of trades in past 24H
+open      | float     | Opening price in past 24H
+close     | float     | Last price
+low       | float     | Low price in past 24H
+high      | float     | High price in past 24H
+vol       | float     | Aggregated trading value in past 24H (in quote currency)
 
-### 数据请求
+### Pull Request
 
-支持数据请求方式一次性获取市场概要数据：
+Pull request is supported.
 
 ```json
 {
@@ -2588,37 +2419,35 @@ vol       | float     | 24小时成交额
 }
 ```
 
-# Websocket资产及订单
+# Websocket Asset and Order
 
-## 简介
+## General
 
-### 接入URL
+### Websocket URL
 
-**Websocket资产及订单**
+**Websocket Asset and Order**
 
 **`wss://api-cloud.huobi.co.kr/ws/v1`**
 
-请使用中国大陆以外的服务器访问火币韩国 API。
+### Data Format
 
-### 数据压缩
+All return data of websocket APIs are compressed with GZIP so they need to be unzipped.
 
-WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在收到数据之后解压。
+### Heartbeat and Connection
 
-### 心跳消息
-
-当用户的Websocket客户端连接到火币Websocket服务器后，服务器会定期（当前设为5秒）向其发送`ping`消息并包含一整数值如下：
+After connected to Huobi's Websocket server, the server will send heartbeat periodically (currently at 5s interval). The heartbeat message will have an integer in it, e.g.
 
 > {"ping": 1492420473027}
 
-当用户的Websocket客户端接收到此心跳消息后，应返回`pong`消息并包含同一整数值：
+When client receives this heartbeat message, it should response with a matching "pong" message which has the same integer in it, e.g.
 
 > {"pong": 1492420473027}
 
-<aside class="warning">当Websocket服务器连续两次发送了`ping`消息却没有收到任何一次`pong`消息返回后，服务器将主动断开与此客户端的连接。</aside>
+<aside class="warning">After the server sent two consective heartbeat message without receiving at least one matching "pong" response from a client, then right before server sends the next "ping" heartbeat, the server will disconnect this client</aside>
 
-### 订阅主题
+### Subscribe to Topic
 
-成功建立与Websocket服务器的连接后，Websocket客户端发送如下请求以订阅特定主题：
+To receive data you have to send a "sub" message first.
 
 ```json
 {
@@ -2628,7 +2457,7 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 }
 ```
 
-成功订阅后，Websocket客户端将收到确认：
+After successfully subscribed, you will receied a response to confirm subscription
 
 ```json
 {
@@ -2640,7 +2469,7 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 }
 ```
 
-之后, 一旦所订阅的主题有更新，Websocket客户端将收到服务器推送的更新消息（push）：
+Then, you will received message when there is update in this topic
 
 ```json
 {
@@ -2653,9 +2482,9 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 }
 ```
 
-### 取消订阅
+### Unsubscribe
 
-取消订阅的格式如下：
+To unsubscribe, you need to send below message
 
 ```json
 {
@@ -2665,7 +2494,7 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 }
 ```
 
-取消订阅成功确认：
+And you will receive a message to confirm the unsubscribe
 
 ```json
 {
@@ -2677,28 +2506,26 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 }
 ```
 
-### 请求数据
+### Pull Data
 
-Websocket服务器同时支持一次性请求数据（pull）。
-
-当与Websocket服务器成功建立连接后，以下三个主题可供用户请求：
+After successfully establishing a connection with the WebSocket API. There are 3 topics which are designed particularly for pull style data query. Those are
 
 * accounts.list
 * orders.list
 * orders.detail
 
-具体请求方式请见后文。
+The details of how to user those three topic will be explain later in this documents.
 
-**数据请求限频规则**
+**Rate limt of pull style query**
 
-限频规则基于API key而不是连接。当请求频率超出限值时，Websocket客户端将收到"too many request"错误码。以下为各主题当前限频设定：
+The limit is count againt per API key not per connection. When you reached the limit you will receive error with "too many request".
 
 * accounts.list: once every 25 seconds
 * orders.list AND orders.detail: once every 5 seconds
 
-### 鉴权
+### Authentication
 
-资产及订单主题鉴权请求数据格式如下：
+Asset and Order topics require authentication. To authenticate yourself, send below message
 
 ```json
 {
@@ -2711,29 +2538,29 @@ Websocket服务器同时支持一次性请求数据（pull）。
 }
 ```
 
-**鉴权请求数据格式说明**
+**The format of Authentication data instruction**
 
   filed              |type   |  instruction|
   ------------------ |----   |  -----------------------------------------------------
-  op                 |string | 必填；操作名称，鉴权固定值为 auth；
-  cid                |string | 选填；Client 请求唯一 ID
-  AccessKeyId        |string | 必填；API 访问密钥, 您申请的 APIKEY 中的 AccessKey
-  SignatureMethod    |string | 必填；签名方法, 用户计算签名的基于哈希的协议，此处使用 HmacSHA256
-  SignatureVersion   |string | 必填；签名协议的版本，此处使用 2
-  Timestamp          |string | 必填；时间戳, 您发出请求的时间 (UTC 时区) (UTC 时区) (UTC 时区) 。在查询请求中包含此值有助于防止第三方截取您的请求。如：2017-05-11T16:22:06。再次强调是 (UTC 时区)
-  Signature          |string |必填；签名, 计算得出的值，用于确保签名有效和未被篡改
+  op                 |string | required; the type of requested operator is auth
+  cid                |string | optional; the ID of Client request
+  AccessKeyId        |string | required; API access key , AccessKey is in APIKEY you applied
+  SignatureMethod    |string | required; the method of sign, user computes signature basing on the protocol of hash ,the api uses HmacSHA256
+  SignatureVersion   |string | required; the version of signature's protocol, the api uses 2
+  Timestamp          |string | required; timestamp, the time is you requests (UTC timezone), this value is to avoid that another people intercepts your request. for example ：2017-05-11T16:22:06 (UTC timezone)|
+  Signature          |string |required; signature, the value is computed to make sure that the Authentication is valid and not tampered|
 
-> **注：**
-> - 参考[https://huobiapi.github.io/docs/v1/cn/#c64cd15fdc] 生成有效签名
-> - 签名计算中请求方法固定值为`GET`
+> **Notice：**
+> - Refer to the Authentication[https://huobiapi.github.io/docs/v1/en/#authentication] section to generate the signature
+> - The request method in signature's method is `GET`
 
-## 订阅账户更新
+## Subscribe to Account Updates
 
-API Key 权限：读取
+API Key Permission：Read
 
-订阅账户资产变动更新。
+This topic publishes all balance updates of the current account.
 
-### 主题订阅
+### Topic
 
 `accounts`
 
@@ -2748,13 +2575,13 @@ API Key 权限：读取
 }
 ```
 
-### 参数
+### Topic Parameter
 
-参数 | 数据类型 | 是否必需 | 缺省值         | 描述                                       | 取值范围
+Parameter | Data Type | Required | Default Value         | Description                                       | Value Range
 --------- | --------- | -------- | -------------         | -----------                                       | -----------
-model     | string    | false    | 0                     | 是否包含已冻结余额                 | 1 to include frozen balance, 0 to not
+model     | string    | false    | 0                     | Whether to include frozen balance                 | 1 to include frozen balance, 0 to not
 
-<aside class="notice">如果同时订阅可用和总余额，需要为 0 和 1 各开启一条websocket连接</aside>
+<aside class="notice">You may subscribe to this topic with different model to get updates in both models</aside>
 
 > Response
 
@@ -2790,23 +2617,23 @@ model     | string    | false    | 0                     | 是否包含已冻结
 
 ```
 
-### 数据更新字段列表
+### Update Content
 
-字段     | 数据类型 | 描述
+Field     | Data Type | Description
 --------- | --------- | -----------
-event     | string    | 资产变化通知相关事件说明，比如订单创建(order.place) 、订单成交(order.match)、订单成交退款（order.refund)、订单撤销(order.cancel) 、点卡抵扣交易手续费（order.fee-refund)、杠杆账户划转（margin.transfer)、借贷本金（margin.loan)、借贷计息（margin.interest)、归还借贷本金利息(margin.repay)、其他资产变化(other)
-account-id| integer   | 账户 id
-currency  | string    | 币种
-type      | string    | 账户类型, 交易子账户（trade),借贷子账户（loan），利息子账户（interest)
-balance   | string    | 账户余额 (当订阅mode=0时，该余额为可用余额；当订阅mode=1时，该余额为总余额）
+event     | string    | The event type which triggers this balance updates, including oder.place, order.match, order.refund, order.cancel, order.fee-refund, and other balance transfer event types
+account-id| integer   | The account id of this individual balance
+currency  | string    | The crypto currency of this balance
+type      | string    | The type of this account, including trade, loan, interest
+balance   | string    | The balance of this account, include frozen balance if "model" was set to 1 in subscription
 
-## 订阅订单更新
+## Subscribe to Order Updates
 
-API Key 权限：读取
+API Key Permission：Read
 
-订阅账户下的订单更新。
+This topic publishes all order updates of the current account.
 
-### 主题订阅
+### Topic
 
 `orders.$symbol`
 
@@ -2820,11 +2647,11 @@ API Key 权限：读取
 }
 ```
 
-### 参数
+### Topic Parameter
 
-参数 | 数据类型 | 是否必需 | 缺省值         | 描述                                    | 取值范围
+Parameter | Data Type | Required | Default Value         | Description                                       | Value Range
 --------- | --------- | -------- | -------------         | -----------                                       | -----------
-symbol    | string    | true     | NA                    | 交易代码                       | All supported trading symbols, e.g. btcusdt, bccbtc
+symbol    | string    | true     | NA                    | Trading symbol                       | All supported trading symbols, e.g. btcusdt, bccbtc
 
 > Response
 
@@ -2866,34 +2693,34 @@ symbol    | string    | true     | NA                    | 交易代码         
 }
 ```
 
-### 数据更新字段列表
+### Update Content
 
-字段               | 数据类型 | 描述
+Field               | Data Type | Description
 ---------           | --------- | -----------
-seq-id              | integer   | 流水号(不连续)
-order-id            | integer   | 订单 id
-symbol              | string    | 交易对
-account-id          | string    | 账户 id
-order-amount        | string    | 订单数量
-order-price         | string    | 订单价格
-created-at          | int       | 订单创建时间 (UNIX epoch time in millisecond)
-order-type          | string    | 订单类型, 有效取值: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker
-order-source        | string    | 订单来源, 有效取值: sys, web, api, app
-order-state         | string    | 订单状态, 有效取值: submitted, partical-filled, cancelling, filled, canceled, partial-canceled
-role                | string    | 成交角色: taker or maker
-price               | string    | 成交价格
-filled-amount       | string    | 单次成交数量
-filled-cash-amount  | string    | 单次未成交数量
-filled-fees         | string    | 单次成交金额
-unfilled-amount     | string    | 单次成交手续费（买入为币，卖出为钱）
+seq-id              | integer   | Sequence id
+order-id            | integer   | Order id
+symbol              | string    | Trading symbol
+account-id          | string    | Account id
+order-amount        | string    | Order amount (in base currency)
+order-price         | string    | Order price
+created-at          | int       | Order creation time (UNIX epoch time in millisecond)
+order-type          | string    | Order type, possible values: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker
+order-source        | string    | Order source, possible values: sys, web, api, app
+order-state         | string    | Order state, possible values: submitted, partical-filled, cancelling, filled, canceled, partial-canceled
+role                | string    | Order role in the trade: taker or maker
+price               | string    | Order execution price
+filled-amount       | string    | Order execution quantity (in base currency)
+filled-cash-amount  | string    | Order execution value (in quote currency)
+filled-fees         | string    | Transaction fee paid so far
+unfilled-amount     | string    | Remaining order quantity
 
-## 订阅订单更新 (NEW)
+## Subscribe to Order Updates (NEW)
 
-API Key 权限：读取
+API Key Permission：Read
 
-相比现有用户订单更新推送主题“orders.$symbol”， 新增主题“orders.$symbol.update”拥有更低的数据延迟以及更准确的消息顺序。建议API用户订阅此新主题接收订单更新推送，以替代现有订阅主题 “orders.$symbol”。（现有订阅主题 “orders.$symbol”仍将在Websocket API服务中被保留直至另行通知。）
+This topic publishes all order updates of the current account. By comparing with above subscription topic “orders.$symbol”, the new topic “orders.$symbol.update” should have lower latency but more sequential updates. API users are encouraged to subscribe to this new topic for getting order update ticks, instead of above topic “orders.$symbol”. (The current subscription topic “orders.$symbol” will be still kept in Websocket API service till further notice.)
 
-### 主题订阅
+### Topic
 
 `orders.$symbol.update`
 
@@ -2907,11 +2734,11 @@ API Key 权限：读取
 }
 ```
 
-### 参数
+### Topic Parameter
 
-参数 | 数据类型 | 是否必需 | 缺省值         | 描述                                       | 取值范围
+Parameter | Data Type | Required | Default Value         | Description                                       | Value Range
 --------- | --------- | -------- | -------------         | -----------                                       | -----------
-symbol    | string    | true     | NA                    | 交易代码                       | All supported trading symbols, e.g. btcusdt, bccbtc
+symbol    | string    | true     | NA                    | Trading symbol                       | All supported trading symbols, e.g. btcusdt, bccbtc
 
 
 
@@ -2948,28 +2775,28 @@ symbol    | string    | true     | NA                    | 交易代码         
 }
 ```
 
-### 数据更新字段列表
+### Update Content
 
 Field               | Data Type | Description
 ---------           | --------- | -----------
-match-id              | integer   | 最近撮合编号（当order-state = submitted, canceled, partial-canceled时，match-id 为消息序列号；当order-state = filled, partial-filled 时，match-id 为最近撮合编号。）
-order-id            | integer   | 订单编号
-symbol              | string    | 交易代码
-order-state         | string    | 订单状态, 有效取值: submitted, partical-filled, cancelling, filled, canceled, partial-canceled
-role                | string    | 最近成交角色（当order-state = submitted, canceled, partial-canceled时，role 为缺省值taker；当order-state = filled, partial-filled 时，role 取值为taker 或maker。）
-price               | string    | 最新价（当order-state = submitted 时，price 为订单价格；当order-state = canceled, partial-canceled 时，price 为零；当order-state = filled, partial-filled 时，price 为最近成交价。当role = taker，且该订单同时与多张对手方订单撮合时，price 为多笔成交均价。）
-filled-amount       | string    | 最近成交数量
-filled-cash-amount  | string    | 最近成交数额
-unfilled-amount     | string    | 最近未成交数量（当order-state = submitted 时，unfilled-amount 为原始订单量；当order-state = canceled OR partial-canceled 时，unfilled-amount 为未成交数量；当order-state = filled 时，如果 order-type = buy-market，unfilled-amount 可能为一极小值；如果order-type <> buy-market 时，unfilled-amount 为零；当order-state = partial-filled AND role = taker 时，unfilled-amount 为未成交数量；当order-state = partial-filled AND role = maker 时，unfilled-amount 为零。（后续将支持此场景下的未成交量，时间另行通知。））
+match-id              | integer   | Match id (While order-state = submitted, canceled, partial-canceled,match-id refers to sequence number; While order-state = filled, partial-filled, match-id refers to last match ID.)
+order-id            | integer   | Order id
+symbol              | string    | Trading symbol
+order-state         | string    | Order state, possible values: submitted, partical-filled, cancelling, filled, canceled, partial-canceled
+role                | string    | Order role in the trade: taker or maker (While order-state = submitted, canceled, partialcanceled, a default value “taker” is given to this field; While order-state = filled, partial-filled, role can be either taker or maker.)
+price               | string    | Last price (While order-state = submitted, price refers to order price; While order-state = canceled, partial-canceled, price is zero; While order-state = filled, partial-filled, price reflects the last execution price. (While role = taker, and this taker’s order matching with multiple orders on the opposite side simultaneously, price here refers to average price of the multiple trades.))
+filled-amount       | string    | Last execution quantity (in base currency)
+filled-cash-amount  | string    | Last execution value (in quote currency)
+unfilled-amount     | string    | Remaining order quantity (While order-state = submitted, unfilled-amount contains the original order size; While order-state = canceled OR partial-canceled, unfilled-amount contains the remaining order quantity; While order-state = filled, if order-type = buymarket, unfilled-amount could possibly contain a minimal value; if order-type <> buy-market, unfilled-amount is zero; While order-state = partial-filled AND role = taker, unfilled-amount is the remaining order quantity; While order-state = partial-filled AND role = maker, unfilled-amount is zero. Huobi will support unfilled amount under this scenario in a later enhancement. Time is to be advised in another notification.)
 
 
-## 请求用户资产数据
+## Request Account Details
 
-API Key 权限：读取
+API Key Permission：Read
 
-查询当前用户的所有账户余额数据。
+Query all account data of the current user.
 
-### 数据请求
+### Query Topic
 
 `accounts.list`
 
@@ -2982,15 +2809,14 @@ API Key 权限：读取
   "topic": "accounts.list",
 }
 ```
-成功建立和 WebSocket API 的连接之后，向 Server发送如下格式的数据来查询账户数据：
 
-参数  | 数据类型   |  描述|
+Parameter  | Data Type  |  Description|
 ----------| --------| -------------------------------------------------------|
-op         |string  | 必填；操作名称，固定值为 req|
-cid        |string  | 选填；Client 请求唯一 ID|
-topic      |string   |必填；固定值为accounts.list|
+op         |string  | Mandatory parameter; operation type "req"|
+cid        |string  | optional parameter; id generate by client|
+topic      |string   |mandatory parameter; topic to request "accounts.list"|
 
-### 返回
+### Response
 
 > Successful
 
@@ -3053,23 +2879,23 @@ topic      |string   |必填；固定值为accounts.list|
     }
 ```
 
-字段                |数据类型 |    描述|
+Field                |Data Type |    Description|
 -------------------- |--------| ------------------------------------|
-{ id                   |long    | 账户ID|
-type              |string   |账户类型|
-state           |string     |账户状态|
-list               |string   |账户列表|
-{currency                |string   |子账户币种|
-type           |string     |子账户类型|
-balance }}           |string     |子账户余额|
+{ id                   |long    | account ID|
+type              |string   |account type|
+state           |string     |account status|
+list               |string   |account list|
+{currency                |string   |sub-account currency|
+type           |string     |sub-account type|
+balance }}           |string     |sub-account balance|
 
-## 请求当前及历史订单
+## Search Past Orders
 
-API Key 权限：读取
+API Key Permission：Read
 
-根据设定条件查询当前委托、历史委托。
+Search past and open orders based on searching criteria.
 
-### 数据请求
+### Query Topic
 
 `order.list`
 
@@ -3085,21 +2911,21 @@ API Key 权限：读取
 }
 ```
 
-### 参数
+### Request Parameters
 
-参数  | 数据类型 | 是否必需 | 缺省值 | 描述                                   | 取值范围
+Parameter  | Data Type | Required | Default | Description                                   | Value Range
 ---------  | --------- | -------- | ------- | -----------                                   | ----------
-account-id | int       | true     | NA      | 账户 id                        | NA
-symbol     | string    | true     | NA      | 交易对                | All supported trading symbols, e.g. btcusdt, bccbtc
-types      | string    | false    | NA      | 查询的订单类型组合，使用','分割   | buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc
-states     | string    | false    | NA      | 查询的订单状态组合，使用','分割  | submitted, partial-filled, partial-canceled, filled, canceled
-start-date | string    | false    | -61d    | 查询开始日期, 日期格式yyyy-mm-dd      | NA
-end-date   | string    | false    | today   | 查询结束日期, 日期格式yyyy-mm-dd        | NA
-from       | string    | false    | NA      | 查询起始 ID                 | NA
-direct     | string    | false    | next    | 查询方向          | next, prev
-size       | int       | false    | 100     | 查询记录大小               | [1, 100]
+account-id | int       | true     | NA      | Account id                        | NA
+symbol     | string    | true     | NA      | Trading symbol                | All supported trading symbols, e.g. btcusdt, bccbtc
+types      | string    | false    | NA      | Order type   | buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc
+states     | string    | false    | NA      | Order state  | submitted, partial-filled, partial-canceled, filled, canceled
+start-date | string    | false    | -61d    | Start date, in format yyyy-mm-dd      | NA
+end-date   | string    | false    | today   | End date, in format yyyy-mm-dd        | NA
+from       | string    | false    | NA      | Order id to begin with                 | NA
+direct     | string    | false    | next    | Searching direction when 'from' is given          | next, prev
+size       | int       | false    | 100     | Number of items in each return               | [1, 100]
 
-### 数据更新字段列表
+### Response
 
 > Successful
 
@@ -3130,32 +2956,31 @@ size       | int       | false    | 100     | 查询记录大小               |
   ]
 }
 ```
-
-字段                 |数据类型 |    描述|
+Field                |Data Type |    Description|
 -------------------- |--------| ------------------------------------|
-id                   |long    | 订单ID|
-symbol               |string   |交易对|
-account-id           |long     |账户ID|
-amount               |string   |订单数量|
-price                |string   |订单价格|
-created-at           |long     |订单创建时间|
-type                 |string   |订单类型，请参考订单类型说明|
-filled-amount        |string   |已成交数量|
-filled-cash-amount   |string   |已成交总金额|
-filled-fees          |string   |已成交手续费|
-finished-at          |string   |最后成交时间|
-source               |string   |订单来源，请参考订单来源说明|
-state                |string   |订单状态，请参考订单状态说明|
-cancel-at            |long     |撤单时间|
+id                   |long    | order ID|
+symbol               |string   |trading symbol|
+account-id           |long     |account ID|
+amount               |string   |order size|
+price                |string   |order price|
+created-at           |long     |order creation time|
+type                 |string   |order type, possible values: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker|
+filled-amount        |string   |filled amount|
+filled-cash-amount   |string   |filled value|
+filled-fees          |string   |transaction fee|
+finished-at          |string   |trade time|
+source               |string   |order source, possible values: sys, web, api, app|
+state                |string   |order state, possible values: submitted, partical-filled, cancelling, filled, canceled, partial-canceled|
+cancel-at            |long     |order cancellation time|
 
 
-## 以订单编号请求订单
+## Query Order by Order ID
 
-API Key 权限：读取
+API Key Permission：Read
 
-以订单编号请求订单数据
+Get order details by a given order ID.
 
-### 数据请求
+### Query Topic
 
 `order.detail`
 
@@ -3170,17 +2995,16 @@ API Key 权限：读取
 }
 ```
 
-### 参数
+### Request Parameters
 
-参数  | 是否必需 |  数据类型    | 描述       |                                      缺省值  | 取值范围|
-----------| ----------| --------| ------------------------------------------------ |--------| ----------|
-op         |true       |string   |操作名称，固定值为 req    |||                                
-cid        |true       |string   |Client 请求唯一 ID        |||                                
-topic      |false      |string   |固定值为 orders.detail  |||          
-order-id   |true       |string   |订单ID    |||                                                
+Parameter  | Required | Data Type | Description |      Default              | Value Range
+---------  | --------- | -------- | ------- | -----------                                   | ----------
+op         |true       |string   |operation type "req"    |||                                
+cid        |true       |string   |id generate by client        |||                                
+topic      |false      |string   |topic to request "orders.detail"  |||          
+order-id   |true       |string   |order ID    ||| 
 
-
-### 返回
+### Response
 
 > Successful
 
@@ -3209,25 +3033,22 @@ order-id   |true       |string   |订单ID    |||
   }
 }
 ```
-字段                 |数据类型 |    描述|
+Field                |Data Type |    Description|
 -------------------- |--------| ------------------------------------|
-id                   |long    | 订单ID|
-symbol               |string   |交易对|
-account-id           |long     |账户ID|
-amount               |string   |订单数量|
-price                |string   |订单价格|
-created-at           |long     |订单创建时间|
-type                 |string   |订单类型，请参考订单类型说明|
-filled-amount        |string   |已成交数量|
-filled-cash-amount   |string   |已成交总金额|
-filled-fees          |string   |已成交手续费|
-finished-at          |string   |最后成交时间|
-source               |string   |订单来源，请参考订单来源说明|
-state                |string   |订单状态，请参考订单状态说明|
-cancel-at            |long     |撤单时间|
+id                   |long    | order ID|
+symbol               |string   |trading symbol|
+account-id           |long     |account ID|
+amount               |string   |order size|
+price                |string   |order price|
+created-at           |long     |order creation time|
+type                 |string   |order type, possible values: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker|
+filled-amount        |string   |filled amount|
+filled-cash-amount   |string   |filled value|
+filled-fees          |string   |transaction fee|
+finished-at          |string   |trade time|
+source               |string   |order source, possible values: sys, web, api, app|
+state                |string   |order state, possible values: submitted, partical-filled, cancelling, filled, canceled, partial-canceled|
+cancel-at            |long     |order cancellation time|
 
-<br>
-<br>
-<br>
-<br>
-<br>
+
+
