@@ -52,27 +52,11 @@ under the License.
     <header>
       <div class="flex_box">
         <%= image_tag "logo.svg", class: 'logo' %>
-        <div class="nav_box">
-          <span class="nav_cell" style="display: none">
-            <a href="javascript:;" class="nav_first">v1<i class="icon_nav"></i></a>
-            <ul class="nav_ul">
-              <li>
-                <a href="/docs/spot/v1/en/" id="v1_url">v1</a>
-              </li>
-              <li>
-                <a href="/docs/spot/v2/en/" id="v2_url">v2</a>
-              </li>
-            </ul>
-          </span>
-          <span class="nav_cell nav_tab">
-            <a href="/docs/spot/v1/en/" id="btn_spot">现货API</a>
-          </span>
-          <span class="nav_cell nav_tab">
-            <a href="/docs/dm/v1/en/" id="btn_dm">合约API</a>
-          </span>
-        </div>
       </div>
-      <a href="/docs/spot/v1/cn/" class="lang" id="lang_box">简体中文</a>
+      <div style="flex-grow: 1;">
+        <a href="/docs/spot/v1/en/" class="lang" id="lang_box_en" style="float: right; margin-left: 5px;">English</a>
+        <a href="/docs/spot/v1/cn/" class="lang" id="lang_box_zn" style="float: right; margin-left: 5px;">简体中文</a>
+      </div>
     </header>
     <div class="toc-wrapper">
       <% if language_tabs.any? %>
@@ -136,42 +120,25 @@ under the License.
       </div>
     </div>
     <script>
-      const lang_btn = document.getElementById('lang_box');
-      const btn_spot = document.getElementById('btn_spot');
-      const btn_dm = document.getElementById('btn_dm');
-      const v1_url = document.getElementById('v1_url');
-      const v2_url = document.getElementById('v2_url');
+      const lang_btn_en = document.getElementById('lang_box_en');
+      const lang_btn_cn = document.getElementById('lang_box_zn');
       const url = GetUrlRelativePath();
       if(url.indexOf('cn') != -1){
         //如果是中文环境
-        lang_btn.innerHTML = 'English';
-        btn_spot.innerHTML = '现货API';
-        btn_dm.innerHTML = '合约API';
-        lang_btn.href = url.replace('cn/', 'en/');
-        btn_spot.href = btn_spot.href.replace('en/', 'cn/');
-        btn_dm.href = btn_dm.href.replace('en/', 'cn/');
-        v1_url.href = '/docs/spot/v1/cn/';
-        v2_url.href = '/docs/spot/v2/cn/';
-      }else{
+        lang_btn_cn.innerHTML = 'Korean';
+        lang_btn_cn.href = url.replace('cn/', 'kr/');
+
+        lang_btn_en.href = url.replace('cn/', 'en/');
+      }else if(url.indexOf('en') != -1){
         //如果是英文环境
-        lang_btn.innerHTML = '中文';
-        btn_spot.innerHTML = 'Spot API';
-        btn_dm.innerHTML = 'Contract API';
-        lang_btn.href = url.replace('en/', 'cn/');
-        btn_spot.href = btn_spot.href.replace('cn/', 'en/');
-        btn_dm.href = btn_dm.href.replace('cn/', 'en/');
-        v1_url.href = '/docs/spot/v1/en/';
-        v2_url.href = '/docs/spot/v2/en/';
-      }
-      if(location.href.indexOf('docs/dm/v') > 0){
-        btn_spot.className = '';
-        btn_dm.className = 'current';
-      } else {
-        btn_spot.className = 'current';
-        btn_dm.className = '';
-      }
+        lang_btn_en.innerHTML = 'Korean';
+        lang_btn_en.href = url.replace('en/', 'kr/');
+
+        lang_btn_cn.href = url.replace('en/', 'cn/');
+      } 
       //显示语言切换按钮
-      lang_btn.style.display = 'block';
+      lang_btn_cn.style.display = 'block';
+      lang_btn_en.style.display = 'block';
       function GetUrlRelativePath(){
         let url = document.location.toString();
         let arrUrl = url.split("//");
