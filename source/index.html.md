@@ -50,8 +50,6 @@ search: False
 |  生效时间（北京时间 UTC+8) | 接口 | 新增 / 修改 | 摘要 |
 |-----|-----|-----|-----|
 |                           |      |             |      |
-|                           |      |             |      |
-|                           |      |             |      |
 
 
 
@@ -110,10 +108,9 @@ API 请求在通过 internet 传输的过程中极有可能被篡改，为了确
 
 - 签名：签名计算得出的值，用于确保签名有效和未被篡改。
 
-
 ### 创建 API Key
 
-您可以在 <a href='<https://www.huobi.co.kr/zh-CN/api/>/'>这里 </a> 创建 API Key。
+您可以在 <a href='https://www.huobi.co.kr/zh-CN/api/'>这里 </a> 创建 API Key。
 
 API Key 包括以下两部分
 
