@@ -8,7 +8,7 @@ toc_footers:
   - <a href='https://www.huobi.kr/ko-kr/api/'>API Key 생성</a>
 includes:
 
-search: true
+search: false
 ---
 
 # 1. 소개
