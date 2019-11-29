@@ -1,4 +1,3 @@
----
 title: 火币 API 文档
 
 language_tabs: # must be one of https://git.io/vQNgJ
@@ -9,51 +8,45 @@ toc_footers:
 includes:
 
 search: False
----
 
-# 简介
+# 1.简介
 
 ## API 简介
 
-欢迎使用火币 API！ 你可以使用此 API 获得市场行情数据，进行交易，并且管理你的账户。
+欢迎使用火币 API！ 
 
-在文档的右侧是代码示例，目前我们仅提供针对 `shell` 的代码示例。
+你可以使用此 API 获得市场行情数据，进行交易，并且管理你的账户。
 
-你可以通过选择上方下拉菜单的版本号来切换文档对应的 API 版本，也可以通过点击右上方的语言按钮来切换文档语言。
+API key 申请和变更可通过API管理菜单申请并变更，以下为路径。 
 
-<aside class="notice">
-在使用中如果遇到问题，请加技术讨论 QQ 群: 火币网API交流群(5) 778160723（加群时请注明 UID 和编程语言），我们将尽力帮您答疑解惑。
-</aside>
+> 火币韩国(www.huobi.co.kr) 登陆 > 我的页面 > API 管理
+> API 使用中如有疑问或咨询事项，请参考‘咨询事项 Q&A’或者通过加入‘火币韩国API交流Telegram群（http://bit.ly/2jXMzEN）‘咨询。
 
 ## 做市商项目
 
-<aside class="notice">
-做市商项目不支持点卡抵扣、VIP、交易量相关活动以及任何形式的返佣活动。
-</aside>
+欢迎有优秀 maker 策略且交易量大的用户参与长期做市商项目。
 
-欢迎有优秀 maker 策略且交易量大的用户参与长期做市商项目。如果您的火币现货账户或者合约账户中有折合大于20BTC资产（币币和合约账户分开统计），请提供以下信息发送邮件至：
+1. 申请条件
 
-- [MM_service@huobi.com](mailto:MM_service@huobi.com) Huobi Global（现货 / 杠杆）做市商申请；
-- [dm_mm@huobi.com](mailto:dm_mm@huobi.com) HBDM（合约）做市商申请。
+   - 火币韩国账号中拥有30BTC以上资产用户（资产折合成BTC）
 
+2. 申请方法
 
-1. 提供 UID （需不存在返佣关系的 UID）；
-2. 提供其他交易平台 maker 交易量截图证明（比如30天内成交量，或者 VIP 等级等）；
-3. 请简要阐述做市方法，不需要细节。
+   - 请将以下3种内容发送到 <span style="color:#d73e48">[MM-kr@huobi.com](mailto:MM-kr@huobi.com)</span>
+   - 做市商申请目录
+     1. 提供 UID （需不存在返佣关系的 UID）；
+     2. 提供其他交易平台 maker 交易量截图证明：例) 30天内成交量等
+     3. 请简要阐述做市方法。(不需要细节) 
 
-<aside class="notice">
-其他接口子账号不可访问，如果尝试访问，系统会返回 “error-code 403”。
-</aside>
+3. 注意事项
 
-# 更新日志
+   - 做市商项目不支持点卡抵扣、VIP、交易量相关活动以及任何形式的返佣活动。
 
-|  生效时间（北京时间 UTC+8) | 接口 | 新增 / 修改 | 摘要 |
-|-----|-----|-----|-----|
-|                           |      |             |      |
+   - 其他接口子账号不可访问，如果尝试访问，系统会返回 “error-code 403”。
 
+     
 
-
-# 接入说明
+# 2.接入说明
 
 ## 接入 URLs
 
@@ -69,17 +62,18 @@ search: False
 
 **`wss://api-cloud.huobi.co.kr/ws/v1`**
 
-<aside class="notice">
-请使用中国大陆以外的 IP 访问火币韩国 API。
-</aside>
-<aside class="notice">
-鉴于延迟高和稳定性差等原因，不建议通过代理的方式访问火币韩国 API。
-</aside>
+- 注意事项
+
+<pre>
+- 请使用中国大陆以外的IP访问火币韩国API
+- 鉴于延迟高和稳定性差等原因，不建议通过代理的方式访问火币韩国 API。
+</pre>
 
 
 ## 限频规则
 
 - 现货 （api-cloud.huobi.co.kr）：10秒100次
+- 所有请求非公共API时，需要签名
 
 <aside class="notice">
 单个 API Key 维度限制。行情 API 访问无需签名。
@@ -100,7 +94,7 @@ API 请求在通过 internet 传输的过程中极有可能被篡改，为了确
 
 - 签名方法（SignatureMethod）：用户计算签名的基于哈希的协议，此处使用 HmacSHA256。
 
-- 签名版本（SignatureVersion）：签名协议的版本，此处使用2。
+- 签名版本（SignatureVersion）：签名协议的版本，此字段值为2。
 
 - 时间戳（Timestamp）：您发出请求的时间 (UTC 时区) (UTC 时区) (UTC 时区) 。如：2017-05-11T16:22:06。在查询请求中包含此值有助于防止第三方截取您的请求。
 
@@ -131,24 +125,25 @@ API Key 具有包括交易、借贷和充提币等所有操作权限。
 
 ### 签名步骤
 
-规范要计算签名的请求 因为使用 HMAC 进行签名计算时，使用不同内容计算得到的结果会完全不同。所以在进行签名计算前，请先对请求进行规范化处理。下面以查询某订单详情请求为例进行说明：
+​	1)计算签名注意事项
 
-查询某订单详情
+​		-进行签名计算前，请先对请求进行规范化处理。
 
-`https://api-cloud.huobi.co.kr/v1/order/orders?`
+​	2)查询某订单详情
 
-`AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx`
+​	`https://api-cloud.huobi.co.kr/v1/order/orders?`
 
-`&SignatureMethod=HmacSHA256`
+​	`AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx`
 
-`&SignatureVersion=2`
+​	`&SignatureMethod=HmacSHA256`
 
-`&Timestamp=2017-05-11T15:19:30`
+​	`&SignatureVersion=2`
 
-`&order-id=1234567890`
+​	`&Timestamp=2017-05-11T15:19:30`
+
+​	`&order-id=1234567890`
 
 #### 1. 请求方法（GET 或 POST），后面添加换行符 “\n”
-
 
 `GET\n`
 
@@ -164,8 +159,9 @@ api-cloud.huobi.co.kr\n
 /v1/order/orders\n
 `
 
-#### 4. 按照ASCII码的顺序对参数名进行排序。例如，下面是请求参数的原始顺序，进行过编码后
+#### 4. 按照ASCII码的顺序对参数名进行排序。
 
+> 例) 下面是请求参数的原始顺序，进行过编码后如下
 
 `AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx`
 
@@ -177,12 +173,9 @@ api-cloud.huobi.co.kr\n
 
 `Timestamp=2017-05-11T15%3A19%3A30`
 
-<aside class="notice">
-使用 UTF-8 编码，且进行了 URI 编码，十六进制字符必须大写，如 “:” 会被编码为 “%3A” ，空格被编码为 “%20”。
-</aside>
-<aside class="notice">
-时间戳（Timestamp）需要以YYYY-MM-DDThh:mm:ss格式添加并且进行 URI 编码。
-</aside>
+- 使用 UTF-8 编码，且进行了 URI 编码，十六进制字符必须大写，如 “:” 会被编码为 “%3A” ，空格被编码为 “%20”。
+
+  时间戳（Timestamp）需要以YYYY-MM-DDThh:mm:ss格式添加并且进行 URI 编码。
 
 
 #### 5. 经过排序之后
@@ -217,9 +210,8 @@ api-cloud.huobi.co.kr\n
 
 `4F65x5A2bLyMWVQj3Aqp+B4w+ivaA7n5Oi2SuYtCJ9o=`
 
-1. 将上一步得到的请求字符串和 API 私钥作为两个参数，调用HmacSHA256哈希函数来获得哈希值。
-
-2. 将此哈希值用base-64编码，得到的值作为此次接口调用的数字签名。
+- 将上一步得到的请求字符串和 API 私钥作为两个参数，调用HmacSHA256哈希函数来获得哈希值。
+- 将此哈希值用base-64编码，得到的值作为此次接口调用的数字签名。
 
 #### 9. 将生成的数字签名加入到请求的路径参数里
 
@@ -227,9 +219,8 @@ api-cloud.huobi.co.kr\n
 
 `https://api-cloud.huobi.co.kr/v1/order/orders?AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx&order-id=1234567890&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2017-05-11T15%3A19%3A30&Signature=4F65x5A2bLyMWVQj3Aqp%2BB4w%2BivaA7n5Oi2SuYtCJ9o%3D`
 
-1. 把所有必须的认证参数添加到接口调用的路径参数里
-
-2. 把数字签名在URL编码后加入到路径参数里，参数名为“Signature”。
+- 把所有必须的认证参数添加到接口调用的路径参数里
+- 把数字签名在URL编码后加入到路径参数里，参数名为“Signature”。
 
 ## 请求格式
 
@@ -268,7 +259,7 @@ data      | object    | 接口返回数据主体
 | bad-request | 错误请求 |
 | invalid-parameter | 参数错误 |
 | invalid-command | 指令错误 |
-code 的具体解释, 参考对应的 `err-msg`.
+> code 的具体解释, 参考对应的 `err-msg`.
 
 ### 交易 API 错误信息
 
@@ -299,54 +290,24 @@ code 的具体解释, 参考对应的 `err-msg`.
 
 **SDK（推荐）**
 
-[Java](https://github.com/huobiapi/huobi_Java)
+[Java](https://github.com/HuobiRDCenter/huobi_Java)
 
-[Python3](https://github.com/huobiapi/huobi_Python)
+[Python3](https://github.com/HuobiRDCenter/huobi_Python)
 
-[C++](https://github.com/huobiapi/huobi_Cpp)
+[C++](https://github.com/HuobiRDCenter/huobi_Cpp)
 
-**Websocket**
+**其它代码示例**
 
-[Python3](https://github.com/huobiapi/Websocket-Python3-demo)
-
-[Node.js](https://github.com/huobiapi/WebSocket-Node.js-demo)
-
-[PHP](https://github.com/huobiapi/WebSocket-PHP-demo)
-
-**REST**
-
-[Python3](https://github.com/huobiapi/REST-Python3-demo)
-
-[Java](https://github.com/huobiapi/REST-Java-demo)
-
-[Node.js](https://github.com/huobiapi/REST-Node.js-demo)
-
-[C#](https://github.com/huobiapi/REST-CSharp-demo)
-
-[go](https://github.com/huobiapi/REST-GO-demo)
-
-[PHP](https://github.com/huobiapi/REST-PHP-demo)
-
-[C++](https://github.com/huobiapi/REST-Cpp-demo)
-
-[Objective-C](https://github.com/huobiapi/REST-ObjectiveC-demo)
-
-[QTC++](https://github.com/huobiapi/REST-QTCpp-demo)
-
-[Python2.7](https://github.com/huobiapi/REST-Python2.7-demo)
-
-[Ruby](https://github.com/huobiapi/REST-Ruby-demo)
-
-[易语言](https://github.com/huobiapi/REST-YiYuyan-demo)
+https://github.com/huobiapi?tab=repositories
 
 ## 常见问题 Q & A
 
-### 经常断线或者丢数据
+### 1）经常断线或者丢数据
 
 * 请确认是否使用 api-cloud.huobi.co.kr 域名访问火币韩国 API
 * 请使用日本云服务器
 
-### 签名失败
+### 2）签名失败
 
 * 检查 API Key 是否有效，是否复制正确，是否有绑定 IP 白名单
 * 检查时间戳是否是 UTC 时间
@@ -357,20 +318,19 @@ code 的具体解释, 参考对应的 `err-msg`.
 * 检查 POST 的 url 是否带着签名字段，POST 的数据格式是否是 json 格式
 * 检查签名结果是否有进行 URI 编码
 
-### 返回 login-required
+### 3）返回 login-required
 
-* 检查参数 `account-id` 是否是由 GET `/v1/account/accounts` 接口返回的，而不是填的 UID
-* 检查是否 POST 请求是否把业务参数也计算进签名
+* 检查参数 `account-id` 是否是由 GET `/v1/account/accounts` 接口返回的
 * 检查 GET 请求是否将参数按照 ASCII 码表顺序排序
 
-### 返回 gateway-internal-error
+### 4）返回 gateway-internal-error
 
 * 检查 POST 请求是否在 header 中声明 Content-Type:application/json
 
 
 
 
-# 基础信息
+# 3.基础信息
 
 ## 获取所有交易对
 
@@ -424,7 +384,7 @@ symbol-partition| string    | 交易区，可能值: [main，innovation，bifurc
 
 ## 获取所有币种
 
-此接口返回所有火币全球站支持的币种。
+此接口返回所有火币韩国站支持的币种。
 
 
 ```shell
@@ -455,8 +415,6 @@ curl "https://api-cloud.huobi.co.kr/v1/common/currencys"
 
 
 <aside class="notice">返回的“data”对象是一个字符串数组，每一个字符串代表一个支持的币种。</aside>
-
-
 ## 获取当前系统时间
 
 此接口返回当前的系统时间，时间是调整为北京时间的时间戳，单位毫秒。
@@ -483,7 +441,7 @@ curl "https://api-cloud.huobi.co.kr/v1/common/timestamp"
 
 返回的“data”对象是一个整数表示返回的调整为北京时间的时间戳，单位毫秒。
 
-# 行情数据
+# 4.行情数据
 
 ## K 线数据（蜡烛图）
 
@@ -506,9 +464,7 @@ period    | string    | true     | NA      | 返回数据时间粒度，也就�
 size      | integer   | false    | 150     | 返回 K 线数据条数 | [1, 2000]
 
 <aside class="notice">当前 REST API 不支持自定义时间区间，如需要历史固定时间范围的数据，请参考 Websocket API 中的 K 线接口。</aside>
-
-<aside class="notice">获取 hb10 净值时， symbol 请填写 “hb10”。</aside>
-
+<aside class="notice"></aside>
 > Response:
 
 ```json
@@ -596,9 +552,8 @@ ask       | object    | 当前的最低买价 [price, quote volume]
 
 ## 所有交易对的最新 Tickers
 
-获得所有交易对的 tickers，数据取值时间区间为24小时滚动。
-
-<aside class="notice">此接口返回所有交易对的 ticker，因此数据量较大。</aside>
+- 获得所有交易对的 tickers，数据取值时间区间为24小时滚动。
+- 此接口返回所有交易对的 ticker，因此数据量较大。
 
 ### HTTP 请求
 
@@ -677,7 +632,6 @@ depth     | integer   | false    | 20    | 返回深度的数量 | 5，10，20 |
 type      | string    | true     | step0 | 深度的价格聚合度，具体说明见下方 | step0，step1，step2，step3，step4，step5 |
 
 <aside class="notice">当type值为‘step0’时，‘depth’的默认值为150而非20。 </aside>
-
 **参数type的各值说明**
 
 取值      | 说明
@@ -717,7 +671,6 @@ step5     | 聚合度为报价精度*100000
 ### 响应数据
 
 <aside class="notice">返回的JSON顶级数据对象名为'tick'而不是通常的'data'。</aside>
-
 字段名称      | 数据类型    | 描述
 --------- | --------- | -----------
 ts        | integer   | 调整为北京时间的时间戳，单位毫秒
@@ -764,7 +717,6 @@ symbol    | string    | true     | NA      | 交易对，例如btcusdt, ethbtc
 ### 响应数据
 
 <aside class="notice">返回的JSON顶级数据对象名为'tick'而不是通常的'data'。</aside>
-
 字段名称       | 数据类型 | 描述
 --------- | --------- | -----------
 id        | integer   | 唯一交易id
@@ -835,7 +787,6 @@ size      | integer   | false    | 1       | 返回的交易记录数量，最�
 ### 响应数据
 
 <aside class="notice">返回的数据对象是一个对象数组，每个数组元素为一个调整为北京时间的时间戳（单位毫秒）下的所有交易记录，这些交易记录以数组形式呈现。</aside>
-
 参数      | 数据类型 | 描述
 --------- | --------- | -----------
 id        | integer   | 唯一交易id
@@ -881,7 +832,6 @@ symbol    | string    | true     | NA      | 交易对，例如btcusdt, ethbtc
 ### 响应数据
 
 <aside class="notice">返回的JSON顶级数据对象名为'tick'而不是通常的'data'。</aside>
-
 字段名称      | 数据类型   | 描述
 --------- | --------- | -----------
 id        | integer   | 响应id
@@ -897,7 +847,6 @@ version   | integer   | 内部数据
 # 账户相关
 
 <aside class="notice">访问账户相关的接口需要进行签名认证。</aside>
-
 ## 账户信息 
 
 API Key 权限：读取
@@ -945,9 +894,9 @@ API Key 权限：读取
 | ----- | ---- | ------ | ----- | ----  |
 | id    | true | long   | account-id |    |
 | state | true | string | 账户状态  | working：正常, lock：账户被锁定 |
-| type  | true | string | 账户类型  | spot：现货账户， margin：杠杆账户，otc：OTC 账户，point：点卡账户  |
+| type  | true | string | 账户类型  | spot：现货账户，otc：OTC 账户，point：点卡账户 |
 
-<aside class="notice">杠杆账户（margin）会在第一次划转资产时创建，如果未划转过资产则不会有杠杆账户。</aside>
+
 
 ## 账户余额
 
@@ -955,7 +904,7 @@ API Key 权限：读取
 
 查询指定账户的余额，支持以下账户：
 
-spot：现货账户， margin：杠杆账户，otc：OTC 账户，point：点卡账户
+spot：现货账户，otc：OTC 账户，point：点卡账户
 
 ### HTTP 请求
 
@@ -998,7 +947,7 @@ spot：现货账户， margin：杠杆账户，otc：OTC 账户，point：点卡
 | ----- | ----- | ------ | ----- | ----- |
 | id    | true  | long   | 账户 ID |      |
 | state | true  | string | 账户状态  | working：正常  lock：账户被锁定 |
-| type  | true  | string | 账户类型  | spot：现货账户， margin：杠杆账户，otc：OTC 账户，point：点卡账户 |
+| type  | true  | string | 账户类型  | spot：现货账户，otc：OTC 账户，point：点卡账户 |
 | list  | false | Array  | 子账号数组 |     |
 
 list字段说明
@@ -1051,16 +1000,16 @@ error_code|	说明|	类型|
 account-transfer-balance-insufficient-error|	账户余额不足|	string|
 base-operation-forbidden|	禁止操作（母子账号关系错误时报）	|string|
 
-# 钱包（充值与提现）
+
+
+# 6.钱包（充值与提现）
 
 <aside class="notice">访问钱包相关的接口需要进行签名认证。</aside>
-
 ## 虚拟币提现
 
 API Key 权限：提币
 
 <aside class="notice">仅支持在官网上相应币种 <a href='https://www.huobi.co.kr/zh-CN/address//'>地址列表 </a> 中的地址。</aside>
-
 ### HTTP 请求
 
 - POST ` /v1/dw/withdraw/api/create`
@@ -1082,8 +1031,7 @@ API Key 权限：提币
 | amount     | true | string | 提币数量   |      |
 | currency | true | string | 资产类型   |  btc, ltc, bch, eth, etc ...(火币全球站支持的币种) |
 | fee     | false | string | 转账手续费  |     |
-| chain   | false | string | 提 USDT-ERC20 时需要设置此参数为 "usdterc20"，其他币种提现不需要设置此参数  |     |
-| addr-tag|false | string | 虚拟币共享地址tag，适用于xrp，xem，bts，steem，eos，xmr | 格式, "123"类的整数字符串|
+| addr-tag | false | string | 虚拟币共享地址tag，适用于xrp，xem，bts，steem，eos，xmr | 格式, "123"类的整数字符串 |
 
 
 > Response:
@@ -1225,7 +1173,6 @@ API Key 权限：读取
 # 现货 
 
 <aside class="notice">访问交易相关的接口需要进行签名认证。</aside>
-
 ## 下单
 
 API Key 权限：交易
@@ -1256,7 +1203,7 @@ symbol     | string    | true     | NA      | 交易对, 例如btcusdt, ethbtc
 type       | string    | true     | NA      | 订单类型，包括buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker（说明见下文）
 amount     | string    | true     | NA      | 订单交易量
 price      | string    | false    | NA      | limit order的交易价格
-source     | string    | false    | api     | 现货交易填写“api”，杠杆交易填写“margin-api”
+source     | string    | false    | api     | 现货交易填写“api” 
 
 **buy-limit-maker**
 
@@ -1289,8 +1236,6 @@ API Key 权限：交易
 此接口发送一个撤销订单的请求。
 
 <aside class="warning">此接口只提交取消请求，实际取消结果需要通过订单状态，撮合状态等接口来确认。</aside>
-
-
 ### HTTP 请求
 
 - POST ` /v1/order/orders/{order-id}/submitcancel`
@@ -1350,7 +1295,6 @@ size       | int       | false    | 10      | 返回订单的数量，最大值2
 
 
 <aside class="warning">“account-id” 和 “symbol” 需同时指定或者二者都不指定。如果二者都不指定，返回最多500条尚未成交订单，按订单号降序排列。</aside>
-
 > Response:
 
 ```json
@@ -1391,12 +1335,10 @@ state               | string    | 订单状态，包括submitted, partical-fille
 
 ## 批量撤销订单（open orders）
 
-API Key 权限：交易
-
-此接口发送批量撤销订单的请求。
+- API Key 权限：交易
+- 此接口发送批量撤销订单的请求。
 
 <aside class="warning">此接口只提交取消请求，实际取消结果需要通过订单状态，撮合状态等接口来确认。</aside>
-
 ### HTTP 请求
 
 - POST ` /v1/order/orders/batchCancelOpenOrders`
@@ -1594,7 +1536,6 @@ API Key 权限：读取
 ### 响应数据
 
 <aside class="notice">返回的主数据对象为一个对象数组，其中每一个元件代表一个交易结果。</aside>
-
 | 字段名称    | 是否必须 | 数据类型   | 描述   | 取值范围     |
 | ------------- | ---- | ------ | -------- | -------- |
 | created-at    | true | long   | 成交时间     |    |
@@ -1764,7 +1705,7 @@ API Key 权限：读取
 
 | 参数名称    | 是否必须  | 数据类型   | 描述   | 取值范围   |
 | ----------------- | ----- | ------ | ----------------- | ----  |
-| {account-id        | true  | long   | 账户 ID    |     |
+| account-id        | true  | long   | 账户 ID    |     |
 | amount            | true  | string | 订单数量    |   |
 | canceled-at       | false | long   | 接到撤单申请的时间   |    |
 | created-at        | true  | long   | 订单创建时间   |    |
@@ -1777,7 +1718,7 @@ API Key 权限：读取
 | source            | true  | string | 订单来源   | api  |
 | state             | true  | string | 订单状态    | partial-canceled 部分成交撤销, filled 完全成交, canceled 已撤销 |
 | symbol            | true  | string | 交易对    | btcusdt, ethbtc, rcneth ... |
-| type}              | true  | string | 订单类型  | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单, buy-limit-maker, sell-limit-maker |
+| type              | true  | string | 订单类型  | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单, buy-limit-maker, sell-limit-maker |
 | next-time            | false  | long |下一查询起始时间（当请求字段”direct”为”prev”时有效）, 下一查询结束时间（当请求字段”direct”为”next”时有效）。注：仅在检索出的总条目数量超出size字段限定时，此返回字段存在。 |UTC time in millisecond   |
 
 ## 当前和历史成交
@@ -1829,7 +1770,6 @@ API Key 权限：读取
 ### 响应数据
 
 <aside class="notice">返回的主数据对象为一个对象数组，其中每一个元件代表一个交易结果。</aside>
-
 | 参数名称   | 是否必须 | 数据类型   | 描述   | 取值范围   |
 | ------------- | ---- | ------ | -------- | ------- |
 | created-at    | true | long   | 成交时间     |    |
@@ -1852,261 +1792,8 @@ API Key 权限：读取
 |invalid_end_date|end date 是一个61天之前的日期；或者end date是一个未来的日期|
 
 
-# ETF（HB10）
 
-## 基本信息
-
-用户可以通过该接口取得关于 ETF 换入换出的 基本信息，包括一次换入最小量，一次换入最大量，一 次换出最小量，一次换出最大量，换入费率，换出费率，最新 ETF 换入换出状态，以及 ETF 的成分结构。
-
-
-### HTTP 请求
-
-- GET `/etf/swap/config`
-
-### 请求参数
-
-参数|是否必填|数据类型|长度|说明|取值范围|
------|-----|-----|------|-------|------|
-etf_name| true | string |- | etf基金名称 | hb10|
-
-> Response:
-
-```json
-{
-  "code": 200,
-  "data": {
-    "purchase_min_amount": 10000,
-    "purchase_max_amount": 100000,
-    "redemption_min_amount": 10000,
-    "redemption_max_amount": 10000,
-    "purchase_fee_rate": 0.001,
-    "redemption_fee_rate": 0.002,
-    "etf_status":1,
-    "unit_price":
-    [
-      {
-        "currency": "eth",
-        "amount": 19.9
-      },
-      {
-        "currency": "btc",
-        "amount": 9.9
-      }
-    ]
-  },
-  "message": null,
-  "success": true
-}
-```
-
-### 响应数据
-
-参数|是否必填 | 数据类型 | 长度 | 说明 | 取值范围 |
------------|------------|-----------|------------|----------|--|
-purchase_min_amount | true| int | - | 最小单次换入数量|      |
-purchase_max_amount  | False| int | - | 最大单次换入数量 |      |
-redemption_min_amount  | true| int | - | 最小单次换出数量 |      |
-redemption_max_amount  | False| int | - | 最大单次换出数量 |      |
-purchase_fee_rate  | true| double | (5,4)  | 换入费率 |      |
-redemption_fee_rate  | true| double | (5,4) | 换出费率 |      |
-etf_status  | true| int | - | 换入换出状态 | 状态： 正常 – 1;  由调仓引起的换入换出暂停 - 2; 其他原因引起的换入换出暂停 - 3; 换入暂停 - 4; 换出暂停 – 5  |
-unit_price  | true| Array | - | ETF成分信息，包含成分币代码和对应的数量 | 调仓会引起成分信息发生变化  |
-
-- unit_price
-
-参数|是否必填|数据类型|长度|说明|
------|-----|-----|------|-------|
-currency| true | string |- | 成分币币种 |
-amount| true | double |- | 成分币数量 |
-
-
-## 换入换出
-
-API Key 权限：交易
-
-用户可以通过该接口取得关于 ETF 换入（swap/in）换出（swap/out）的 基本信息，包括一次换入最小量，一次换入最大量，一次换出最小量，一次换出最大量，换入费率，换出费率，最新 ETF 换入换出状态，以及 ETF 的成分结构。
-
-
-### HTTP 请求
-
-- POST ` /etf/swap/in `
-
-- POST ` /etf/swap/out`
-
-### 请求参数
-
-参数|是否必填 | 数据类型 | 长度 | 说明 | 取值范围 |
------------|------------|-----------|------------|----------|--|
-etf_name  | true| string | - | etf基金名称|    hb10  |
-amount  | true| int | - | 换入数量  (POST /etf/swap/in) 或 换出数量 (POST /etf/swap/out) | 换入换出数量的范围请参照接口GET /etf/swap/config 提供的相应范围 |
-
-
-> Response:
-
-```json
-{
-    "code": 200,
-    "data": null,
-    "message": null,
-    "success": true
-}
-```
-
-
-### 响应数据
-
-
-参数|是否必填 | 数据类型 | 长度 | 说明 | 取值范围 |
------------|------------|-----------|------------|----------|--|
-code | true| int | - | 结果返回码|   请参照返回码解释表 |
-data | true|   | - |  |     |
-message | true|   | - |  |     |
-success | true| Boolean | - | 请求是否成功|  true or false |
-
-* 返回码解释表
-
-返回码|说明
---|--
-200|正常
-10404|基金代码不正确或不存在
-13403|账户余额不足
-13404|基金调整中，不能换入换出
-13405|因配置项问题基金不可换入换出
-13406|非API调用，请求被拒绝
-13410|API签名错误
-13500|系统错误
-13601|调仓期：暂停换入换出
-13603|其他原因，暂停换入和换出
-13604| 暂停换入                         
-13605|暂停换出
-13606|换入或换出的基金份额超过规定范围
-
-## 操作记录
-
-API Key 权限：读取
-
-用户可以通过该接口取得关于 ETF 换入换出操 作的明细记录。最多返回 100 条记录。
-
-
-### HTTP 请求
-
-- GET `/etf/swap/list `
-
-### 请求参数
-
-参数|是否必填 | 数据类型 | 长度 | 说明 | 取值范围 |
------------|------------|-----------|------------|----------|--|
-etf_name | true| string | - | etf基金名称|   hb10 |
-offset | true|  int | - | 开始位置 | >=0. 比如，当offset=0, 开始位置就 是最新的这一条记录。 |
-limit | true|  int  | - |最大返回记录条数|  [1, 100]  |
-
-> Response:
-
-```json
-{
-  "code": 200,
-  "data": [
-    {
-      "id": 112222,
-      "gmt_created": 1528855872323,
-      "currency": "hb10",
-      "amount": 11.5,
-      "type": 1,
-      "status": 2,
-      "detail": 
-      {
-        "used_ currency_list": 
-        [
-          {
-            "currency": "btc",
-            "amount": 0.666
-          },
-          {
-            "currency": "eth",
-            "amount": 0.666
-          }
-        ],
-        "rate": 0.002,
-        "fee": 100.11,
-        "point_card_amount":1.0,
-        "obtain_ currency_list": 
-        [
-          {
-            "currency": "hb10",
-            "amount": 1000
-          }
-        ]
-      }
-    },
-    {
-      "id": 112223,
-      "gmt_created": 1528855872323,
-      "currency": "hb10",
-      "amount": 11.5,
-      "type": 2,
-      "status": 1,
-      "detail": 
-      {
-        "used_ currency_list": 
-        [
-          {
-            "currency": "btc",
-            "amount": 0.666
-          },
-          {
-            "currency": "eth",
-            "amount": 0.666
-          }
-        ],
-        "rate": 0.002,
-        "fee": 100.11,
-        "point_card_amount":1.0,
-        "obtain_ currency_list":
-        [
-          {
-            "currency": "hb10",
-            "amount": 1000
-          }
-        ]
-      }
-    }
-  ],
-  "message": null,
-  "success": true
-}
-```
-
-### 响应数据
-
-
-参数|是否必填 | 数据类型 | 长度 | 说明 | 取值范围 |
----|------- |------   |---- |-----|--------|
-id | true| long | - |操作ID |     |
-gmt_created | true| long | - |操作时间（毫秒） |     |
-currency | true| string | - |基金名称 |     |
-amount | true| double | - |基金数量 |     |
-type | true| int | - |操作类型 |    换入-1；换出-2 |
-status | true| int | - |操作结果状态 |     成功-2|
-detail | true| Detail[] | - |详情 |     |
-
-Detail
-
-参数|是否必填|数据类型|长度|说明|
------|-----|-----|------|-------|
-used_ currency_list| ture| Currency[]| -| 换出的资产列表。如果是换入，该参数包括的是用于换入的成分币详情。如果是换出，该参数则是用于换出的基金详情。|
-rate|ture| double| -|费率|
-fee|ture| double| -|实际收取的手续费|
-point_card_amount| ture| double|-|用点卡折扣的手续费|
-obtain_ currency_list| ture| Currency[]| -|换回的资产列表。如果是换入，该参数包括的是用 于换出的基金详情。如果是换出，该参数则是用于 换入的成分币详情。 |
-
-Currency
-
-参数|是否必填|数据类型|长度|说明|
------|-----|-----|------|-------|
-currency| true | string |- | 成分币名称或基金名称 |
-amount| true | double |- | 数量 |
-
-# Websocket行情数据
+# 8.Websocket行情数据
 
 ## 简介
 
@@ -2133,7 +1820,6 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 > {"pong": 1492420473027}
 
 <aside class="warning">当Websocket服务器连续两次发送了`ping`消息却没有收到任何一次`pong`消息返回后，服务器将主动断开与此客户端的连接。</aside>
-
 ### 订阅主题
 
 成功建立与Websocket服务器的连接后，Websocket客户端发送如下请求以订阅特定主题：
@@ -2145,10 +1831,12 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 }
 ```
 
+```json
 {
   "sub": "topic to sub",
   "id": "id generate by client"
 }
+```
 
 成功订阅后，Websocket客户端将收到确认：
 
@@ -2191,10 +1879,12 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 }
 ```
 
+```json
 {
   "unsub": "topic to unsub",
   "id": "id generate by client"
 }
+```
 
 取消订阅成功确认：
 
@@ -2220,10 +1910,12 @@ Websocket服务器同时支持一次性请求数据（pull）。
 }
 ```
 
+```json
 {
   "req": "topic to req",
   "id": "id generate by client"
 }
+```
 
 一次性返回的数据：
 
@@ -2323,7 +2015,7 @@ low       | float     | 最低价
 high      | float     | 最高价
 vol       | float     | 成交额, 即 sum(每一笔成交价 * 该笔的成交量)
 
-<aside class="notice">当symbol被设为“hb10”或“huobi10”时，amount，count，vol均为零值。</aside>
+
 
 ### 数据请求
 
@@ -2412,14 +2104,10 @@ step5     | Aggregation level = precision*100000
 
 ### 数据更新字段列表
 
-<aside class="notice">在'tick'object下方呈现买盘卖盘深度列表</aside>
-
 字段     | 数据类型 | 描述
 --------- | --------- | -----------
 bids      | object    | The current all bids in format [price, quote volume]
 asks      | object    | The current all asks in format [price, quote volume]
-
-<aside class="notice">当symbol被设为"hb10"时，amount, count, vol均为零值 </aside>
 
 ### 数据请求
 
@@ -2612,7 +2300,6 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 > {"pong": 1492420473027}
 
 <aside class="warning">当Websocket服务器连续两次发送了`ping`消息却没有收到任何一次`pong`消息返回后，服务器将主动断开与此客户端的连接。</aside>
-
 ### 订阅主题
 
 成功建立与Websocket服务器的连接后，Websocket客户端发送如下请求以订阅特定主题：
@@ -2752,7 +2439,6 @@ API Key 权限：读取
 model     | string    | false    | 0                     | 是否包含已冻结余额                 | 1 to include frozen balance, 0 to not
 
 <aside class="notice">如果同时订阅可用和总余额，需要为 0 和 1 各开启一条websocket连接</aside>
-
 > Response
 
 ```json
@@ -2791,10 +2477,10 @@ model     | string    | false    | 0                     | 是否包含已冻结
 
 字段     | 数据类型 | 描述
 --------- | --------- | -----------
-event     | string    | 资产变化通知相关事件说明，比如订单创建(order.place) 、订单成交(order.match)、订单成交退款（order.refund)、订单撤销(order.cancel) 、点卡抵扣交易手续费（order.fee-refund)、杠杆账户划转（margin.transfer)、借贷本金（margin.loan)、借贷计息（margin.interest)、归还借贷本金利息(margin.repay)、其他资产变化(other)
+event     | string    | 资产变化通知相关事件说明，比如订单创建(order.place) 、订单成交(order.match)、订单成交退款（order.refund)、订单撤销(order.cancel) 、点卡抵扣交易手续费（order.fee-refund)、其他资产变化(other) 
 account-id| integer   | 账户 id
 currency  | string    | 币种
-type      | string    | 账户类型, 交易子账户（trade),借贷子账户（loan），利息子账户（interest)
+type      | string    | 账户类型 
 balance   | string    | 账户余额 (当订阅mode=0时，该余额为可用余额；当订阅mode=1时，该余额为总余额）
 
 ## 订阅订单更新
@@ -2888,7 +2574,7 @@ unfilled-amount     | string    | 单次成交手续费（买入为币，卖出�
 
 API Key 权限：读取
 
-相比现有用户订单更新推送主题“orders.$symbol”， 新增主题“orders.$symbol.update”拥有更低的数据延迟以及更准确的消息顺序。建议API用户订阅此新主题接收订单更新推送，以替代现有订阅主题 “orders.$symbol”。（现有订阅主题 “orders.$symbol”仍将在Websocket API服务中被保留直至另行通知。）
+相比现有用户订单更新推送主题“orders.symbol”， 新增主题“orders.​symbol.update”拥有更低的数据延迟以及更准确的消息顺序。建议API用户订阅此新主题接收订单更新推送，以替代现有订阅主题 “orders.symbol”。（现有订阅主题 “orders.​symbol”仍将在Websocket API服务中被保留直至另行通知。）
 
 ### 主题订阅
 
@@ -3051,14 +2737,14 @@ topic      |string   |必填；固定值为accounts.list|
 ```
 
 字段                |数据类型 |    描述|
--------------------- |--------| ------------------------------------|
-{ id                   |long    | 账户ID|
+-------------------- |--------| ------------------------------------ | ------------------------------------ 
+id                   |long    | 账户ID|
 type              |string   |账户类型|
 state           |string     |账户状态|
 list               |string   |账户列表|
-{currency                |string   |子账户币种|
+currency                |string   |子账户币种|
 type           |string     |子账户类型|
-balance }}           |string     |子账户余额|
+balance           |string     |子账户余额|
 
 ## 请求当前及历史订单
 
