@@ -119,25 +119,36 @@ under the License.
         <% end %>
       </div>
     </div>
-/**
     <script>
       const lang_btn_en = document.getElementById('lang_box_en');
       const lang_btn_cn = document.getElementById('lang_box_zn');
       const url = GetUrlRelativePath();
       if(url.indexOf('cn') != -1){
-        //如果是中文环境
-        lang_btn_cn.innerHTML = 'Korean';
-        lang_btn_cn.href = url.replace('cn/', 'kr/');
 
-        lang_btn_en.href = url.replace('cn/', 'en/');
+        //如果是中文环境
+        lang_btn_en.innerHTML = 'English';
+        lang_btn_en.href = "/docs/spot/v1/en/"
+        lang_btn_cn.innerHTML = 'Korean';
+        lang_btn_cn.href = "/docs/spot/v1/kr/"
+
       }else if(url.indexOf('en') != -1){
+
         //如果是英文环境
         lang_btn_en.innerHTML = 'Korean';
-        lang_btn_en.href = url.replace('en/', 'kr/');
+        lang_btn_en.href = "/docs/spot/v1/kr/"
+	lang_btn_cn.innerHTML = '简体中文';
+        lang_btn_cn.href = "/docs/spot/v1/cn/"
 
-        lang_btn_cn.href = url.replace('en/', 'cn/');
+      }else if(url.indexOf('kr') != -1){
+
+        //如果是韩文环境
+        lang_btn_en.innerHTML = 'English';
+        lang_btn_en.href = "/docs/spot/v1/en/"
+        lang_btn_cn.innerHTML = '简体中文';
+        lang_btn_cn.href = "/docs/spot/v1/cn/"
 
       }
+
 
       //显示语言切换按钮
       lang_btn_cn.style.display = 'block';
@@ -156,6 +167,5 @@ under the License.
         return relUrl;
   　　}
     </script>
-**/
   </body>
 </html>
