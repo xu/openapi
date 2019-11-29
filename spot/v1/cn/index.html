@@ -219,46 +219,6 @@
     <div class="toc-wrapper">
       <ul id="toc" class="toc-list-h1">
           <li>
-            <a href="#1" class="toc-h1 toc-link" data-title="1.简介">1.简介</a>
-              <ul class="toc-list-h2">
-                  <li>
-                    <a href="#api" class="toc-h2 toc-link" data-title="API 简介">API 简介</a>
-                  </li>
-                  <li>
-                    <a href="#cc4b988593" class="toc-h2 toc-link" data-title="做市商项目">做市商项目</a>
-                  </li>
-              </ul>
-          </li>
-          <li>
-            <a href="#2" class="toc-h1 toc-link" data-title="2.接入说明">2.接入说明</a>
-              <ul class="toc-list-h2">
-                  <li>
-                    <a href="#urls" class="toc-h2 toc-link" data-title="接入 URLs">接入 URLs</a>
-                  </li>
-                  <li>
-                    <a href="#c1fd2fc5ac" class="toc-h2 toc-link" data-title="限频规则">限频规则</a>
-                  </li>
-                  <li>
-                    <a href="#c64cd15fdc" class="toc-h2 toc-link" data-title="签名认证">签名认证</a>
-                  </li>
-                  <li>
-                    <a href="#21d67c3c4c" class="toc-h2 toc-link" data-title="请求格式">请求格式</a>
-                  </li>
-                  <li>
-                    <a href="#dac673286f" class="toc-h2 toc-link" data-title="返回格式">返回格式</a>
-                  </li>
-                  <li>
-                    <a href="#a38a81c9d5" class="toc-h2 toc-link" data-title="错误信息">错误信息</a>
-                  </li>
-                  <li>
-                    <a href="#sdk-todo" class="toc-h2 toc-link" data-title="SDK 与代码示例 ——TODO">SDK 与代码示例 ——TODO</a>
-                  </li>
-                  <li>
-                    <a href="#q-amp-a" class="toc-h2 toc-link" data-title="常见问题 Q &amp; A">常见问题 Q &amp; A</a>
-                  </li>
-              </ul>
-          </li>
-          <li>
             <a href="#3" class="toc-h1 toc-link" data-title="3.基础信息">3.基础信息</a>
               <ul class="toc-list-h2">
                   <li>
@@ -412,254 +372,12 @@
     <div class="page-wrapper">
       <div class="dark-box"></div>
       <div class="content">
-        <p>title: 火币 API 文档</p>
-
-<p>language_tabs: # must be one of https://git.io/vQNgJ
-  - shell</p>
-
-<p>toc_footers:
-  - <a href='https://www.hbg.com/zh-cn/apikey/'>创建 API Key </a>
-includes:</p>
-
-<p>search: False</p>
-<h1 id='1'>1.简介</h1><h2 id='api'>API 简介</h2>
-<p>欢迎使用火币 API！ </p>
-
-<p>你可以使用此 API 获得市场行情数据，进行交易，并且管理你的账户。</p>
-
-<p>API key 申请和变更可通过API管理菜单申请并变更，以下为路径。 </p>
-
-<blockquote>
-<p>火币韩国(www.huobi.co.kr) 登陆 &gt; 我的页面 &gt; API 管理
-API 使用中如有疑问或咨询事项，请参考‘咨询事项 Q&amp;A’或者通过加入‘火币韩国API交流Telegram群（http://bit.ly/2jXMzEN）‘咨询。</p>
-</blockquote>
-<h2 id='cc4b988593'>做市商项目</h2>
-<p>欢迎有优秀 maker 策略且交易量大的用户参与长期做市商项目。</p>
-
-<ol>
-<li>申请条件</li>
-</ol>
-
-<ul>
-<li>火币韩国账号中拥有30BTC以上资产用户（资产折合成BTC）</li>
-</ul>
-
-<ol>
-<li>申请方法</li>
-</ol>
-
-<ul>
-<li>请将以下3种内容发送到 <span style="color:#d73e48"><a href="mailto:MM-kr@huobi.com">MM-kr@huobi.com</a></span></li>
-<li>做市商申请目录
-
-<ol>
-<li>提供 UID （需不存在返佣关系的 UID）；</li>
-<li>提供其他交易平台 maker 交易量截图证明：例) 30天内成交量等</li>
-<li>请简要阐述做市方法。(不需要细节) </li>
-</ol></li>
-</ul>
-
-<ol>
-<li>注意事项</li>
-</ol>
-
-<ul>
-<li><p>做市商项目不支持点卡抵扣、VIP、交易量相关活动以及任何形式的返佣活动。</p></li>
-<li><p>其他接口子账号不可访问，如果尝试访问，系统会返回 “error-code 403”。</p></li>
-</ul>
-<h1 id='2'>2.接入说明</h1><h2 id='urls'>接入 URLs</h2>
-<p><strong>REST API</strong></p>
-
-<p><strong><code>https://api-cloud.huobi.co.kr</code></strong> </p>
-
-<p><strong>Websocket Feed（行情）</strong></p>
-
-<p><strong><code>wss://api-cloud.huobi.co.kr/ws</code></strong></p>
-
-<p><strong>Websocket Feed（资产和订单）</strong></p>
-
-<p><strong><code>wss://api-cloud.huobi.co.kr/ws/v1</code></strong></p>
-
-<ul>
-<li>注意事项</li>
-</ul>
-
-<pre>
-- 请使用中国大陆以外的IP访问火币韩国API
-- 鉴于延迟高和稳定性差等原因，不建议通过代理的方式访问火币韩国 API。
-</pre>
-<h2 id='c1fd2fc5ac'>限频规则</h2>
-<ul>
-<li>现货 （api-cloud.huobi.co.kr）：10秒100次</li>
-<li>所有请求非公共API时，需要签名</li>
-</ul>
-
-<aside class="notice">
-单个 API Key 维度限制。行情 API 访问无需签名。
-</aside>
-<h2 id='c64cd15fdc'>签名认证</h2><h3 id='34addae335'>签名说明</h3>
-<p>API 请求在通过 internet 传输的过程中极有可能被篡改，为了确保请求未被更改，除公共接口（基础信息，行情数据）外的私有接口均必须使用您的 API Key 做签名认证，以校验参数或参数值在传输途中是否发生了更改。每一个API Key需要有适当的权限才能访问相应的接口。每个新创建的API Key都需要分配权限。权限类型分为：读取，交易，提币。在使用接口前，请查看每个接口的权限类型，并确认你的API Key有相应的权限。</p>
-
-<p>一个合法的请求由以下几部分组成：</p>
-
-<ul>
-<li><p>方法请求地址：即访问服务器地址 api-cloud.huobi.co.kr，比如 api-cloud.huobi.co.kr/v1/order/orders。</p></li>
-<li><p>API 访问密钥（AccessKeyId）：您申请的 API Key 中的 Access Key。</p></li>
-<li><p>签名方法（SignatureMethod）：用户计算签名的基于哈希的协议，此处使用 HmacSHA256。</p></li>
-<li><p>签名版本（SignatureVersion）：签名协议的版本，此字段值为2。</p></li>
-<li><p>时间戳（Timestamp）：您发出请求的时间 (UTC 时区) (UTC 时区) (UTC 时区) 。如：2017-05-11T16:22:06。在查询请求中包含此值有助于防止第三方截取您的请求。</p></li>
-<li><p>必选和可选参数：每个方法都有一组用于定义 API 调用的必需参数和可选参数。可以在每个方法的说明中查看这些参数及其含义。 请一定注意：对于 GET 请求，每个方法自带的参数都需要进行签名运算； 对于 POST 请求，每个方法自带的参数不进行签名认证，即 POST 请求中需要进行签名运算的只有 AccessKeyId、SignatureMethod、SignatureVersion、Timestamp 四个参数，其它参数放在 body 中。</p></li>
-<li><p>签名：签名计算得出的值，用于确保签名有效和未被篡改。</p></li>
-</ul>
-<h3 id='api-key'>创建 API Key</h3>
-<p>您可以在 <a href='https://www.huobi.co.kr/zh-CN/api/'>这里 </a> 创建 API Key。</p>
-
-<p>API Key 包括以下两部分</p>
-
-<ul>
-<li><p><code>Access Key</code>  API 访问密钥</p></li>
-<li><p><code>Secret Key</code>  签名认证加密所使用的密钥（仅申请时可见）</p></li>
-</ul>
-
-<aside class="notice">
-创建 API Key 时可以选择绑定 IP 地址，未绑定 IP 地址的 API Key 有效期为90天。
-</aside>
-
-<aside class="notice">
-API Key 具有包括交易、借贷和充提币等所有操作权限。
-</aside>
-
-<aside class="warning">
-这两个密钥与账号安全紧密相关，无论何时都请勿向其它人透露。
-</aside>
-<h3 id='1fbac240b7'>签名步骤</h3>
-<p>​ 1)计算签名注意事项</p>
-
-<p>​     -进行签名计算前，请先对请求进行规范化处理。</p>
-
-<p>​ 2)查询某订单详情</p>
-
-<p>​ <code>https://api-cloud.huobi.co.kr/v1/order/orders?</code></p>
-
-<p>​ <code>AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx</code></p>
-
-<p>​ <code>&amp;SignatureMethod=HmacSHA256</code></p>
-
-<p>​ <code>&amp;SignatureVersion=2</code></p>
-
-<p>​ <code>&amp;Timestamp=2017-05-11T15:19:30</code></p>
-
-<p>​ <code>&amp;order-id=1234567890</code></p>
-<h4 id='1-get-post-n'>1. 请求方法（GET 或 POST），后面添加换行符 “\n”</h4>
-<p><code>GET\n</code></p>
-<h4 id='2-n'>2. 添加小写的访问地址，后面添加换行符 “\n”</h4>
-<p><code>
-api-cloud.huobi.co.kr\n
-</code></p>
-<h4 id='3-n'>3. 访问方法的路径，后面添加换行符 “\n”</h4>
-<p><code>
-/v1/order/orders\n
-</code></p>
-<h4 id='4-ascii'>4. 按照ASCII码的顺序对参数名进行排序。</h4>
-<blockquote>
-<p>例) 下面是请求参数的原始顺序，进行过编码后如下</p>
-</blockquote>
-
-<p><code>AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx</code></p>
-
-<p><code>order-id=1234567890</code></p>
-
-<p><code>SignatureMethod=HmacSHA256</code></p>
-
-<p><code>SignatureVersion=2</code></p>
-
-<p><code>Timestamp=2017-05-11T15%3A19%3A30</code></p>
-
-<ul>
-<li>使用 UTF-8 编码，且进行了 URI 编码，十六进制字符必须大写，如 “:” 会被编码为 “%3A” ，空格被编码为 “%20”。</li>
-</ul>
-
-<p>时间戳（Timestamp）需要以YYYY-MM-DDThh:mm:ss格式添加并且进行 URI 编码。</p>
-<h4 id='5'>5. 经过排序之后</h4>
-<p><code>AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx</code></p>
-
-<p><code>SignatureMethod=HmacSHA256</code></p>
-
-<p><code>SignatureVersion=2</code></p>
-
-<p><code>Timestamp=2017-05-11T15%3A19%3A30</code></p>
-
-<p><code>order-id=1234567890</code></p>
-<h4 id='6-amp'>6. 按照以上顺序，将各参数使用字符 “&amp;” 连接</h4>
-<p><code>AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx&amp;SignatureMethod=HmacSHA256&amp;SignatureVersion=2&amp;Timestamp=2017-05-11T15%3A19%3A30&amp;order-id=1234567890</code></p>
-<h4 id='7'>7. 组成最终的要进行签名计算的字符串如下</h4>
-<p><code>GET\n</code></p>
-
-<p><code>api-cloud.huobi.co.kr\n</code></p>
-
-<p><code>/v1/order/orders\n</code></p>
-
-<p><code>AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx&amp;SignatureMethod=HmacSHA256&amp;SignatureVersion=2&amp;Timestamp=2017-05-11T15%3A19%3A30&amp;order-id=1234567890</code></p>
-<h4 id='8-secret-key'>8. 用上一步里生成的 “请求字符串” 和你的密钥 (Secret Key) 生成一个数字签名</h4>
-<p><code>4F65x5A2bLyMWVQj3Aqp+B4w+ivaA7n5Oi2SuYtCJ9o=</code></p>
-
-<ul>
-<li>将上一步得到的请求字符串和 API 私钥作为两个参数，调用HmacSHA256哈希函数来获得哈希值。</li>
-<li>将此哈希值用base-64编码，得到的值作为此次接口调用的数字签名。</li>
-</ul>
-<h4 id='9'>9. 将生成的数字签名加入到请求的路径参数里</h4>
-<p>最终，发送到服务器的 API 请求应该为</p>
-
-<p><code>https://api-cloud.huobi.co.kr/v1/order/orders?AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx&amp;order-id=1234567890&amp;SignatureMethod=HmacSHA256&amp;SignatureVersion=2&amp;Timestamp=2017-05-11T15%3A19%3A30&amp;Signature=4F65x5A2bLyMWVQj3Aqp%2BB4w%2BivaA7n5Oi2SuYtCJ9o%3D</code></p>
-
-<ul>
-<li>把所有必须的认证参数添加到接口调用的路径参数里</li>
-<li>把数字签名在URL编码后加入到路径参数里，参数名为“Signature”。</li>
-</ul>
-<h2 id='21d67c3c4c'>请求格式</h2>
-<p>所有的API请求都以GET或者POST形式发出。对于GET请求，所有的参数都在路径参数里；对于POST请求，所有参数则以JSON格式发送在请求主体（body）里。</p>
-<h2 id='dac673286f'>返回格式</h2>
-<p>所有的接口返回都是JSON格式。在JSON最上层有几个表示请求状态和属性的字段：&quot;status&quot;, &quot;ch&quot;, 和 &quot;ts&quot;. 实际的接口返回内容在&quot;data&quot;字段里.</p>
-<h3 id='d9618612cd'>返回内容格式</h3>
-<blockquote>
-<p>返回内容将会是以下格式:</p>
-</blockquote>
-<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-  </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ok"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"ch"</span><span class="p">:</span><span class="w"> </span><span class="s2">"market.btcusdt.kline.1day"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"ts"</span><span class="p">:</span><span class="w"> </span><span class="mi">1499223904680</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">per</span><span class="w"> </span><span class="err">API</span><span class="w"> </span><span class="err">response</span><span class="w"> </span><span class="err">data</span><span class="w"> </span><span class="err">in</span><span class="w"> </span><span class="err">nested</span><span class="w"> </span><span class="err">JSON</span><span class="w"> </span><span class="err">object</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-<table><thead>
-<tr>
-<th>参数名称</th>
-<th>数据类型</th>
-<th>描述</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>status</td>
-<td>string</td>
-<td>API接口返回状态</td>
-</tr>
-<tr>
-<td>ch</td>
-<td>string</td>
-<td>接口数据对应的数据流。部分接口没有对应数据流因此不返回此字段</td>
-</tr>
-<tr>
-<td>ts</td>
-<td>int</td>
-<td>接口返回的调整为北京时间的时间戳，单位毫秒</td>
-</tr>
-<tr>
-<td>data</td>
-<td>object</td>
-<td>接口返回数据主体</td>
-</tr>
-</tbody></table>
-<h2 id='a38a81c9d5'>错误信息</h2><h3 id='api-2'>行情 API 错误信息</h3>
+        <p>------ | --------- | -----------
+status    | string    | API接口返回状态
+ch        | string    | 接口数据对应的数据流。部分接口没有对应数据流因此不返回此字段
+ts        | int       | 接口返回的调整为北京时间的时间戳，单位毫秒
+data      | object    | 接口返回数据主体</p>
+<h2 id='a38a81c9d5'>错误信息</h2><h3 id='api'>行情 API 错误信息</h3>
 <table><thead>
 <tr>
 <th>错误码</th>
@@ -683,7 +401,7 @@ api-cloud.huobi.co.kr\n
 <blockquote>
 <p>code 的具体解释, 参考对应的 <code>err-msg</code>.</p>
 </blockquote>
-<h3 id='api-3'>交易 API 错误信息</h3>
+<h3 id='api-2'>交易 API 错误信息</h3>
 <table><thead>
 <tr>
 <th>错误码</th>
@@ -783,12 +501,12 @@ api-cloud.huobi.co.kr\n
 <p><strong>其它代码示例</strong></p>
 
 <p>https://github.com/huobiapi?tab=repositories</p>
-<h2 id='q-amp-a'>常见问题 Q &amp; A</h2><h3 id='1-2'>1）经常断线或者丢数据</h3>
+<h2 id='q-amp-a'>常见问题 Q &amp; A</h2><h3 id='1'>1）经常断线或者丢数据</h3>
 <ul>
 <li>请确认是否使用 api-cloud.huobi.co.kr 域名访问火币韩国 API</li>
 <li>请使用日本云服务器</li>
 </ul>
-<h3 id='2-2'>2）签名失败</h3>
+<h3 id='2'>2）签名失败</h3>
 <ul>
 <li>检查 API Key 是否有效，是否复制正确，是否有绑定 IP 白名单</li>
 <li>检查时间戳是否是 UTC 时间</li>
