@@ -8,7 +8,7 @@ toc_footers:
   - <a href='https://www.huobi.kr/zh-cn/api/'>创建 API Key </a>
 includes:
 
-search: true
+search: false
 ---
 
 # 1.简介
