@@ -1,294 +1,262 @@
-title: 火币 API 文档
+---
+title: 소개
+---
 
-language_tabs: # must be one of https://git.io/vQNgJ
-  - shell
+# 1. 소개
 
-toc_footers:
-  - <a href='https://www.hbg.com/zh-cn/apikey/'>创建 API Key </a>
-includes:
+### API 소개
 
-search: False
+안녕하세요. 후오비 코리아 API 안내입니다.
+귀하는 API를 활용하여 후오비 코리아의 모든 마켓 데이터 및 거래, 계정 관리 Endpoints에 접근할 수 있습니다.
 
-# 1.简介
+API key 발급 신청과 변경은 API 관리 메뉴를 통해 진행할 수 있으며 경로는 다음과 같습니다. 
+> 후오비 코리아(www.huobi.co.kr) 로그인 > 마이페이지 > API 관리
+API 관련하여 궁금증 또는 문의사항이 있을 경우 ‘자주 묻는 질문(FAQ)’을 참고하거나 ‘후오비 코리아 API 커뮤니티 텔레그램(http://bit.ly/2jXMzEN) 채팅방’을 통해 상담 받을 수 있습니다.
 
-## API 简介
+   
 
-欢迎使用火币 API！ 
+## 마켓 메이커 프로그램
 
-你可以使用此 API 获得市场行情数据，进行交易，并且管理你的账户。
+<font color="#d73e48">우수한 Maker 전략으로 많은 거래량이 많은 회원님들께서 장기적으로 마켓 메이커 프로젝트에 참여하는 것을 환영합니다.</font>
 
-API key 申请和变更可通过API管理菜单申请并变更，以下为路径。 
+1. 신청 조건
+    - 후오비 코리아 계정에 30 BTC 이상 자산 보유자(BTC 환산 기준)
+1. 신청 방법
+    - 다음 3가지 내용을 작성하여 <span style="color:#d73e48">[MM-kr@huobi.com](mailto:MM-kr@huobi.com)</span> 이메일 주소로 보내주시기 바랍니다.
+    - 마켓 메이커 신청 시 작성 항목
+      1. 후오비 코리아 UID: 페이백 또는 레퍼럴과 관련되어 있지 않은 UID
+      1. 기타 거래 플랫폼 Maker 거래량 캡쳐 화면: 예) 30일간 체결량 등
+      1. 마켓 메이킹 진행 방안에 대해 간단히 기재해주세요. (구체적인 내용은 작성하지 않으셔도 됩니다.) 
+1. 유의사항
+    - 마켓 메이커 프로그램은 수수료 쿠폰 포인트 차감 및 거래량 관련 이벤트 등 어떠한 페이백 이벤트도 지원하지 않습니다.
+    - 하위 계정은 기타 API에 접속할 수 없습니다. 접속 시도 시 시스템은 "error-code 403"를 반환합니다.
+    
 
-> 火币韩国(www.huobi.co.kr) 登陆 > 我的页面 > API 管理
-> API 使用中如有疑问或咨询事项，请参考‘咨询事项 Q&A’或者通过加入‘火币韩国API交流Telegram群（http://bit.ly/2jXMzEN）‘咨询。
+---
+title: api_access
+---
 
-## 做市商项目
+# 2. 액세스 설명
+## Access URLs
 
-欢迎有优秀 maker 策略且交易量大的用户参与长期做市商项目。
+1. REST API: <font color="#d73e48">wss://api-cloud.huobi.co.kr</font>
+1. Websocket Feed(시세): <font color="#d73e48">wss://api-cloud.huobi.co.kr/ws</font>
+1. Websocket Feed(자산 주문내역): <font color="#d73e48">wss://api-cloud.huobi.co.kr/ws/v1</font>
 
-1. 申请条件
-
-   - 火币韩国账号中拥有30BTC以上资产用户（资产折合成BTC）
-
-2. 申请方法
-
-   - 请将以下3种内容发送到 <span style="color:#d73e48">[MM-kr@huobi.com](mailto:MM-kr@huobi.com)</span>
-   - 做市商申请目录
-     1. 提供 UID （需不存在返佣关系的 UID）；
-     2. 提供其他交易平台 maker 交易量截图证明：例) 30天内成交量等
-     3. 请简要阐述做市方法。(不需要细节) 
-
-3. 注意事项
-
-   - 做市商项目不支持点卡抵扣、VIP、交易量相关活动以及任何形式的返佣活动。
-
-   - 其他接口子账号不可访问，如果尝试访问，系统会返回 “error-code 403”。
-
-     
-
-# 2.接入说明
-
-## 接入 URLs
-
-**REST API**
-
-**`https://api-cloud.huobi.co.kr`** 
-
-**Websocket Feed（行情）**
-
-**`wss://api-cloud.huobi.co.kr/ws`**
-
-**Websocket Feed（资产和订单）**
-
-**`wss://api-cloud.huobi.co.kr/ws/v1`**
-
-- 注意事项
-
+* 유의사항
 <pre>
-- 请使用中国大陆以外的IP访问火币韩国API
-- 鉴于延迟高和稳定性差等原因，不建议通过代理的方式访问火币韩国 API。
+-	중국 이외의 IP를 통해 후오비 코리아 API로 접속해주시기 바랍니다.
+- Proxy를 사용하여 접속 시 지연 시간이 길어지고 안정성이 저하될 수 있으므로 Proxy 접속 방식은 권장하지 않습니다.
 </pre>
 
 
-## 限频规则
+## 빈도 제한 규정
+- 현물(api-cloud.huobi.co.kr) : 10초 이내에 최대 100 개의 https 요청을 보낼 수 있습니다. 더 높은 한계 속도가 필요하다고 생각되면 고객 지원에 문의하십시오. 
+- API 통신을 무단 변경으로부터 보호하기 위해, 모든 비공용 API 호출에 서명이 필요합니다.
+
+<pre>
+단일 API Key 차원 제한. 시세 API 액세스는 서명이 필요없습니다.
+</pre>
+
+
+
+## 서명 인증
+API 요청은 인터넷을 통한 전송 중 변조될 가능성이 있습니다.
+Public API(기본 정보, 시세 데이터)를 제외한 Private API는 요청이 변조되지 않도록 하기 위해 반드시 귀하의 API Key로 서명 인증을 진행하여 매개 변수 또는 매개 변수 값이 변경되었는지 확인해야 합니다.
+새로 생성된 모든 API Key에는 권한이 적용되어야 하고, 각 API Key는 해당 API에 적합한 권한이 있어야만 요청이 가능합니다.
+권한 유형은 조회, 거래, 코인 출금으로 구분됩니다. 
+API를 요청하기 전에 각 API 권한 유형을 보시고 회원님의 API Key에 적합한 권한을 확인해주시기 바랍니다. 
+
+합법적인 요청은 다음과 같은 부분으로 구성됩니다.
+
+- 메소드 요청 주소: 서버 접속 주소 api-cloud.huobi.co.kr, 예) api-cloud.huobi.co.kr/v1/order/orders.
+- API Access Key(AccessKeyId): 회원님이 신청한 API Key에 대한 Access Key.
+- 서명 방법(SignatureMethod): 회원님이 서명을 계산할 수 있는 Hash 기반의 프로토콜로 HmacSHA256를 사용합니다.
+- 서명 버전(SignatureVersion): 서명 프로토콜 버전으로 API는 2를 사용합니다.
+- 타임 스탬프(Timestamp): 회원님이 요청한 시간(UTC 시간대), 예) 2017-05-11 T16:22:06. 
+쿼리 요청 시 해당 값을 포함하면 제3자가 회원님의 요청을 가로챌 수 없습니다.
+- 필수 및 선택적 매개 변수: 각 메소드에는 API 호출 정의를 위한 필수 및 선택적 매개 변수 세트가 있습니다. 각 방법의 설명에서 이러한 매개 변수와 의미를 확인할 수 있습니다. 주의할 사항은 GET 방식으로 요청할 경우 각 메소드와 함께 제공되는 매개 변수에 서명 인증을 진행해야 합니다. POST 요청의 경우 각 메소드의 매개 변수는 서명 인증을 진행하지 않습니다. 즉, POST 요청 시 필요한 매개 변수는 AccessKeyId, SignatureMethod, SignatureVersion, Timestamp 총 4개 입니다. 나머지 매개 변수는 body에 배치됩니다.
+- 서명: 유효하고 변조되지 않았음을 보장하기 위해 서명에 의해 계산된 값입니다.
+
+
+## API Key 생성
+
+본 <a href="https://www.huobi.co.kr/api">링크(https://www.huobi.co.kr/api)</a>로 접속하여 API Key를 발급 받을 수 있습니다.
+
+API Key는 다음 2가지로 구성됩니다.
+
+- `Access Key`: API Access Key
+- `Secret Key`: 서명 인증 암호화에 사용되는 Key (신청 시에만 확인할 수 있습니다.)
+
+<pre>
+API Key 발급 시 IP 주소를 연동할 수 있습니다. IP 주소를 연동하지 않은 API Key의 유효기간은 90일입니다.
+API Key는 거래, 코인 입출금 등을 포함한 모든 작업 권한을 가지고 있습니다.
+이 2개의 키는 보안상 절대 타인에게 공개하시면 안됩니다.
+</pre>
+
+
+1. ### 서명 절차
+    1) 서명 계산 시 유의사항
+        - 서명 계산 진행 시 먼저 요청 전에 반드시 절차를 지켜주세요. 다음은 어떤 주문 건의 상세내역을 조회하는 예시입니다.
+
+    2) 주문 건 상세내역 조회
+    ```js
+    https://api-cloud.huobi.co.kr/v1/order/orders? 
+    AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx
+    &SignatureMethod=HmacSHA256
+    &SignatureVersion=2
+    &Timestamp=2017-05-11T15:19:30
+    &order-id=1234567890
+    ```
+
+    #### 1. 요청 메소드(GET 또는 POST) 입력 후 줄바꿈 개행 문자 "\n" 추가해주세요.
+    <pre>
+    GET\n
+    </pre>
+
+    #### 2. 소문자로 접속 주소 입력 후 줄바꿈 개행 문자 "\n" 추가해주세요.
+    <pre>
+    api-cloud.huobi.co.kr\n
+    </pre>
+
+    #### 3. Access 메소드 입력 후 줄바꿈 개행 문자 "\n" 추가해주세요.
+    <pre>
+    /v1/order/orders\n
+    </pre>
+
+    #### 4. ASCII 코드 순서에 따라 매개 변수 명칭을 정렬해주세요.
+    > 예) 인코딩 진행 후 매개 변수 정렬은 다음과 같습니다.
+
+    ```js
+    AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx
+    order-id=1234567890
+    SignatureMethod=HmacSHA256
+    SignatureVersion=2
+    Timestamp=2017-05-11T15%3A19%3A30
+    ```
+    
+    - UTF-8 방식으로 인코딩되고 URI 인코딩 됩니다. 16진수 문자는 반드시 대문자로 진행되어야 합니다.
+    예를 들어 ":"는 "%3A"로 인코딩되고 빈칸은 "%20"으로 인코딩됩니다. 
+    타임 스탬프(Timestamp)는 YYYY-MM-DDThh:mm:ss 형식 및 URI 인코딩으로 추가해야 합니다.
+
+    #### STEP5. 정렬 완료 이후
+    ```js
+    AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx
+    SignatureMethod=HmacSHA256
+    SignatureVersion=2
+    Timestamp=2017-05-11T15%3A19%3A30
+    order-id=1234567890
+    ```
+
+    #### STEP6. 위의 순서대로 각 매개 변수를 문자 “&”로 연결해주세요.
+    ```js
+    AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx
+    SignatureMethod=HmacSHA256&SignatureVersion=2
+    Timestamp=2017-05-11T15%3A19%3A30&order-id=1234567890
+    ```
 
-- 现货 （api-cloud.huobi.co.kr）：10秒100次
-- 所有请求非公共API时，需要签名
+    #### STEP7. 계산을 위해 서명할 마지막 문자열은 다음과 같습니다.
+    ```js
+    GET\n
+    api-cloud.huobi.co.kr\n
+    /v1/order/orders\n
+    AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx
+    SignatureMethod=HmacSHA256&SignatureVersion=2
+    Timestamp=2017-05-11T15%3A19%3A30&order-id=1234567890
+    ```
 
-<aside class="notice">
-单个 API Key 维度限制。行情 API 访问无需签名。
-</aside>
+    #### STEP8. 이전 단계에서 생성된 “요청 문자열”과 회원님 Key(Secret Key)를 사용하여 디지털 서명 생성해주세요.
+    ```js
+    4F65x5A2bLyMWVQj3Aqp+B4w+ivaA7n5Oi2SuYtCJ9o=
+    ```
 
+    - 위에서 발생한 요청 문자열과 API 개인 Key를 2개의 매개 변수로 사용하여 HmacSHA256 해시 함수를 호출후 해시 값을 얻습니다.
+    - 해시 값은 base-64로 인코딩되고 생성된 값은 API 호출을 위한 디지털 서명으로 사용됩니다.
 
-## 签名认证
+    #### STEP9. 생성된 디지털 서명을 요청 path 매개 변수에 추가해주세요.
 
-### 签名说明
+    최종적으로 서버에 전송된 API 요청은 다음과 같습니다.
 
-API 请求在通过 internet 传输的过程中极有可能被篡改，为了确保请求未被更改，除公共接口（基础信息，行情数据）外的私有接口均必须使用您的 API Key 做签名认证，以校验参数或参数值在传输途中是否发生了更改。每一个API Key需要有适当的权限才能访问相应的接口。每个新创建的API Key都需要分配权限。权限类型分为：读取，交易，提币。在使用接口前，请查看每个接口的权限类型，并确认你的API Key有相应的权限。
+    ```js
+    https://api-cloud.huobi.co.kr/v1/order/orders?
+    AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx&order-id=1234567890&
+    SignatureMethod=HmacSHA256&
+    SignatureVersion=2&
+    Timestamp=2017-05-11T15%3A19%3A30&
+    Signature=4F65x5A2bLyMWVQj3Aqp%2BB4w%2BivaA7n5Oi2SuYtCJ9o%3D
+    ```
 
-一个合法的请求由以下几部分组成：
+    - 필요한 모든 인증 매개 변수를 API 호출의 경로 매개 변수에 추가해주세요. 
+    - URL 인코딩 후 path 매개 변수에 디지털 서명을 추가하십시오. 매개 변수 이름은 "Signature"입니다.
 
-- 方法请求地址：即访问服务器地址 api-cloud.huobi.co.kr，比如 api-cloud.huobi.co.kr/v1/order/orders。
+### 요청 형식
 
-- API 访问密钥（AccessKeyId）：您申请的 API Key 中的 Access Key。
+모든 API 요청은 GET 또는 POST로 전송됩니다. GET 요청의 경우 모든 매개 변수는 path 매개 변수에 있습니다. POST 요청의 경우 모든 매개 변수는 요청 본문(body)에 JSON 형식으로 적용합니다.
 
-- 签名方法（SignatureMethod）：用户计算签名的基于哈希的协议，此处使用 HmacSHA256。
+### 응답 형식
 
-- 签名版本（SignatureVersion）：签名协议的版本，此字段值为2。
+모든 API 응답은 JSON 형식입니다. JSON 상단에는 요청 상태와 속성을 나타내는 필드 "status", "ch", "ts"가 있으며 실제 응답은 "data"필드에 있습니다.
 
-- 时间戳（Timestamp）：您发出请求的时间 (UTC 时区) (UTC 时区) (UTC 时区) 。如：2017-05-11T16:22:06。在查询请求中包含此值有助于防止第三方截取您的请求。
+### 응답 내용 형식
 
-- 必选和可选参数：每个方法都有一组用于定义 API 调用的必需参数和可选参数。可以在每个方法的说明中查看这些参数及其含义。 请一定注意：对于 GET 请求，每个方法自带的参数都需要进行签名运算； 对于 POST 请求，每个方法自带的参数不进行签名认证，即 POST 请求中需要进行签名运算的只有 AccessKeyId、SignatureMethod、SignatureVersion、Timestamp 四个参数，其它参数放在 body 中。
-
-- 签名：签名计算得出的值，用于确保签名有效和未被篡改。
-
-### 创建 API Key
-
-您可以在 <a href='https://www.huobi.co.kr/zh-CN/api/'>这里 </a> 创建 API Key。
-
-API Key 包括以下两部分
-
-- `Access Key`  API 访问密钥
-  
-- `Secret Key`  签名认证加密所使用的密钥（仅申请时可见）
-
-<aside class="notice">
-创建 API Key 时可以选择绑定 IP 地址，未绑定 IP 地址的 API Key 有效期为90天。
-</aside>
-<aside class="notice">
-API Key 具有包括交易、借贷和充提币等所有操作权限。
-</aside>
-<aside class="warning">
-这两个密钥与账号安全紧密相关，无论何时都请勿向其它人透露。
-</aside>
-
-
-### 签名步骤
-
-​	1)计算签名注意事项
-
-​		-进行签名计算前，请先对请求进行规范化处理。
-
-​	2)查询某订单详情
-
-​	`https://api-cloud.huobi.co.kr/v1/order/orders?`
-
-​	`AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx`
-
-​	`&SignatureMethod=HmacSHA256`
-
-​	`&SignatureVersion=2`
-
-​	`&Timestamp=2017-05-11T15:19:30`
-
-​	`&order-id=1234567890`
-
-#### 1. 请求方法（GET 或 POST），后面添加换行符 “\n”
-
-`GET\n`
-
-#### 2. 添加小写的访问地址，后面添加换行符 “\n”
-
-`
-api-cloud.huobi.co.kr\n
-`
-
-#### 3. 访问方法的路径，后面添加换行符 “\n”
-
-`
-/v1/order/orders\n
-`
-
-#### 4. 按照ASCII码的顺序对参数名进行排序。
-
-> 例) 下面是请求参数的原始顺序，进行过编码后如下
-
-`AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx`
-
-`order-id=1234567890`
-
-`SignatureMethod=HmacSHA256`
-
-`SignatureVersion=2`
-
-`Timestamp=2017-05-11T15%3A19%3A30`
-
-- 使用 UTF-8 编码，且进行了 URI 编码，十六进制字符必须大写，如 “:” 会被编码为 “%3A” ，空格被编码为 “%20”。
-
-  时间戳（Timestamp）需要以YYYY-MM-DDThh:mm:ss格式添加并且进行 URI 编码。
-
-
-#### 5. 经过排序之后
-
-`AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx`
-
-`SignatureMethod=HmacSHA256`
-
-`SignatureVersion=2`
-
-`Timestamp=2017-05-11T15%3A19%3A30`
-
-`order-id=1234567890`
-
-#### 6. 按照以上顺序，将各参数使用字符 “&” 连接
-
-
-`AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2017-05-11T15%3A19%3A30&order-id=1234567890`
-
-#### 7. 组成最终的要进行签名计算的字符串如下
-
-`GET\n`
-
-`api-cloud.huobi.co.kr\n`
-
-`/v1/order/orders\n`
-
-`AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2017-05-11T15%3A19%3A30&order-id=1234567890`
-
-
-#### 8. 用上一步里生成的 “请求字符串” 和你的密钥 (Secret Key) 生成一个数字签名
-
-`4F65x5A2bLyMWVQj3Aqp+B4w+ivaA7n5Oi2SuYtCJ9o=`
-
-- 将上一步得到的请求字符串和 API 私钥作为两个参数，调用HmacSHA256哈希函数来获得哈希值。
-- 将此哈希值用base-64编码，得到的值作为此次接口调用的数字签名。
-
-#### 9. 将生成的数字签名加入到请求的路径参数里
-
-最终，发送到服务器的 API 请求应该为
-
-`https://api-cloud.huobi.co.kr/v1/order/orders?AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx&order-id=1234567890&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2017-05-11T15%3A19%3A30&Signature=4F65x5A2bLyMWVQj3Aqp%2BB4w%2BivaA7n5Oi2SuYtCJ9o%3D`
-
-- 把所有必须的认证参数添加到接口调用的路径参数里
-- 把数字签名在URL编码后加入到路径参数里，参数名为“Signature”。
-
-## 请求格式
-
-所有的API请求都以GET或者POST形式发出。对于GET请求，所有的参数都在路径参数里；对于POST请求，所有参数则以JSON格式发送在请求主体（body）里。
-
-## 返回格式
-
-所有的接口返回都是JSON格式。在JSON最上层有几个表示请求状态和属性的字段："status", "ch", 和 "ts". 实际的接口返回内容在"data"字段里.
-
-### 返回内容格式
-
-> 返回内容将会是以下格式:
+> 응답 내용의 양식은 다음과 같습니다.
 
 ```json
 {
-  "status": "ok",
-  "ch": "market.btcusdt.kline.1day",
-  "ts": 1499223904680,
-  "data": // per API response data in nested JSON object
+"status": "ok", 
+"ch": "market.btcusdt.kline.1day", 
+"ts": 1499223904680, 
+"data": // per API response data in nested JSON object 
 }
 ```
 
-参数名称| 数据类型 | 描述
---------- | --------- | -----------
-status    | string    | API接口返回状态
-ch        | string    | 接口数据对应的数据流。部分接口没有对应数据流因此不返回此字段
-ts        | int       | 接口返回的调整为北京时间的时间戳，单位毫秒
-data      | object    | 接口返回数据主体
+| 매개 변수 | 데이터 유형 | 설명                                                         |
+| -------- | ----------- | ------------------------------------------------------------ |
+| status   | string      | API 응답 상태                      |
+| ch       | string      | API 데이터에 해당하는 데이터 스트림. 일부 API에는 해당 데이터 스트림이 없으므로 이 필드를 반환하지 않습니다. |
+| ts       | int         | API가 응답한 베이징 시간으로 조정된 타임 스탬프(단위: ms(millisecond)) |
+| data     | object      | API 응답 데이터                    |
 
-## 错误信息
+## 오류 정보
 
-### 行情 API 错误信息
+### 1) 마켓 API 오류 정보
 
-| 错误码  |  描述 |
-|-----|-----|
-| bad-request | 错误请求 |
-| invalid-parameter | 参数错误 |
-| invalid-command | 指令错误 |
-> code 的具体解释, 参考对应的 `err-msg`.
+| 오류 코드         | 설명          |
+| ----------------- | ------------- |
+| bad-request       | 잘못된 요청     |
+| invalid-parameter | 매개 변수 오류 |
+| invalid-command   | 명령 오류     |
 
-### 交易 API 错误信息
+> 코드에 대한 자세한 설명은 해당`err-msg`를 참조하십시오.
 
-| 错误码  |  描述 |
-|-----|-----|
-| base-symbol-error |  交易对不存在 |
-| base-currency-error |  币种不存在 |
-| base-date-error | 错误的日期格式 |
-| account for id `12,345` and user id `6,543,210` does not exist| `account-id` 错误，请使用GET `/v1/account/accounts` 接口查询 |
-| account-frozen-balance-insufficient-error | 余额不足 |
-| account-transfer-balance-insufficient-error | 余额不足无法冻结 |
-| bad-argument | 无效参数 |
-| api-signature-not-valid | API签名错误 |
-| gateway-internal-error | 系统繁忙，请稍后再试|
-| ad-ethereum-addresss| 请输入有效的以太坊地址|
-| order-accountbalance-error| 账户余额不足|
-| order-limitorder-price-error|限价单下单价格超出限制 |
-|order-limitorder-amount-error|限价单下单数量超出限制 |
-|order-orderprice-precision-error|下单价格超出精度限制 |
-|order-orderamount-precision-error|下单数量超过精度限制|
-|order-marketorder-amount-error|下单数量超出限制|
-|order-queryorder-invalid|查询不到此条订单|
-|order-orderstate-error|订单状态错误|
-|order-datelimit-error|查询超出时间限制|
-|order-update-error|订单更新出错|
+### 2) 거래 API 오류 정보
 
-##  SDK 与代码示例 ——TODO
+| 오류 코드                                                    | 설명                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| base-symbol-error                                            | 존재하지 않는 거래쌍입니다.                                  |
+| base-currency-error                                          | 존재하지 않는 코인입니다.                                    |
+| base-date-error                                              | 일자 형식 오류                                               |
+| account for id `12,345` and user id `6,543,210` does not exist | `account-id` 오류입니다. GET `/v1/account/accounts` API를 이용하여 조회해주세요. |
+| account-frozen-balance-insufficient-error                    | 잔액 부족                                                    |
+| account-transfer-balance-insufficient-error                 | 이체할 잔액 부족                          |
+| bad-argument                                                 | 잘못된 매개 변수                                |
+| api-signature-not-valid                                      | API 서명 오류                                                |
+| gateway-internal-error                                       | 시스템이 사용 중입니다. 잠시 후 다시 시도해주세요.                 |
+| ad-ethereum-addresss                                         | 유효한 이더리움 주소를 입력해주세요.                         |
+| order-accountbalance-error                                   | 계정 잔액 부족                                               |
+| order-limitorder-price-error                                 | 지정가 주문 가격 제한을 초과하였습니다.                      |
+| order-limitorder-amount-error                                | 지정가 주문 수량 제한을 초과하였습니다.                      |
+| order-orderprice-precision-error                             | 주문 가격이 소수점 자릿수 제한을 초과하였습니다.               |
+| order-orderamount-precision-error                            | 주문 수량이 소수점 자릿수 제한을 초과하였습니다.               |
+| order-marketorder-amount-error                               | 주문 수량 제한을 초과였습니다.                             |
+| order-queryorder-invalid                                     | 해당 주문은 존재하지 않습니다.                     |
+| order-orderstate-error                                       | 주문 상태 오류                                               |
+| order-datelimit-error                                        | 조회 가능한 제한 시간을 초과하였습니다.                          |
+| order-update-error                                           | 주문 업데이트 오류                                         |
 
-**SDK（推荐）**
+##  SDK 및 코드 예시
+
+**SDK（추천）**
 
 [Java](https://github.com/HuobiRDCenter/huobi_Java)
 
@@ -296,60 +264,61 @@ data      | object    | 接口返回数据主体
 
 [C++](https://github.com/HuobiRDCenter/huobi_Cpp)
 
-**其它代码示例**
+**다른 코드 예시**
 
 https://github.com/huobiapi?tab=repositories
 
-## 常见问题 Q & A
+* ## 자주 묻는 질문 Q & A
 
-### 1）经常断线或者丢数据
+  ### 1) 연결이 끊기거나 데이터 분실의 경우
 
-* 请确认是否使用 api-cloud.huobi.co.kr 域名访问火币韩国 API
-* 请使用日本云服务器
+  - Japan Cloud 서버를 사용해 주세요.
 
-### 2）签名失败
+  ### 2) 서명 실패의 경우
 
-* 检查 API Key 是否有效，是否复制正确，是否有绑定 IP 白名单
-* 检查时间戳是否是 UTC 时间
-* 检查参数是否按字母排序
-* 检查编码
-* 检查签名是否有 base64 编码
-* 检查 GET 是否以表单方式提交
-* 检查 POST 的 url 是否带着签名字段，POST 的数据格式是否是 json 格式
-* 检查签名结果是否有进行 URI 编码
+  - API Key의 유효성 여부, 복사된 값의 정확성 여부, IP의 화이트 리스트 여부를 확인해주세요.
+  - 타임 스탬프(Time Stamp)가 UTC 시간으로 설정되어 있는지 확인해주세요.
+  - Parameter가 문자 순서에 따라 정렬되었는지 확인해주세요.
+  - 코딩을 확인해주세요.
+  - 서명이 base64 코딩인지 확인해주세요.
+  - Get이 form으로 제출되었는지 확인해주세요.
+  - Post의 URL이 서명 필드를 보유했는지 확인해주세요.
+  - Post의 데이터 형식이 json 형식인지 확인해주세요.
+  - 서명 결과를 URI코딩인지 확인해 주세요.
 
-### 3）返回 login-required
+  ### 3) Login-required로 응답된 경우
 
-* 检查参数 `account-id` 是否是由 GET `/v1/account/accounts` 接口返回的
-* 检查 GET 请求是否将参数按照 ASCII 码表顺序排序
+  - Accountid가 Accounts 인터페이스로 응답 되었는지 확인해주세요.
+  - Get 요청이 Parameter를 ASCII 코드 표 순서대로 정렬했는지 확인해주세요.
 
-### 4）返回 gateway-internal-error
+  ### 4) gateway-internal-error 응답된 경우
 
-* 检查 POST 请求是否在 header 中声明 Content-Type:application/json
-
-
+  - POST 요청이 header에서 Content-Type:application/json 설정된 것인지 확인해주세요.
 
 
-# 3.基础信息
+---
+title: reference_data
+---
 
-## 获取所有交易对
+# 3. 기본 정보
 
-此接口返回所有火币全球站支持的交易对。
+## 모든 거래쌍 정보 수집
+
+본 API는 후오비 코리아에서 지원하는 모든 거래쌍 정보를 반환합니다.
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/v1/common/symbols"
 ```
 
-
-### HTTP 请求
+### HTTP 요청
 
 - GET `/v1/common/symbols`
 
-### 请求参数
+### 요청 매개 변수
 
-此接口不接受任何参数。
+본 API는 매개 변수가 필요하지 않습니다.
 
-> Responds:
+> Response:
 
 ```json
   "data": [
@@ -372,34 +341,32 @@ curl "https://api-cloud.huobi.co.kr/v1/common/symbols"
   ]
 ```
 
-### 返回字段
+### 응답 데이터
 
-字段名称            | 数据类型 | 描述
----------       | --------- | -----------
-base-currency   | string    | 交易对中的基础币种
-quote-currency  | string    | 交易对中的报价币种
-price-precision | integer   | 交易对报价的精度（小数点后位数）
-amount-precision| integer   | 交易对基础币种计数精度（小数点后位数）
-symbol-partition| string    | 交易区，可能值: [main，innovation，bifurcation]
+| 매개 변수        | 데이터 유형 | 설명                                                  |
+| ---------------- | ----------- | ----------------------------------------------------- |
+| base-currency    | string      | 기본 통화의 심볼명                                    |
+| quote-currency   | string      | 기축 통화의 심볼명                                    |
+| price-precision  | integer     | 코인 가격의 소수점 자릿수                             |
+| amount-precision | integer     | 코인 수량의 소수점 자릿수                             |
+| symbol-partition | string      | 거래 범위, 가능한 값: [main, innovation, bifurcation] |
 
-## 获取所有币种
 
-此接口返回所有火币韩国站支持的币种。
+## 모든 코인 회득
 
+이 API에서 모든 후오비 코리아가 지원하는 코인이 반환됩니다. 
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/v1/common/currencys"
 ```
 
-### HTTP 请求
+### HTTP 요청
 
 - GET `/v1/common/currencys`
 
+### 요청 매개 변수
 
-### 请求参数
-
-此接口不接受任何参数。
-
+본 API는 매개 변수가 필요하지 않습니다.
 
 > Response:
 
@@ -411,25 +378,25 @@ curl "https://api-cloud.huobi.co.kr/v1/common/currencys"
   ]
 ```
 
-### 返回字段
+### 응답 데이터
 
+<font color="#d73e48">반환 된 "data" 개체는 각각 지원되는 통화를 나타내는 문자열 배열입니다.</font>
 
-<aside class="notice">返回的“data”对象是一个字符串数组，每一个字符串代表一个支持的币种。</aside>
-## 获取当前系统时间
+## 현재 시스템 시간 획득
 
-此接口返回当前的系统时间，时间是调整为北京时间的时间戳，单位毫秒。
+본 API는 현재 시스템 시간 정보(UTC/GMT+08:00)가 반환됩니다. *시간 단위: ms(millisecond)
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/v1/common/timestamp"
 ```
 
-### HTTP 请求
+### HTTP 요청
 
 - GET `/v1/common/timestamp`
 
-### 请求参数
+### 요청 매개 변수
 
-此接口不接受任何参数。
+이 API에서 모든 파라미터를 받지 않습니다.
 
 > Response:
 
@@ -437,17 +404,22 @@ curl "https://api-cloud.huobi.co.kr/v1/common/timestamp"
   "data": 1494900087029
 ```
 
-### 响应数据
+### 응답 데이터
 
-返回的“data”对象是一个整数表示返回的调整为北京时间的时间戳，单位毫秒。
+반환된 "data"는 정수이며, ms(millisecond) 단위의 UTC/GMT+08:00 타임 스탬프 값입니다.
 
-# 4.行情数据
 
-## K 线数据（蜡烛图）
+---
+title: market_data
+---
 
-此接口返回历史K线数据。
+# 4. 시세 데이터
 
-### HTTP 请求
+## K-line 차트 정보(캔들 도표)
+
+본 API는 K-라인의 내역을 반환합니다.
+
+### HTTP 요청
 
 - GET `/market/history/kline`
 
@@ -455,16 +427,17 @@ curl "https://api-cloud.huobi.co.kr/v1/common/timestamp"
 curl "https://api-cloud.huobi.co.kr/market/history/kline?period=1day&size=200&symbol=btcusdt"
 ```
 
-### 请求参数
+### 요청 매개 변수
 
-参数       | 数据类型 | 是否必须 | 默认值 | 描述 | 取值范围
---------- | --------- | -------- | ------- | ------ | ------
-symbol    | string    | true     | NA      | 交易对 | btcusdt, ethbtc...
-period    | string    | true     | NA      | 返回数据时间粒度，也就是每根蜡烛的时间区间 | 1min, 5min, 15min, 30min, 60min, 1day, 1mon, 1week, 1year
-size      | integer   | false    | 150     | 返回 K 线数据条数 | [1, 2000]
+| 매개 변수 | 데이터 유형 | 필수 여부 | 기본값 | 설명                                                        | 값의 범위                                                 |
+| -------- | ----------- | --------- | ------ | ----------------------------------------------------------- | --------------------------------------------------------- |
+| symbol   | string      | true      | N/A     | 거래쌍                                                      | btcusdt, ethbtc 등  |
+| period   | string      | true      | N/A     | 각 차트의 시간 간격의 단위를 반환합니다. | 1min, 5min, 15min, 30min, 60min, 1day, 1mon, 1week, 1year |
+| size     | integer     | false     | 150    | 반환한 K챠트 개수                                           | [1, 2000]                                                 |
 
-<aside class="notice">当前 REST API 不支持自定义时间区间，如需要历史固定时间范围的数据，请参考 Websocket API 中的 K 线接口。</aside>
-<aside class="notice"></aside>
+<font color="#d73e48">현재 REST API는 UTC/GMT+08:00만 지원합니다. 만약 기존 지정한 시간대 데이터가 필요하시면 Websocket API 중의 챠트 API 참고 하세요.</font>
+
+
 > Response:
 
 ```json
@@ -482,26 +455,26 @@ size      | integer   | false    | 150     | 返回 K 线数据条数 | [1, 2000
 ]
 ```
 
-### 响应数据
+### 응답 데이터
 
-字段名称      | 数据类型 | 描述
---------- | --------- | -----------
-id        | integer   | 调整为北京时间的时间戳，单位秒，并以此作为此K线柱的id
-amount    | float     | 以基础币种计量的交易量
-count     | integer   | 交易次数
-open      | float     | 本阶段开盘价
-close     | float     | 本阶段收盘价
-low       | float     | 本阶段最低价
-high      | float     | 本阶段最高价
-vol       | float     | 以报价币种计量的交易量
+| 매개 변수 | 데이터 유형 | 설명                                                         |
+| --------- | ----------- | ------------------------------------------------------------ |
+| id        | integer     | UTC/GMT+08:00의 타임 스탬프로 조정(단위: 초)하고 K-라인의 아이디로 사용. |
+| amount    | float       | 기본 통화 기준으로 측정된 거래량                                   |
+| count     | integer     | 거래 건수                                                    |
+| open      | float       | 이 단계 시작가                                               |
+| close     | float       | 이 단계의 종가                                                 |
+| low       | float       | 이 단계 최저가                                               |
+| high      | float       | 이 단계 최고가                                               |
+| vol       | float       | 기축 통화 기준으로 측정하는 거래량                                 |
 
 
 
-## 聚合行情（Ticker）
+## 시세 집계（Ticker）
 
-此接口获取ticker信息同时提供最近24小时的交易聚合信息。
+본 API는 시세 정보를 수집하여 지난 24시간의 거래 집계 정보를 제공합니다.
 
-### HTTP 请求
+### HTTP 요청
 
 - GET `/market/detail/merged`
 
@@ -509,12 +482,11 @@ vol       | float     | 以报价币种计量的交易量
 curl "https://api-cloud.huobi.co.kr/market/detail/merged?symbol=ethusdt"
 ```
 
-### 请求参数
+### 요청 매개 변수
 
-参数      | 数据类型   | 是否必须  | 默认值  | 描述 | 取值范围
---------- | --------- | -------- | ------- | ------| -----
-symbol    | string    | true     | NA      | 交易对 | btcusdt, ethbtc
-
+| 매개 변수 | 데이터 유형 | 필수 여부 | 기본값 | 설명   | 값의 범위       |
+| -------- | ----------- | --------- | ------ | ------ | --------------- |
+| symbol   | string      | true      | N/A     | 거래쌍 | btcusdt, ethbtc 등 |
 
 > Response:
 
@@ -534,28 +506,28 @@ symbol    | string    | true     | NA      | 交易对 | btcusdt, ethbtc
 }
 ```
 
-### 响应数据
+### 응답 데이터
 
-字段名称      | 数据类型 | 描述
---------- | --------- | -----------
-id        | integer   | NA
-amount    | float     | 以基础币种计量的交易量
-count     | integer   | 交易次数
-open      | float     | 本阶段开盘价
-close     | float     | 本阶段最新价
-low       | float     | 本阶段最低价
-high      | float     | 本阶段最高价
-vol       | float     | 以报价币种计量的交易量
-bid       | object    | 当前的最高卖价 [price, quote volume]
-ask       | object    | 当前的最低买价 [price, quote volume]
+| 매개 변수 | 데이터 유형 | 설명                                   |
+| :-------- | :---------- | :------------------------------------- |
+| id        | integer     | N/A                                     |
+| amount    | float       | 기본 통화 기준으로 측정된 거래량             |
+| count     | integer     | 거래 건수                              |
+| open      | float       | 이 단계의 시작가                         |
+| close     | float       | 이 단계의 종가                           |
+| low       | float       | 이 단계 최저가                         |
+| high      | float       | 이 단계 최고가                         |
+| vol       | float       | 기축 통화 기준으로 측정하는 거래량           |
+| bid       | object      | 현재 최고 매도가 [price, quote volume] |
+| ask       | object      | 현재 최저 매수가 [price, quote volume] |
 
 
-## 所有交易对的最新 Tickers
+## 모든 거래쌍의 최신 시세
 
-- 获得所有交易对的 tickers，数据取值时间区间为24小时滚动。
-- 此接口返回所有交易对的 ticker，因此数据量较大。
+- 24시간 간격으로 모든 거래쌍의 시세 수집
+- 본 API는 모든 거래쌍에 대한 시세 정보를 반환하므로 데이터 양이 많습니다.
 
-### HTTP 请求
+### HTTP 요청
 
 - GET `/market/tickers`
 
@@ -565,19 +537,19 @@ curl "https://api-cloud.huobi.co.kr/market/tickers"
 
 
 
-### 请求参数
+### 요청 매개 변수
 
-此接口不接受任何参数。
+본 API는 매개 변수가 필요하지 않습니다.
 
 > Response:
 
 ```json
 [  
     {  
-        "open":0.044297,      // 开盘价
-        "close":0.042178,     // 收盘价
-        "low":0.040110,       // 最高价
-        "high":0.045255,      // 最低价
+        "open":0.044297,      // 개장가
+        "close":0.042178,     // 종가
+        "low":0.040110,       // 최고가
+        "high":0.045255,      // 최저가
         "amount":12880.8510,  
         "count":12838,
         "vol":563.0388715740,
@@ -596,26 +568,26 @@ curl "https://api-cloud.huobi.co.kr/market/tickers"
 ]
 ```
 
-### 响应数据
+### 응답 데이터
 
-核心响应数据为一个对象列，每个对象包含下面的字段
+핵심 응답 내용은 개체 열이며, 각 개체에는 다음 필드가 포함됩니다.
 
-字段名称      | 数据类型   | 描述
+매개 변수      | 데이터 유형 | 설명
 --------- | --------- | -----------
-amount    | float     | 以基础币种计量的交易量
-count     | integer   | 交易笔数
-open      | float     | 开盘价
-close     | float     | 最新价
-low       | float     | 最低价
-high      | float     | 最高价
-vol       | float     | 以报价币种计量的交易量
-symbol    | string    | 交易对，例如btcusdt, ethbtc
+amount    | float     | 기본 통화 기준으로 측정된 거래량 
+count     | integer   | 거래 건수 
+open      | float     | 이 단계의 시작가
+close     | float     | 이 단계의 종가
+low       | float     | 이 단계 최저가
+high      | float     | 이 단계 최고가
+vol       | float     | 기축 통화 기준으로 측정하는 거래량 
+symbol    | string    | 거래쌍 예) btcusdt, ethbtc
 
-## 市场深度数据
+## Market 누적주문량 정보
 
-此接口返回指定交易对的当前市场深度数据。
+본 API에서 지정된 거래쌍에 대한 현재 Market 누적주문량 정보를 반환합니다.
 
-### HTTP 请求
+### HTTP 요청
 
 - GET `/market/depth`
 
@@ -623,25 +595,26 @@ symbol    | string    | 交易对，例如btcusdt, ethbtc
 curl "https://api-cloud.huobi.co.kr/market/depth?symbol=btcusdt&type=step2"
 ```
 
-### 请求参数
+### 요청 매개 변수
 
-参数      | 数据类型   | 必须     | 默认值 | 描述 | 取值范围 |
---------- | --------- | -------- | ------| ---- | --- |
-symbol    | string    | true     | NA    | 交易对 | btcusdt, ethbtc...|
-depth     | integer   | false    | 20    | 返回深度的数量 | 5，10，20 |
-type      | string    | true     | step0 | 深度的价格聚合度，具体说明见下方 | step0，step1，step2，step3，step4，step5 |
+매개 변수      | 데이터 유형 | 필수 여부 | 기본값 | 설명 | 값의 범위 |
+--------- | --------- | -------- | ------| ---- | --- | --- 
+symbol    | string    | true     | N/A    | 거래쌍 | btcusdt, ethbtc 등 |
+depth     | integer   | false    | 20    | 누적 주문량 반환 | 5，10，20 |
+type      | string    | true     | step0 | 누적주문량 가격 집계 (자세한 내용은 아래 참고) | step0，step1，step2，step3，step4，step5 |
 
-<aside class="notice">当type值为‘step0’时，‘depth’的默认值为150而非20。 </aside>
-**参数type的各值说明**
+type값이 ‘step0’인 경우，‘depth’의 기본값이 20이 아니고 150입니다.
 
-取值      | 说明
+**매개 변수 유형의 각 값에 대한 설명**
+
+값      | 설명 
 --------- | ---------
-step0     | 无聚合
-step1     | 聚合度为报价精度*10
-step2     | 聚合度为报价精度*100
-step3     | 聚合度为报价精度*1000
-step4     | 聚合度为报价精度*10000
-step5     | 聚合度为报价精度*100000
+step0     | 집계하지 않음 
+step1     | 집계 수준 = 정밀도 * 10
+step2     | 집계 수준 = 정밀도 * 100
+step3     | 집계 수준 = 정밀도 * 1000
+step4     | 집계 수준 = 정밀도 * 10000
+step5     | 집계 수준 = 정밀도 * 100000
 
 > Response:
 
@@ -668,21 +641,22 @@ step5     | 聚合度为报价精度*100000
   }
 ```
 
-### 响应数据
+### 응답 데이터
 
-<aside class="notice">返回的JSON顶级数据对象名为'tick'而不是通常的'data'。</aside>
-字段名称      | 数据类型    | 描述
+반환된 JSON 최상위 데이터 개체의 이름은 일반적인 'data'대신 'tick'입니다.
+
+매개 변수      | 데이터 유형  | 설명
 --------- | --------- | -----------
-ts        | integer   | 调整为北京时间的时间戳，单位毫秒
-version   | integer   | 内部字段
-bids      | object    | 当前的所有买单 [price, quote volume]
-asks      | object    | 当前的所有卖单 [price, quote volume]
+ts        | integer   | UTC/GMT+08:00의 타임 스탬프로 조정 (단위: ms(milliseconds)) 
+version   | integer   | 내부 필드 
+bids      | object    | 현재 모든 매수 주문 
+asks      | object    | 현재 모든 매도 주문
 
-## 最近市场成交记录
+## 최근 Market 거래 기록
 
-此接口返回指定交易对最新的一个交易记录。
+본 API는 지정된 거래쌍에 대한 최신 거래 기록을 반환합니다.
 
-### HTTP 请求
+### HTTP 요청
 
 - GET `/market/trade`
 
@@ -690,11 +664,11 @@ asks      | object    | 当前的所有卖单 [price, quote volume]
 curl "https://api-cloud.huobi.co.kr/market/trade?symbol=ethusdt"
 ```
 
-### 请求参数
+### 요청 매개 변수
 
-参数      | 数据类型   | 是否必须  | 默认值   | 描述
+매개 변수      | 데이터 유형 | 필수 여부 | 기본값 | 설명
 --------- | --------- | -------- | ------- | -----------
-symbol    | string    | true     | NA      | 交易对，例如btcusdt, ethbtc
+symbol    | string    | true     | N/A      | 거래쌍，예) btcusdt, ethbtc 
 
 > Response:
 
@@ -714,22 +688,22 @@ symbol    | string    | true     | NA      | 交易对，例如btcusdt, ethbtc
 }
 ```
 
-### 响应数据
+### 응답 데이터
 
-<aside class="notice">返回的JSON顶级数据对象名为'tick'而不是通常的'data'。</aside>
-字段名称       | 数据类型 | 描述
+반환된 JSON 최상위 데이터 개체의 이름은 일반적인 'data'대신 'tick'입니다.
+매개 변수       | 데이터 유형 | 설명
 --------- | --------- | -----------
-id        | integer   | 唯一交易id
-amount    | float     | 以基础币种为单位的交易量
-price     | float     | 以报价币种为单位的成交价格
-ts        | integer   | 调整为北京时间的时间戳，单位毫秒
-direction | string    | 交易方向：“buy” 或 “sell”, “buy” 即买，“sell” 即卖
+id        | integer   | 유일한 거래 id 
+amount    | float     | 거래화폐을 단위으로 하는 거래량 
+price     | float     | 마켓화폐을 단위으로 하는 체결가격 
+ts        | integer   | UTC/GMT+08:00의 타임 스탬프으로 조정, 단위는 밀리초. 
+direction | string    | 거래방향：“buy”  혹은 “sell”, “buy”는 매수，“sell” 는 매도. 
 
-## 获得近期交易记录
+## 근일 체결 기록
 
-此接口返回指定交易对近期的所有交易记录。
+이 API에서 지정한 거래쌍의 근일 모든 체결 기록이 반환 됩니다. 
 
-### HTTP 请求
+### HTTP 요청
 
 - GET `/market/history/trade`
 
@@ -737,12 +711,12 @@ direction | string    | 交易方向：“buy” 或 “sell”, “buy” 即�
 curl "https://api-cloud.huobi.co.kr/market/history/trade?symbol=ethusdt&size=2"
 ```
 
-### 请求参数
+### 요청 매개 변수
 
-参数       | 数据类型  | 是否必须   | 默认值 | 描述
+ 매개 변수 | 데이터 유형 | 필수 여부 | 기본값 | 설명                                 
 --------- | --------- | -------- | ------- | -----------
-symbol    | string    | true     | NA      | 交易对，例如 btcusdt, ethbtc
-size      | integer   | false    | 1       | 返回的交易记录数量，最大值2000
+symbol    | string    | true     | N/A      | 거래쌍，예) btcusdt, ethbtc 
+size      | integer   | false    | 1       | 반환되는 체결 기록수, 최대값 2000 
 
 > Response:
 
@@ -784,22 +758,23 @@ size      | integer   | false    | 1       | 返回的交易记录数量，最�
 ]
 ```
 
-### 响应数据
+### 응답 데이터
 
-<aside class="notice">返回的数据对象是一个对象数组，每个数组元素为一个调整为北京时间的时间戳（单位毫秒）下的所有交易记录，这些交易记录以数组形式呈现。</aside>
-参数      | 数据类型 | 描述
+반환한 데이터 대상은 하나의 object array이고 각 array의 요소는 UTC/GMT+08:00의 타임 스탬프(단위는 밀리초)으로 조정한 모든 체결기록이며 이런 체결 기록은 array 형식으로 나타납니다.
+
+매개 변수      | 데이터 유형 | 설명
 --------- | --------- | -----------
-id        | integer   | 唯一交易id
-amount    | float     | 以基础币种为单位的交易量
-price     | float     | 以报价币种为单位的成交价格
-ts        | integer   | 调整为北京时间的时间戳，单位毫秒
-direction | string    | 交易方向：“buy” 或 “sell”, “buy” 即买，“sell” 即卖
+id        | integer   | 고유 거래 ID 
+amount    | float     | 기본 통화 기준으로 측정된 거래량 
+price     | float     | 기축 통화를 단위로 하는 체결 가격 
+ts        | integer   | UTC/GMT+08:00의 타임 스탬프로 조정 (단위: ms(milliseconds))
+direction | string    | 거래: “buy” 또는 “sell”, “buy” 매수，“sell” 매도 
 
-## 最近24小时行情数据
+## 최근 24시간 시세 데이터
 
-此接口返回最近24小时的行情数据汇总。
+본 API는 최근 24시간 시세 데이터의 합계를 반환합니다.
 
-### HTTP 请求
+### HTTP 요청
 
 - GET `/market/detail`
 
@@ -807,11 +782,11 @@ direction | string    | 交易方向：“buy” 或 “sell”, “buy” 即�
 curl "https://api-cloud.huobi.co.kr/market/detail?symbol=ethusdt"
 ```
 
-### 请求参数
+### 요청 매개 변수
 
-参数      | 数据类型 | 是否必须 | 默认值 | 描述
+ 매개 변수 | 데이터 유형 | 필수 여부 | 기본값 | 설명                              
 --------- | --------- | -------- | ------- | -----------
-symbol    | string    | true     | NA      | 交易对，例如btcusdt, ethbtc
+symbol    | string    | true     | N/A      | 거래쌍，예)  btcusdt, ethbtc 
 
 > Response:
 
@@ -829,37 +804,45 @@ symbol    | string    | true     | NA      | 交易对，例如btcusdt, ethbtc
 }
 ```
 
-### 响应数据
+### 응답 데이터
 
-<aside class="notice">返回的JSON顶级数据对象名为'tick'而不是通常的'data'。</aside>
-字段名称      | 数据类型   | 描述
+반환된 JSON 최상위 데이터 개체의 이름은 일반적인 'data'대신 'tick'입니다.
+
+매개 변수      | 데이터 유형 | 설명
 --------- | --------- | -----------
-id        | integer   | 响应id
-amount    | float     | 以基础币种计量的交易量
-count     | integer   | 交易次数
-open      | float     | 本阶段开盘价
-close     | float     | 本阶段收盘价
-low       | float     | 本阶段最低价
-high      | float     | 本阶段最高价
-vol       | float     | 以报价币种计量的交易量
-version   | integer   | 内部数据
+id        | integer   | 고유 거래 ID
+amount    | float     | 기본 통화 기준으로 측정된 거래량 
+count     | integer   | 거래 건수 
+open      | float     | 이 단계의 시작가 
+close     | float     | 이 단계의 종가 
+low       | float     | 이 단계 최저가 
+high      | float     | 이 단계 최고가 
+vol       | float     | 기축 통화 기준으로 측정하는 거래량 
+version   | integer   | 내부 데이터 
 
-# 账户相关
 
-<aside class="notice">访问账户相关的接口需要进行签名认证。</aside>
-## 账户信息 
 
-API Key 权限：读取
+---
+title: account
+---
 
-查询当前用户的所有账户 ID `account-id` 及其相关信息
+# 5. 계정 관련
 
-### HTTP 请求
+Access 계정과 연결된 API에는 서명 인증이 필요합니다.
+
+## 계정 정보 
+
+- API Key 권한：읽기
+
+- 사용자`account-id`의 모든 계정 ID 및 관련 정보를 조회합니다.
+
+### HTTP 요청
 
 - GET `/v1/account/accounts`
 
-### 请求参数
+### 요청 매개 변수
 
-无
+없음.
 
 > Response:
 
@@ -888,33 +871,33 @@ API Key 权限：读取
 }
 ```
 
-### 响应数据
+### 응답 데이터
 
-| 参数名称  | 是否必须 | 数据类型 | 描述 | 取值范围 |
+| 매개 변수 | 데이터 유형 | 필수 여부 | 설명 | 값의 범위 |
 | ----- | ---- | ------ | ----- | ----  |
-| id    | true | long   | account-id |    |
-| state | true | string | 账户状态  | working：正常, lock：账户被锁定 |
-| type  | true | string | 账户类型  | spot：现货账户，otc：OTC 账户，point：点卡账户 |
+| id    | long | true | account-id |    |
+| state | string | true | 계정 상태 | working：정상, lock：계정이 잠금됨. |
+| type  | string | true | 계정 유형 | spot: 자산 계정, otc: C2C 계정, point: 포인트 카드계정 |
 
 
 
-## 账户余额
+## 계정 잔액
 
-API Key 权限：读取
+- API Key 권한：읽기
 
-查询指定账户的余额，支持以下账户：
+- 지정한 계정의 잔액 조회 가능합니다. 아래 계정 지원:
 
-spot：现货账户，otc：OTC 账户，point：点卡账户
+- spot：현물 계정, otc：C2C 계정, point：포인트 카드 계정
 
-### HTTP 请求
+### HTTP 요청
 
 - GET `/v1/account/accounts/{account-id}/balance`
 
-### 请求参数
+### 요청 매개 변수
 
-| 参数名称   | 是否必须 | 类型   | 描述   | 默认值  | 取值范围 |
+| 매개 변수 | 데이터 유형 | 필수 여부 | 설명   |
 | ---------- | ---- | ------ | --------------- | ---- | ---- |
-| account-id | true | string | account-id，填在 path 中，可用 GET /v1/account/accounts 获取 |  |      |
+| account-id | string | true | account-id을 path에 작성 ，GET /v1/account/accounts 으로 회득 가능함. |
 
 > Response:
 
@@ -941,76 +924,37 @@ spot：现货账户，otc：OTC 账户，point：点卡账户
 }
 ```
 
-### 响应数据
+### 응답 데이터
 
-| 参数名称  | 是否必须  | 数据类型   | 描述    | 取值范围   |
+| 매개 변수 | 데이터 유형 | 필수 여부 | 설명    | 값의 범위  |
 | ----- | ----- | ------ | ----- | ----- |
-| id    | true  | long   | 账户 ID |      |
-| state | true  | string | 账户状态  | working：正常  lock：账户被锁定 |
-| type  | true  | string | 账户类型  | spot：现货账户，otc：OTC 账户，point：点卡账户 |
-| list  | false | Array  | 子账号数组 |     |
+| id    | long  | true   | 계정 ID |      |
+| state | string  | true | 계정 상태 | working：정상, lock： 계정 잠금 처리 |
+| type  | string  | true | 계정 유형 | spot: 현물 계정, otc: C2C 계정, point: 포인트 카드 계정 |
 
-list字段说明
+list 필드 설명
 
-| 参数名称   | 是否必须 | 数据类型   | 描述   | 取值范围    |
-| -------- | ---- | ------ | ---- |  ------ |
-| balance  | true | string | 余额   |    |
-| currency | true | string | 币种   |    |
-| type     | true | string | 类型   | trade: 交易余额，frozen: 冻结余额 |
-
-## 资产划转（母子账号之间）
-
-API Key 权限：交易
-
-母账户执行母子账号之间的划转
-
-### HTTP 请求
-
-- POST ` /v1/subuser/transfer`
-
-### 请求参数
-
-参数|是否必填 | 数据类型 | 说明 | 取值范围 |
------------|------------|-----------|------------|----------|--
-sub-uid	|true|	long|子账号uid	|-|
-currency|true|	string|币种	|-|
-amount|true|	decimal|划转金额|-|	
-type|true|string|划转类型| master-transfer-in（子账号划转给母账户虚拟币）/ master-transfer-out （母账户划转给子账号虚拟币）/master-point-transfer-in （子账号划转给母账户点卡）/master-point-transfer-out（母账户划转给子账号点卡） |
-
-> Response:
-
-```json
-{
-  "data":123456,
-  "status":"ok"
-}
-```
-
-### 响应数据
-
-参数|是否必填 | 数据类型 | 长度 | 说明 | 取值范围 |
------------|------------|-----------|------------|----------|--|
-data | true| int | - | 划转订单id|   - |
-status | true|   | - |  状态| "OK" or "Error"    |
-
-### 错误码
-
-error_code|	说明|	类型|
-------------------|------------|-----------|
-account-transfer-balance-insufficient-error|	账户余额不足|	string|
-base-operation-forbidden|	禁止操作（母子账号关系错误时报）	|string|
+| 매개 변수 | 데이터 유형 | 필수 여부 | 설명   | 값의 범위 |
+| :------- | ---- | ------ | ---- |  :----- |
+| balance  | true | string | 잔액 |    |
+| currency | true | string | 코인 |    |
+| type     | true | string | 유형 | trade: 거래 잔액，frozen: 동결 자산 |
 
 
+---
+title: wallet
+---
 
-# 6.钱包（充值与提现）
+# 6. 지갑（입금과 출금）
 
-<aside class="notice">访问钱包相关的接口需要进行签名认证。</aside>
-## 虚拟币提现
+<font color="red">지갑 관련 API 액세스하려면 서명 인증이 필요합니다.</font>
 
-API Key 权限：提币
+## 암호화폐 출금
 
-<aside class="notice">仅支持在官网上相应币种 <a href='https://www.huobi.co.kr/zh-CN/address//'>地址列表 </a> 中的地址。</aside>
-### HTTP 请求
+- API Key 권한：출금
+- 후오비 코리아 <a href='https://www.huobi.co.kr/ko-kr/address/'>웹사이트</a>에서 지원하는 코인 주소만 지원합니다.
+
+### HTTP 요청
 
 - POST ` /v1/dw/withdraw/api/create`
 
@@ -1023,15 +967,15 @@ API Key 权限：提币
 }
 ```
 
-### 请求参数
+### 요청 매개 변수
 
-| 参数名称       | 是否必须 | 类型     | 描述     |取值范围 |
+| 매개 변수  | 유형 | 필수 여부 | 설명     |값의 범위 |
 | ---------- | ---- | ------ | ------ | ---- |
-| address | true | string   | 提现地址 |仅支持在官网上相应币种[地址列表](https://www.hbg.com/zh-cn/withdraw_address/) 中的地址  |
-| amount     | true | string | 提币数量   |      |
-| currency | true | string | 资产类型   |  btc, ltc, bch, eth, etc ...(火币全球站支持的币种) |
-| fee     | false | string | 转账手续费  |     |
-| addr-tag | false | string | 虚拟币共享地址tag，适用于xrp，xem，bts，steem，eos，xmr | 格式, "123"类的整数字符串 |
+| address | string | true   | 출금 주소 | 웹사이트에서 지원하는 [코인 주소](https://www.hbg.com/zh-cn/withdraw_address/) 중의 주소만 지원합니다.  |
+| amount     | string | true | 출금 수량 |      |
+| currency | string | true | 자산 유형                                                    | btc, ltc, bch, eth, etc 등 (후오비 코리아에서 지원하는 코인) |
+| fee     | string | false | 수수료 |     |
+| addr-tag      | string     | false | XRP, XEM, BTS, STEEM, EOS, XMR 암호화폐 주소 Tag | 형식, class "123"의 정수형 문자열 |
 
 
 > Response:
@@ -1042,27 +986,27 @@ API Key 权限：提币
 }
 ```
 
-### 响应数据
+### 응답 데이터
 
 
-| 参数名称 | 是否必须  | 数据类型 | 描述   | 取值范围 |
+| 매개 변수 | 데이터 유형 | 필수 여부 | 설명   |
 | ---- | ----- | ---- | ---- | ---- |
-| data | false | long | 提现 ID |      |
+| data | long | false | 출금 ID |      |
 
 
-## 取消提现
+## 출금 취소
 
-API Key 权限：提币
+- API Key 권한：출금
 
-### HTTP 请求
+### HTTP 요청
 
 - POST ` /v1/dw/withdraw-virtual/{withdraw-id}/cancel`
 
-### 请求参数
+### 요청 매개 변수
 
-| 参数名称        | 是否必须 | 类型   | 描述 | 默认值  | 取值范围 |
-| ----------- | ---- | ---- | ------------ | ---- | ---- |
-| withdraw-id | true | long | 提现 ID，填在 path 中 |      |      |
+| 매개 변수   | 유형 |  필수 여부  | 설명 | 값의 범위 |
+| ----------- | ---- | ---- | ------------ | ---- |
+| withdraw-id | long | true | 출금 ID | path에 작성 |      |
 
 
 > Response:
@@ -1073,33 +1017,32 @@ API Key 权限：提币
 }
 ```
 
-### 响应数据
+### 응답 데이터
 
 
-| 参数名称 | 是否必须  | 数据类型 | 描述    | 取值范围 |
-| ---- | ----- | ---- | ----- | ---- |
-| data | false | long | 提现 ID |      |
+| 매개 변수 | 데이터 유형 | 필수 여부 | 설명    |
+| ------------- | --------- | ----------- | ------- | --------- |
+| data          | long     | false        | 출금 ID |           |
 
-## 充提记录
+## 입출금 내역
 
-API Key 权限：读取
+- API Key 권한：읽기
 
-查询充提记录
+- 입출금 기록 조회.
 
-### HTTP 请求
+### HTTP 요청
 
 - GET `/v1/query/deposit-withdraw`
 
-### 请求参数
+### 요청 매개 변수
 
-| 参数名称        | 是否必须 | 类型   | 描述 | 默认值  | 取值范围 |
+| 매개 변수 | 데이터 유형 | 필수 여부 | 설명 | 기본값  | 값의 범위 |
 | ----------- | ---- | ---- | ------------ | ---- | ---- |
-| currency | false | string | 币种  |  |缺省时，返回所有币种 |
-| type | true | string | 充值或提现 |     |  deposit 或 withdraw |
-| from   | false | string | 查询起始 ID  |缺省时，默认值direct相关。当direct为‘prev’时，from 为1 ，从旧到新升序返回；当direct为’next‘时，from为最新的一条记录的ID，从新到旧降序返回    |     |
-| size   | false | string | 查询记录大小  | 100   |1-500     |
-| direct  | false | string | 返回记录排序方向  | 缺省时，默认为“prev” （升序）  |“prev” （升序）or “next” （降序）    |
-
+| currency | string | false | 코인종류 |  | 매개 변수가 없는 경우 모든 코인이 반환됩니다. |
+| type | string | true | 입금 또는 출금 |     | deposit 혹은 withdraw |
+| from   | string | false | 쿼리 시작 ID | 매개 변수가 없는 경우 기본값은 direct 관련입니다. direct가 'prev'인 경우 from은 1이고 과거순으로 오름차순 정렬됩니다. direct가 'next'인 경우 from은 최신 기록 ID이며 최신순으로 내림차순 정렬됩니다.    |     |
+| size   | string | false | 쿼리 레코드 크기 | 100   |1-500     |
+| direct | string | false | 레코드 정렬 direct 반환 | 매개 변수가 없을 시 기본값은 “prev”(올림차순) |“prev”(올림차순) or “next” (내림차순) |
 > Response:
 
 ```json
@@ -1124,62 +1067,65 @@ API Key 权限：读取
 }
 ```
 
-### 响应数据
+### 응답 데이터
 
 
-| 参数名称 | 是否必须 | 数据类型 | 描述 | 取值范围 |
+| 매개 변수 |  데이터 유형 | 필수 여부 | 설명 | 값의 범위 |
 |-----|-----|-----|-----|------|
-|   id  |  true  |  long  |   | |
-|   type  |  true  |  string  | 类型 | 'deposit', 'withdraw' |
-|   currency  |  true  |  string  |  币种 | |
-| tx-hash | true |string | 交易哈希 | |
-| amount | true | long | 个数 | |
-| address | true | string | 地址 | |
-| address-tag | true | string | 地址标签 | |
-| fee | true | long | 手续费 | |
-| state | true | string | 状态 | 状态参见下表 |
-| created-at | true | long | 发起时间 | |
-| updated-at | true | long | 最后更新时间 | |
+|   id  |  long  |  true  |   | |
+|   type  |  string  |  true  | 유형 | 'deposit', 'withdraw' |
+| currency  |  string  |  true  | 코인 | |
+| tx-hash | string | true | 거래hash | |
+| amount | long | true | 개수 | |
+| address | string | true | 주소 | |
+| address-tag | string | true | 주소 tag | |
+| fee | long | true | 수수료 | |
+| state | string | true | 상태 | 상태는 아래의 도표를 참조 |
+| created-at | long | true | 생성시간 | |
+| updated-at | long | true | 최종 업데이트 시간 | |
 
 
-- 虚拟币充值状态定义：
+- 암호화폐 입금 상태 정의：
 
-|状态|描述|
+|상태|설명|
 |--|--|
-|unknown|状态未知|
-|confirming|确认中|
-|confirmed|确认中|
-|safe|已完成|
-|orphan| 待确认|
+|unknown|알 수 없는 상태|
+|confirming|컨펌 중|
+|confirmed|컨펌 완료|
+|safe|입금 완료|
+|orphan| 입금 대기|
 
-- 虚拟币提现状态定义：
+- 암호화폐 출금 상태 정의：
 
-| 状态 | 描述  |
+| 상태 | 설명  |
 |--|--|
-| submitted | 已提交 |
-| reexamine | 审核中 |
-| canceled  | 已撤销 |
-| pass    | 审批通过 |
-| reject  | 审批拒绝 |
-| pre-transfer | 处理中 |
-| wallet-transfer | 已汇出 |
-| wallet-reject   | 钱包拒绝 |
-| confirmed      | 区块已确认 |
-| confirm-error  | 区块确认错误 |
-| repealed       | 已撤销 |
+| submitted | 제출 완료 |
+| reexamine | 심사 중 |
+| canceled  | 출금 취소 완료 |
+| pass    | 심사 승인 |
+| reject  | 심사 거절 |
+| pre-transfer | 처리 중 |
+| wallet-transfer | 입금 완료 |
+| wallet-reject   | 지갑 전송 거절 |
+| confirmed      | 블록 컨펌 완료 |
+| confirm-error  | 블록 컨펌 오류 |
+| repealed       | 출금 취소 완료 |
 
 
+---
+title: trading
+---
 
-# 现货 
+# 7. 거래
 
-<aside class="notice">访问交易相关的接口需要进行签名认证。</aside>
-## 下单
+거래 관련 API 액세스 하는 경우 서명 인증이 필요합니다.
 
-API Key 权限：交易
+## 주문
 
-发送一个新订单到火币韩国以进行撮合。
+- API Key 권한：거래
+- 후오비 코리아에 새로운 주문을 생성하여 매칭을 진행합니다.
 
-### HTTP 请求
+### HTTP 요청
 
 - POST ` /v1/order/orders/place`
 
@@ -1194,28 +1140,28 @@ API Key 权限：交易
 }
 ```
 
-### 请求参数
+### 요청 매개 변수
 
-参数名称 | 数据类型 | 是否必需 | 默认值 | 描述
+매개 변수 | 데이터 유형 | 필수 여부 | 기본값 | 설명
 ---------  | --------- | -------- | ------- | -----------
-account-id | string    | true     | NA      | 账户 ID，使用 GET /v1/account/accounts 接口查询。现货交易使用 ‘spot’ 账户的 account-id；杠杆交易，请使用 ‘margin’ 账户的 account-id
-symbol     | string    | true     | NA      | 交易对, 例如btcusdt, ethbtc
-type       | string    | true     | NA      | 订单类型，包括buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker（说明见下文）
-amount     | string    | true     | NA      | 订单交易量
-price      | string    | false    | NA      | limit order的交易价格
-source     | string    | false    | api     | 现货交易填写“api” 
+account-id | string    | true     | N/A      | 계정 ID, GET /v1/account/accounts API로 조회, 현물 거래는 ‘spot’ 계정의 account-id 사용
+symbol     | string    | true     | N/A      | 거래쌍, 예) btcusdt, ethbtc
+type       | string    | true     | N/A      | 주문 유형 - buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sellioc, buy-limit-maker, sell-limit-maker 포함(아래 설명 참조)
+amount     | string    | true     | N/A      | 주문 거래량 
+price      | string    | false    | N/A      | limit order의 체결 가격 
+source     | string    | false    | api     | 현물거래는 “api” 입력 
 
 **buy-limit-maker**
 
-当“下单价格”>=“市场最低卖出价”，订单提交后，系统将拒绝接受此订单；
+“주문 가격” >= “마켓 최저 매도가”인 경우 주문 제출 후 시스템에서 거절됩니다.
 
-当“下单价格”<“市场最低卖出价”，提交成功后，此订单将被系统接受。
+“주문 가격” < “마켓 최저 매도가”인 경우 주문 제출 후, 시스템에서 정상 접수됩니다.
 
 **sell-limit-maker**
 
-当“下单价格”<=“市场最高买入价”，订单提交后，系统将拒绝接受此订单；
+“주문 가격” <= “마켓 최고 매수가”인 경우 주문 제출 후 시스템에서 거절됩니다.
 
-当“下单价格”>“市场最高买入价”，提交成功后，此订单将被系统接受。
+“주문 가격” > “마켓 최고 매수가”인 경우 주문 제출 후 시스템에서 정상 접수됩니다.
 
 > Response:
 
@@ -1225,27 +1171,26 @@ source     | string    | false    | api     | 现货交易填写“api”
 }
 ```
 
-### 响应数据
+### 응답 데이터
 
-返回的主数据对象是一个对应下单单号的字符串。
+- 반환된 기본 데이터 object는 주문 번호에 해당하는 문자열입니다.
 
-## 撤销订单
+## 주문 취소
 
-API Key 权限：交易
+- API Key 권한：거래
+- 본 API는 주문 취소 요청을 보냅니다.
 
-此接口发送一个撤销订单的请求。
+- 본 API는 취소요청만 제출하며 실제 취소결과는 API 상태, 일치 상태 및 기타 API로 확인해야 합니다.
 
-<aside class="warning">此接口只提交取消请求，实际取消结果需要通过订单状态，撮合状态等接口来确认。</aside>
-### HTTP 请求
+### HTTP 요청
 
 - POST ` /v1/order/orders/{order-id}/submitcancel`
 
+### 요청 매개 변수
 
-### 请求参数
-
-| 参数名称     | 是否必须 | 类型     | 描述           | 默认值  | 取值范围 |
-| -------- | ---- | ------ | ------------ | ---- | ---- |
-| order-id | true | string | 订单ID，填在path中 |      |      |
+| 매개 변수 | 필수 여부 | 데이터 유형 | 설명                     |
+| --------- | --------- | ----------- | ------------------------ |
+| order-id  | true      | string      | 주문내역 ID，path에 작성 |
 
 
 > Response:
@@ -1256,16 +1201,15 @@ API Key 权限：交易
 }
 ```
 
-### 响应数据
+### 응답 데이터
 
-返回的主数据对象是一个对应下单单号的字符串。
+- 반환된 기본 데이터 object는 주문 번호에 해당하는 문자열입니다.
 
 
-## 查询当前未成交订单
+## 미체결 주문 조회
 
-API Key 权限：读取
-
-查询已提交但是仍未完全成交或未被撤销的订单。
+- API Key 권한：읽기
+- 제출 후, 체결되지 않은 주문 건에 대한 조회
 
 ```json
 {
@@ -1278,23 +1222,23 @@ API Key 权限：读取
 }
 ```
 
-### HTTP 请求
+### HTTP 요청
 
 - GET `/v1/order/openOrders`
 
 
-### 请求参数
+### 요청 매개 변수
 
-参数名称 | 数据类型 | 是否必需 | 默认值 | 描述
+매개 변수 | 데이터 유형 | 필수여부 | 기본값 | 설명
 ---------  | --------- | -------- | ------- | -----------
-account-id | string    | true    | NA      | 账户 ID，使用 GET /v1/account/accounts 接口获得。现货交易使用‘spot’账户的 account-id； 
-symbol     | string    | ture    | NA      | 交易对, 例如btcusdt, ethbtc
-side       | string    | false    | both    | 指定只返回某一个方向的订单，可能的值有: buy, sell. 默认两个方向都返回。
-size       | int       | false    | 10      | 返回订单的数量，最大值2000。
+account-id | string    | true    | N/A      | 계정 ID, GET /v1/account/accounts API로 조회, 현물 거래는 ‘spot’ 계정의 account-id 사용
+symbol     | string    | ture    | N/A      | 거래쌍, 예) btcusdt, ethbtc 
+side       | string    | false    | both    | 단 방향만 반환하는 주문을 지정합니다. 가능한 값은 buy, sell이며 기본값은 양방향으로 반환됩니다.
+size       | int       | false    | 10      | 주문 건수를 반환합니다. 최대값: 2,000
 
 
+"account-id"와 "symbol"은 같이 지정되거나 지정되지 않아야 합니다. 같이 지정되지 않은 경우 주문번호를 기준으로 내림차순 정렬된 최대 500개의 미체결 주문을 반환합니다.
 
-<aside class="warning">“account-id” 和 “symbol” 需同时指定或者二者都不指定。如果二者都不指定，返回最多500条尚未成交订单，按订单号降序排列。</aside>
 > Response:
 
 ```json
@@ -1318,40 +1262,41 @@ size       | int       | false    | 10      | 返回订单的数量，最大值2
 }
 ```
 
-### 响应数据
+### 응답 데이터
 
-字段名称          | 数据类型 | 描述
+매개 변수          | 데이터 유형 | 설명
 ---------           | --------- | -----------
-id                  | integer   | 订单id
-symbol              | string    | 交易对, 例如btcusdt, ethbtc
-price               | string    | limit order的交易价格
-created-at          | int       | 订单创建的调整为北京时间的时间戳，单位毫秒
-type                | string    | 订单类型
-filled-amount       | string    | 订单中已成交部分的数量
-filled-cash-amount  | string    | 订单中已成交部分的总价格
-filled-fees         | string    | 已交交易手续费总额
-source              | string    | 现货交易填写“api”
-state               | string    | 订单状态，包括submitted, partical-filled, cancelling
+id                  | integer   | 주문 ID
+symbol              | string    | 거래쌍, 예) btcusdt, ethbtc
+price               | string    | 지정가 주문 가격 제한
+created-at          | int       | 주문 생성 시 UTC/GMT+08:00의 타임 스탬프로 조정 (단위: ms(milliseconds))
+type                | string    | 주문 유형 
+filled-amount       | string    | 주문 건에서 체결완료된 수량
+filled-cash-amount  | string    | 주문 건에서 체결완료된 금액
+filled-fees         | string    | 차감된 총 거래 수수료
+source              | string    | 현물 거래는 “api” 추가
+state               | string    | 주문 상태, submitted, partical-filled, cancelling 포함
 
-## 批量撤销订单（open orders）
+## 대량 주문 취소(open orders)
 
-- API Key 权限：交易
-- 此接口发送批量撤销订单的请求。
+- API Key 권한：거래
+- 본 API는 대량 주문 취소 요청을 보냅니다.
 
-<aside class="warning">此接口只提交取消请求，实际取消结果需要通过订单状态，撮合状态等接口来确认。</aside>
-### HTTP 请求
+본 API는 취소요청만 제출하며 실제 취소결과는 API 상태, 일치 상태 및 기타 API로 확인해야 합니다.
+
+### HTTP 요청
 
 - POST ` /v1/order/orders/batchCancelOpenOrders`
 
 
-### 请求参数
+### 요청 매개 변수
 
-| 参数名称     | 是否必须 | 类型     | 描述           | 默认值  | 取值范围 |
+| 매개 변수 | 유형 | 필수 여부     | 설명           | 기본값  | 값의 범위 |
 | -------- | ---- | ------ | ------------ | ---- | ---- |
-| account-id | true  | string | 账户ID     |     |      |
-| symbol     | false | string | 交易对     |      |   单个交易对字符串，缺省将返回所有符合条件尚未成交订单  |
-| side | false | string | 主动交易方向 |      |   “buy”或“sell”，缺省将返回所有符合条件尚未成交订单   |
-| size | false | int | 所需返回记录数  |  100 |   [0,100]   |
+| account-id | string  | true | 계정ID     |     |      |
+| symbol     | string | true | 거래쌍     |      | 단일 거래 쌍 문자열, 매개변수가 없을 경우 미체결된 주문이 반환됩니다.|
+| side | string | false | 주문 활성화 지시 |      |   “buy” 또는 “sell”, 매개변수가 없을 경우 미체결된 주문이 반환됩니다.   |
+| size | int | false | 필요한 레코드 수  |  100 |   [0,100]   |
 
 
 > Response:
@@ -1368,22 +1313,22 @@ state               | string    | 订单状态，包括submitted, partical-fille
 ```
 
 
-### 响应数据
+### 응답 데이터
 
 
-| 参数名称 | 是否必须 | 数据类型   | 描述    | 取值范围 |
+| 매개 변수 | 데이터 유형 | 필수 여부 | 설명    | 값의 범위 |
 | ---- | ---- | ------ | ----- | ---- |
-| success-count | true | int | 成功取消的订单数 |     |
-| failed-count | true | int | 取消失败的订单数 |     |
-| next-id | true | long | 下一个符合取消条件的订单号 |    |
+| success-count | int | true | 취소 완료 주문 건수 |     |
+| failed-count | int | true | 취소 실패 주문 건수 |     |
+| next-id | long | true | 취소 가능한 다음 주문번호 |    |
 
-## 批量撤销订单
+## 주문서 대량 철회
 
-API Key 权限：交易
+API Key 권한：거래
 
-此接口同时为多个订单（基于id）发送取消请求。
+해당 API는 동시에 여러개 주문서(id로 식별) 취소시 요청 합니다.
 
-### HTTP 请求
+### HTTP 요청
 
 - POST ` /v1/order/orders/batchcancel`
 
@@ -1395,11 +1340,11 @@ API Key 权限：交易
 }
 ```
 
-### 请求参数
+### 요청 매개 변수
 
-| 参数名称  | 是否必须 | 类型   | 描述   | 默认值  | 取值范围 |
+| 매개 변수 | 필수 여부 | 유형   | 설명   | 기본값  | 값의 범위 |
 | ---- | ---- | ---- | ----  | ---- | ---- |
-| order-ids | true | list | 撤销订单ID列表 |  |单次不超过50个订单id|
+| order-ids | true | list | 철회 오더 ID리스트 |  | 한차례에 50개 오더 id를 초과 못합니다 |
 
 
 > Response:
@@ -1422,28 +1367,28 @@ API Key 权限：交易
 }
 ```
 
-### 响应数据
+### 응답 데이터
 
-| 字段名称 | 数据类型 | 描述|
+| 필드 이름 | 데이터 유형 | 설명|
 | ---- | ----- | ---- |
-| data | map | 撤单结果
+| data | map | 주문서 철회 결과
 
-## 查询订单详情
+## 주문서 내역 조회
 
-API Key 权限：读取
+API Key 권한：읽기
 
-此接口返回指定订单的最新状态和详情。
+해당 API는 해당 주문서의 최신상태와 상세내역을 반환 합니다.
 
-### HTTP 请求
+### HTTP 요청
 
 - GET `/v1/order/orders/{order-id}`
 
 
-### 请求参数
+### 요청 매개 변수
 
-| 参数名称     | 是否必须 | 类型  | 描述   | 默认值  | 取值范围 |
+| 매개 변수   | 필수 여부 | 유형  | 설명   | 기본값  | 값의 범위 |
 | -------- | ---- | ------ | -----  | ---- | ---- |
-| order-id | true | string | 订单ID，填在path中 |      |      |
+| order-id | true | string | 주문서ID，path에 입력 |      |      |
 
 
 > Response:
@@ -1473,42 +1418,42 @@ API Key 权限：读取
 }
 ```
 
-### 响应数据
+### 응답 데이터
 
-| 字段名称     | 是否必须  | 数据类型   | 描述   | 取值范围     |
+| 필드 이름    | 필수 여부 | 데이터 유형 | 설명   | 값의 범위    |
 | ----------------- | ----- | ------ | -------  | ----  |
-| account-id        | true  | long   | 账户 ID    |       |
-| amount            | true  | string | 订单数量              |    |
-| canceled-at       | false | long   | 订单撤销时间    |     |
-| created-at        | true  | long   | 订单创建时间    |   |
-| field-amount      | true  | string | 已成交数量    |     |
-| field-cash-amount | true  | string | 已成交总金额     |      |
-| field-fees        | true  | string | 已成交手续费（买入为币，卖出为钱） |     |
-| finished-at       | false | long   | 订单变为终结态的时间，不是成交时间，包含“已撤单”状态    |     |
-| id                | true  | long   | 订单ID    |     |
-| price             | true  | string | 订单价格       |     |
-| source            | true  | string | 订单来源   | api |
-| state             | true  | string | 订单状态   | submitting , submitted 已提交, partial-filled 部分成交, partial-canceled 部分成交撤销, filled 完全成交, canceled 已撤销 |
-| symbol            | true  | string | 交易对   | btcusdt, ethbtc, rcneth ... |
-| type              | true  | string | 订单类型   | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单 |
+| account-id        | true  | long   | 계정 ID    |       |
+| amount            | true  | string | 주문서 수량          |    |
+| canceled-at       | false | long   | 주문서 철회 시간 |     |
+| created-at        | true  | long   | 주문서 생성 시간 |   |
+| field-amount      | true  | string | 체결된 수량  |     |
+| field-cash-amount | true  | string | 체결된 총금액   |      |
+| field-fees        | true  | string | 체결된 수수료(매수시 거래 화폐,매도시 메켓화폐) |     |
+| finished-at       | false | long   | 주문서가 최종상태시 시간,체결 시간이 아니며 "주문서 철회"상태를 포함 |     |
+| id                | true  | long   | 주문서 ID |     |
+| price             | true  | string | 주문 가격     |     |
+| source            | true  | string | 주문 경로 | api |
+| state             | true  | string | 주문서 상태 | submitting , submitted 제출 완료, partial-filled 부분체결, partial-canceled 부분철회, filled 체결 완료, canceled 철회 완료 |
+| symbol            | true  | string | 거래쌍 | btcusdt, ethbtc, rcneth ... |
+| type              | true  | string | 주문서 유형 | buy-market：시가 매수, sell-market：시가 매도, buy-limit： 지정가 매수, sell-limit：지정가 매도, buy-ioc：IOC 매수 오더, sell-ioc：IOC 매도 오더 |
 
-## 成交明细
+## 체결 완료 내역
 
-API Key 权限：读取
+API Key 권한：읽기
 
-此接口返回指定订单的成交明细。
+해당 API는 체결 완료 주문서 내역을 반환 합니다. 
 
-### HTTP 请求
+### HTTP 요청
 
 - GET `/v1/order/orders/{order-id}/matchresults`
 
 
 
-### 请求参数
+### 요청 매개 변수
 
-| 参数名称  | 是否必须 | 类型  | 描述  | 默认值  | 取值范围 |
+| 매개 변수 | 필수 여부 | 유형  | 설명  | 기본값  | 값의 범위 |
 | -------- | ---- | ------ | -----  | ---- | ---- |
-| order-id | true | string | 订单ID，填在path中 |      |      |
+| order-id | true | string | 주문서ID，path에 입력 |      |      |
 
 
 > Response:
@@ -1533,29 +1478,29 @@ API Key 权限：读取
 }
 ```
 
-### 响应数据
+### 응답 데이터
 
-<aside class="notice">返回的主数据对象为一个对象数组，其中每一个元件代表一个交易结果。</aside>
-| 字段名称    | 是否必须 | 数据类型   | 描述   | 取值范围     |
+<aside class="notice">반환한 주요 데이터 객체는 하나의 객체array입니다.그중에 매개 원소는 거래 결과 입니다.</aside>
+| 필드 이름   | 필수 여부 | 데이터 유형 | 설명   | 값의 범위    |
 | ------------- | ---- | ------ | -------- | -------- |
-| created-at    | true | long   | 成交时间     |    |
-| filled-amount | true | string | 成交数量     |    |
-| filled-fees   | true | string | 成交手续费    |     |
-| id            | true | long   | 订单成交记录ID |     |
-| match-id      | true | long   | 撮合ID     |     |
-| order-id      | true | long   | 订单 ID    |      |
-| price         | true | string | 成交价格  |    |
-| source        | true | string | 订单来源  | api      |
-| symbol        | true | string | 交易对   | btcusdt, ethbtc, rcneth ...  |
-| type          | true | string | 订单类型   | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单 |
+| created-at    | true | long   | 체결  시간   |    |
+| filled-amount | true | string | 체결  수량   |    |
+| filled-fees   | true | string | 체결  수수료  |     |
+| id            | true | long   | 주문서 체결 리스트 ID |     |
+| match-id      | true | long   | 매칭 ID     |     |
+| order-id      | true | long   | 주문서 ID |      |
+| price         | true | string | 체결 가격 |    |
+| source        | true | string | 주문 경로 | api      |
+| symbol        | true | string | 거래쌍 | btcusdt, ethbtc, rcneth ...  |
+| type          | true | string | 주문서 유형 | buy-market：시가 매수, sell-market：시가 매도, buy-limit：지정가 매수, sell-limit：지정가 매도, buy-ioc：IOC 매수 오더, sell-ioc：IOC 매도 오더 |
 
-## 搜索历史订单
+## 오더 리스트 검색
 
-API Key 权限：读取
+API Key 권한：읽기
 
-此接口基于搜索条件查询历史订单。
+해당 API는 검색 조건에 의하여 주문 리스트를 반환합니다
 
-### HTTP 请求
+### HTTP 요청
 
 - GET `/v1/order/orders`
 
@@ -1571,18 +1516,18 @@ API Key 权限：读取
 ```
 
 
-### 请求参数
+### 요청 매개 변수
 
-| 参数名称   | 是否必须  | 类型     | 描述   | 默认值  | 取值范围   |
+| 매개 변수 | 필수 여부 | 유형     | 설명   | 기본값  | 값의 범위  |
 | ---------- | ----- | ------ | ------  | ---- | ----  |
-| symbol     | true  | string | 交易对      |      |btcusdt, ethbtc, rcneth ...  |
-| types      | false | string | 查询的订单类型组合，使用','分割  |      | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单 |
-| start-date | false | string | 查询开始日期, 日期格式yyyy-mm-dd。 以订单生成时间进行查询 | -180 days     | [-180 days, end-date] （自6月10日起， start-date与end-date的查询窗口最大为2天，如果超出范围，接口会返回错误码。 |
-| end-date   | false | string | 查询结束日期, 日期格式yyyy-mm-dd。 以订单生成时间进行查询 | today     | [start-date, today] （自6月10日起， start-date与end-date的查询窗口最大为2天，如果超出范围，接口会返回错误码。   |
-| states     | true  | string | 查询的订单状态组合，使用','分割  |      | submitted 已提交, partial-filled 部分成交, partial-canceled 部分成交撤销, filled 完全成交, canceled 已撤销 |
-| from       | false | string | 查询起始 ID   |      |    |
-| direct     | false | string | 查询方向   |      | prev 向前，时间（或 ID）正序；next 向后，时间（或 ID）倒序）    |
-| size       | false | string | 查询记录大小      | 100     |  [1, 1000]       |
+| symbol     | true  | string | 거래쌍   |      |btcusdt, ethbtc, rcneth ...  |
+| types      | false | string | 주문서의 유형조합을 조회시 ','부호로 분리 |      | buy-market：시가 매수, sell-market：시가 매도, buy-limit：지정가 매수, sell-limit：지정가 매도, buy-ioc：IOC 매수 오더, sell-ioc：IOC 매도 오더 |
+| start-date | false | string | 시작 일자 조회,일자 양식은 yyyy-mm-dd 입니다. 주문서 생성시간으로 조회 | -180 days     | [-180 days, end-date] （6월10일부터 시작하여 start-date와 end-date의 조회는 최대 2일이며 범위 초과시 오류코드를 반환합니다 |
+| end-date   | false | string | 완료일자 조회, 일자 양식 yyyy-mm-dd 입니다. 주문서 생성기간으로 조회 | today     | [start-date, today] （6월10일부터 시작하여 start-date와 end-date의 조회 범위는 최대 2일이며 범위 초과시 오류코드를 반환합니다 |
+| states     | true  | string | 오더 상태조합 조회,부호','분할  |      | submitted 제출 완료, partial-filled 부분 체결 완료, partial-canceled 부분 체결 철회, filled 체결 완료, canceled 철회 완료 |
+| from       | false | string | 최초 ID 조회   |      |    |
+| direct     | false | string | 조회 방향   |      | prev 이전，시간(혹은 ID) 순차적 순서；next 이후，시간(혹은 ID) 역차적 순서    |
+| size       | false | string | 조회 기록 사이즈      | 100     |  [1, 1000]       |
 
 
 > Response:
@@ -1614,41 +1559,41 @@ API Key 权限：读取
 }
 ```
 
-### 响应数据
+### 응답 데이터
 
-| 参数名称    | 是否必须  | 数据类型   | 描述   | 取值范围   |
+| 매개 변수  | 필수 여부 | 데이터 유형 | 설명   | 값의 범위  |
 | ----------------- | ----- | ------ | ----------------- | ----  |
-| account-id        | true  | long   | 账户 ID    |     |
-| amount            | true  | string | 订单数量    |   |
-| canceled-at       | false | long   | 接到撤单申请的时间   |    |
-| created-at        | true  | long   | 订单创建时间   |    |
-| field-amount      | true  | string | 已成交数量   |    |
-| field-cash-amount | true  | string | 已成交总金额    |    |
-| field-fees        | true  | string | 已成交手续费（买入为基础币，卖出为计价币） |       |
-| finished-at       | false | long   | 最后成交时间    |   |
-| id                | true  | long   | 订单ID    |    |
-| price             | true  | string | 订单价格  |    |
-| source            | true  | string | 订单来源   | api  |
-| state             | true  | string | 订单状态    | submitting , submitted 已提交, partial-filled 部分成交, partial-canceled 部分成交撤销, filled 完全成交, canceled 已撤销 |
-| symbol            | true  | string | 交易对    | btcusdt, ethbtc, rcneth ... |
-| type              | true  | string | 订单类型  | submit-cancel：已提交撤单申请  ,buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单 |
+| account-id        | true  | long   | 계정 ID    |     |
+| amount            | true  | string | 주문 수량 |   |
+| canceled-at       | false | long   | 철회 신청 접수 시간  |    |
+| created-at        | true  | long   | 주문서 생성 시간 |    |
+| field-amount      | true  | string | 체결 수량 |    |
+| field-cash-amount | true  | string | 체결 총금액 |    |
+| field-fees        | true  | string | 체결 수수료(매수시 거래 화폐, 매도시 마켓화폐) |       |
+| finished-at       | false | long   | 최종 체결 시간  |   |
+| id                | true  | long   | 주문서 ID |    |
+| price             | true  | string | 주문 가격 |    |
+| source            | true  | string | 주문 경로 | api  |
+| state             | true  | string | 주문서 상태 | submitting , submitted 제출 완료, partial-filled 부분 체결, partial-canceled 부분 체결 철회, filled 체결 완료, canceled 철회 완료 |
+| symbol            | true  | string | 거래쌍 | btcusdt, ethbtc, rcneth ... |
+| type              | true  | string | 주문서 유형 | submit-cancel：철회 신청 제출 완료  ,buy-market：시가 매수, sell-market：시가 매도, buy-limit：지정가 매수, sell-limit：지정가 매도, buy-ioc：IOC 매수 오더, sell-ioc：IOC 매도 오더 |
 
-### start-date, end-date相关错误码 （自6月10日生效）
+### start-date, end-date 관련 오류 코드 （6월10일 부로 유효）
 
-|错误码|对应错误场景|
+|오류 코드|해당 오류 환경|
 |------------|----------------------------------------------|
-|invalid_interval| start date小于end date; 或者 start date 与end date之间的时间间隔大于2天|
-|invalid_start_date|start date是一个180天之前的日期；或者start date是一个未来的日期|
-|invalid_end_date|end date 是一个180天之前的日期；或者end date是一个未来的日期|
+|invalid_interval| start date 는 작기 end date; 혹은 start date 와 end date 시간차이는 크기 2일 이여야 합니다. |
+|invalid_start_date|start date는 180일 이전 일자；혹은start date는 미래 일자|
+|invalid_end_date|end date 는 180일 이전 일자；혹은 end date는 미래 일자|
 
 
-## 搜索最近48小时内历史订单
+## 최근 48시간내 주문 리스트 검색
 
-API Key 权限：读取
+API Key 권한：읽기
 
-此接口基于搜索条件查询最近48小时内历史订单。
+해당 API는 검색 조건에 의하여 최근 48시간내 주문 리스트를 반환 합니다.
 
-### HTTP 请求
+### HTTP 요청
 
 - GET `/v1/order/history`
 
@@ -1663,15 +1608,15 @@ API Key 权限：读取
 ```
 
 
-### 请求参数
+### 요청 매개 변수
 
-| 参数名称   | 是否必须  | 类型     | 描述   | 默认值  | 取值范围   |
+| 매개 변수 | 필수 여부 | 유형     | 설명   | 기본값  | 값의 범위  |
 | ---------- | ----- | ------ | ------  | ---- | ----  |
-| symbol     | false  | string | 交易对      |all      |btcusdt, ethbtc, rcneth ...  |
-| start-time      | false | long | 查询起始时间（含）  |48小时前的时刻      |UTC time in millisecond |
-| end-time | false | long | 查询结束时间（含） | 查询时刻     |UTC time in millisecond |
-| direct   | false | string | 订单查询方向（注：仅在检索出的总条目数量超出size字段限定时起作用；如果检索出的总条目数量在size 字段限定内，direct 字段不起作用。） | next     |prev, next   |
-| size     | false  | int | 每次返回条目数量  |100      | [10,1000] |
+| symbol     | false  | string | 거래쌍   |all      |btcusdt, ethbtc, rcneth ...  |
+| start-time      | false | long | 처음 시간 조회(포함) |48시간  이전 시각      |UTC time in millisecond |
+| end-time | false | long | 종료시간 조회(포함) | 조회 시각     |UTC time in millisecond |
+| direct   | false | string | 주문서 조회 방향（주：조회 결과 총세목 수량이 size필드 제한을 초과시 작용 합니다.；만약 조회 결과 총 세목 수량이 size필드 제한 내일 경우 direct필드는 작용이 없습니다.） | next     |prev, next   |
+| size     | false  | int | 매번 반환한 총세목 |100      | [10,1000] |
 
 
 
@@ -1701,48 +1646,48 @@ API Key 权限：读取
 }
 ```
 
-### 响应数据
+### 응답 데이터
 
-| 参数名称    | 是否必须  | 数据类型   | 描述   | 取值范围   |
+| 매개 변수  | 필수 여부 | 데이터 유형 | 설명   | 값의 범위  |
 | ----------------- | ----- | ------ | ----------------- | ----  |
-| account-id        | true  | long   | 账户 ID    |     |
-| amount            | true  | string | 订单数量    |   |
-| canceled-at       | false | long   | 接到撤单申请的时间   |    |
-| created-at        | true  | long   | 订单创建时间   |    |
-| field-amount      | true  | string | 已成交数量   |    |
-| field-cash-amount | true  | string | 已成交总金额    |    |
-| field-fees        | true  | string | 已成交手续费（买入为基础币，卖出为计价币） |       |
-| finished-at       | false | long   | 最后成交时间    |   |
-| id                | true  | long   | 订单ID    |    |
-| price             | true  | string | 订单价格  |    |
-| source            | true  | string | 订单来源   | api  |
-| state             | true  | string | 订单状态    | partial-canceled 部分成交撤销, filled 完全成交, canceled 已撤销 |
-| symbol            | true  | string | 交易对    | btcusdt, ethbtc, rcneth ... |
-| type              | true  | string | 订单类型  | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单, buy-limit-maker, sell-limit-maker |
-| next-time            | false  | long |下一查询起始时间（当请求字段”direct”为”prev”时有效）, 下一查询结束时间（当请求字段”direct”为”next”时有效）。注：仅在检索出的总条目数量超出size字段限定时，此返回字段存在。 |UTC time in millisecond   |
+| account-id        | true  | long   | 계정ID  |     |
+| amount            | true  | string | 주문서 수량 |   |
+| canceled-at       | false | long   | 주문 철회 신청을 접수한 시간 |    |
+| created-at        | true  | long   | 주문서 생성 시간 |    |
+| field-amount      | true  | string | 체결 수량 |    |
+| field-cash-amount | true  | string | 체결 총금액 |    |
+| field-fees        | true  | string | 체결 수수료(매수시 거래 화폐,매도시 마켓 화폐) |       |
+| finished-at       | false | long   | 최종 체결 시간 |   |
+| id                | true  | long   | 주문서 ID |    |
+| price             | true  | string | 주문 가격 |    |
+| source            | true  | string | 주문 경로 | api  |
+| state             | true  | string | 주문서 상태 | partial-canceled 부분 체결 철회, filled 체결 완료, canceled 철회 완료 |
+| symbol            | true  | string | 거래쌍 | btcusdt, ethbtc, rcneth ... |
+| type              | true  | string | 주문서 유형 | buy-market：시가 매수, sell-market：시가 매도, buy-limit：지정가 매수, sell-limit：지정가 매도, buy-ioc：IOC 매수 오더, sell-ioc：IOC매도 오더, buy-limit-maker, sell-limit-maker |
+| next-time            | false  | long |다음 조회 시작시간(요청한 필드"direct"가 "prev" 일때 유효 합니다), 다음 조회 종료시간(요청한 필드"direct"가 "next" 일때 유효 합니다),주：조회 결과 총 세목 수량이 size필드 제한 내일 경우  반환한 필드가 있습니다. |UTC time in millisecond   |
 
-## 当前和历史成交
+## 현재 및 과거 주문 체결 리스트
 
-API Key 权限：读取
+API Key 권한：읽기
 
-此接口基于搜索条件查询当前和历史成交记录。
+해당 API는 검색 조건에 의하여 현재 및 과거 주문 체결 리스트를 조회 합니다.
 
-### HTTP 请求
+### HTTP 요청
 
 - GET `/v1/order/matchresults`
 
 
-### 请求参数
+### 요청 매개 변수
 
-| 参数名称   | 是否必须  | 类型  | 描述   | 默认值  | 取值范围    |
+| 매개 변수 | 필수 여부 | 유형  | 설명   | 기본값  | 값의 범위   |
 | ---------- | ----- | ------ | ------ | ---- | ----------- |
-| symbol     | true  | string | 交易对   | NA |  btcusdt, ethbtc, rcneth ...  |
-| types      | false | string | 查询的订单类型组合，使用','分割   |      | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单 |
-| start-date | false | string | 查询开始日期, 日期格式yyyy-mm-dd | -61 days     | [-61day, today] （自6月10日起， start-date与end-date的查询窗口最大为2天，如果超出范围，接口会返回错误码。 ||
-| end-date   | false | string | 查询结束日期, 日期格式yyyy-mm-dd |   today   |  [start-date, today] （自6月10日起， start-date与end-date的查询窗口最大为2天，如果超出范围，接口会返回错误码。 | |
-| from       | false | string | 查询起始 ID    |   订单成交记录ID（最大值）   |     |
-| direct     | false | string | 查询方向    |   默认 next， 成交记录 ID 由大到小排序   | prev 向前，时间（或 ID）正序；next 向后，时间（或 ID）倒序）   |
-| size       | false | string | 查询记录大小    |   100   | [1，100]  |
+| symbol     | true  | string | 거래쌍 | N/A |  btcusdt, ethbtc, rcneth ...  |
+| types      | false | string | 주문서    유형 조합 조회,부호 ','로 분리 |      | buy-market：시가 매수, sell-market：시가 매도, buy-limit：지정가 매수, sell-limit：지정가 매도, buy-ioc：IOC 매수 오더, sell-ioc：IOC 매도 오더 |
+| start-date | false | string | 시작 일자 조회,일자 양식:yyyy-mm-dd | -61 days     | [-61day, today] (6월 10일부터 시작하며 start-date와 end-date 의 조회 범위는 최대 2일 이며 범위 초과시 API는 오류 코드를 반환 합니다.) |
+| end-date   | false | string | 종료 일자 조회,일자 양식:yyyy-mm-dd |   today   | [start-date, today] (6월 10일부터 시작하며 start-date와 end-date 의 조회 범위는 최대 2일 이며 범위 초과시 API는 오류 코드를 반환 합니다.) |
+| from       | false | string | 조회 처음 ID |   주문서 체결 ID(최대치)   |     |
+| direct     | false | string | 조회 방향 |   기본적으로next， 체결 리스트 ID는 내림차순   | prev 이전，시간(혹은 ID) 순차적 순서；next 이후，시간(혹은 ID) 역차적 순서 |
+| size       | false | string | 조회 리스트 크기 |   100   | [1，100]  |
 
 
 > Response:
@@ -1767,62 +1712,66 @@ API Key 权限：读取
 }
 ```
 
-### 响应数据
+### 응답 데이터
 
-<aside class="notice">返回的主数据对象为一个对象数组，其中每一个元件代表一个交易结果。</aside>
-| 参数名称   | 是否必须 | 数据类型   | 描述   | 取值范围   |
+<aside class="notice">반환한 주요 데이터 대상은 하나의 대상 array입니다.그 중에 매개 원소는 거래 결과 입니다.</aside>
+| 매개 변수 | 필수 여부 | 데이터 유형 | 설명   | 값의 범위  |
 | ------------- | ---- | ------ | -------- | ------- |
-| created-at    | true | long   | 成交时间     |    |
-| filled-amount | true | string | 成交数量     |    |
-| filled-fees   | true | string | 成交手续费    |    |
-| id            | true | long   | 订单成交记录 ID |    |
-| match-id      | true | long   | 撮合 ID     |    |
-| order-id      | true | long   | 订单 ID    |    |
-| price         | true | string | 成交价格     |    |
-| source        | true | string | 订单来源     | api   |
-| symbol        | true | string | 交易对      | btcusdt, ethbtc, rcneth ...  |
-| type          | true | string | 订单类型     | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单 |
+| created-at    | true | long   | 체결 시간 |    |
+| filled-amount | true | string | 체결 수량 |    |
+| filled-fees   | true | string | 체결 수수료 |    |
+| id            | true | long   | 주문 체결 리스트 ID |    |
+| match-id      | true | long   | 매칭 ID   |    |
+| order-id      | true | long   | 주문서ID |    |
+| price         | true | string | 체결 가격 |    |
+| source        | true | string | 주문 경로 | api   |
+| symbol        | true | string | 거래쌍   | btcusdt, ethbtc, rcneth ...  |
+| type          | true | string | 주문서유형  | buy-market：시가 매수, sell-market：시가 매도, buy-limit：지정가 매수, sell-limit：지정가 매도, buy-ioc：IOC 매수 오더, sell-ioc：IOC 매도 오더 |
 
-### start-date, end-date相关错误码
+### start-date, end-date 관련 오류 코드
 
-|错误码|对应错误场景|
+|오류 코드|해당 오류 환경|
 |------------|----------------------------------------------|
-|invalid_interval| start date小于end date; 或者 start date 与end date之间的时间间隔大于2天|
-|invalid_start_date|start date是一个61天之前的日期；或者start date是一个未来的日期|
-|invalid_end_date|end date 是一个61天之前的日期；或者end date是一个未来的日期|
+|invalid_interval| start date 는 작기 end date; 혹은 start date 와 end date 시간차이는 크기 2일 이여야 합니다. |
+|invalid_start_date|start date는 61일 이전 일자；혹은 start date는 미래 일자|
+|invalid_end_date|end date는 61일 이전 일자；혹은 end date는 미래 일자|
 
 
+---
+title: websocket_market_data
+---
 
-# 8.Websocket行情数据
+# 8. Websocket 시세 데이터
 
-## 简介
+## 소개
 
-### 接入URL
+### Access URL
 
-**火币韩国站行情请求地址**
+**후오비 코리아 시세 요청 API 주소**
 
 **`wss://api-cloud.huobi.co.kr/ws`**
 
-请使用中国大陆以外的服务器访问火币韩国 API
+-	중국 이외의 IP를 통해 후오비 코리아 API로 접속해주시기 바랍니다.
 
-### 数据压缩
+### 데이터 압축
 
-WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在收到数据之后解压。
+- WebSocket API에서 반환된 모든 데이터는 GZIP로 압축되어 있으며 데이터 수신 후 클라이언트의 압축을 해제해야 합니다.
 
-### 心跳消息
+### **Heartbeat 메세지**
 
-当用户的Websocket客户端连接到火币Websocket服务器后，服务器会定期（当前设为5秒）向其发送`ping`消息并包含一整数值如下：
+- 회원님의 WebSocket 클라이언트가 후오비 코리아 WebSocket 서버에 접속하면 서버는 정기적으로(현재 5초로 설정) `ping` 메세지를 발송하며 메시지에 아래와 같은 데이터를 포함합니다.
 
-> {"ping": 1492420473027}
+  `{"ping": 1492420473027}`
 
-当用户的Websocket客户端接收到此心跳消息后，应返回`pong`消息并包含同一整数值：
+- 회원님의 WebSocket 클라이언트가 Heartbeat 메세지를 수신하면 동일한 데이터를 지닌 pong 메세지를 반환해야 합니다.
 
-> {"pong": 1492420473027}
+  `{"pong": 1492420473027}`
 
-<aside class="warning">当Websocket服务器连续两次发送了`ping`消息却没有收到任何一次`pong`消息返回后，服务器将主动断开与此客户端的连接。</aside>
-### 订阅主题
+WebSocket 서버가 `pong` 메세지를 수신하지 못하고 `ping` 메세지를 2회 연속 보낼 경우 서버는 클라이언트와의 연결을 종료합니다.
 
-成功建立与Websocket服务器的连接后，Websocket客户端发送如下请求以订阅特定主题：
+### 구독 주제
+
+WebSocket 서버에 성공적으로 연결되면 WebSocket 클라이언트는 특정 주제를 구독하기 위해 다음 요청을 보냅니다.
 
 ```json
 {
@@ -1838,7 +1787,7 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 }
 ```
 
-成功订阅后，Websocket客户端将收到确认：
+구독이 정상적으로 완료될 경우 WebSocket 클라이언트는 확인을 받습니다.
 
 ```json
 {
@@ -1849,7 +1798,7 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 }
 ```
 
-之后, 一旦所订阅的主题有更新，Websocket客户端将收到服务器推送的更新消息（push）：
+이후 구독한 주제가 업데이트될 시 WebSocket 클라이언트는 서버가 발송한 업데이트 메시지를 받습니다.（push）
 
 ```json
 {
@@ -1868,9 +1817,9 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 }
 ```
 
-### 取消订阅
+### 구독 취소
 
-取消订阅的格式如下：
+구독 취소 양식은 다음과 같습니다:
 
 ```json
 {
@@ -1886,7 +1835,7 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 }
 ```
 
-取消订阅成功确认：
+구독 취소 확인 완료:
 
 ```json
 {
@@ -1897,11 +1846,11 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 }
 ```
 
-### 请求数据
+### 요청 데이터
 
-Websocket服务器同时支持一次性请求数据（pull）。
+WebSocket 서버는 동시에 일괄적으로 요청 받는 데이터(Pull)에 대해 모두 지원합니다.
 
-请求数据的格式如下：
+요청 데이터의 양식：
 
 ```json
 {
@@ -1917,7 +1866,7 @@ Websocket服务器同时支持一次性请求数据（pull）。
 }
 ```
 
-一次性返回的数据：
+일괄적으로 반환되는 데이터는 다음과 같습니다.
 
 ```json
 {
@@ -1948,15 +1897,14 @@ Websocket服务器同时支持一次性请求数据（pull）。
 }
 ```
 
-## K线数据
+## K차트 데이터
 
-### 主题订阅
-
-一旦K线数据产生，Websocket服务器将通过此订阅主题接口推送至客户端：
+### 구독 주제
+K-차트 데이터 생성 시 WebSocket 서버는 구독 주제 API를 통해 클라이언트로 발송됩니다.
 
 `market.$symbol$.kline.$period$`
 
-> 订阅请求
+- 구독 요청
 
 ```json
 {
@@ -1965,12 +1913,12 @@ Websocket服务器同时支持一次性请求数据（pull）。
 }
 ```
 
-### 参数
+### 매개 변수
 
-参数 | 数据类型 | 是否必需 | 描述                      | 取值范围
+매개 변수 | 데이터 유형 | 필수여부 | 설명                      | 값의 범위 
 --------- | --------- | -------- | -----------                      | -----------
-symbol    | string    | true     | 交易代码     | All supported trading symbols, e.g. btcusdt, bccbtc
-period     | string    | true     | K线周期   | 1min, 5min, 15min, 30min, 60min, 1day, 1mon, 1week, 1year
+symbol    | string    | true     | 거래 코드 | 모든 거래 지원, 예) btcusdt, bccbtc
+period     | string    | true     | K차트  주기 | 1분, 5분, 15분, 30분, 60분, 1일, 1달, 1주, 1년
 
 > Response
 
@@ -2002,24 +1950,24 @@ period     | string    | true     | K线周期   | 1min, 5min, 15min, 30min, 60m
 }
 ```
 
-### 数据更新字段列表
+### 데이터 업데이트 필드 목록
 
-字段     | 数据类型 | 描述
+매개 변수     | 데이터 유형 | 설명
 --------- | --------- | -----------
-id        | integer   | unix时间，同时作为K线ID
-amount    | float     | 成交量
-count     | integer   | 成交笔数
-open      | float     | 开盘价
-close     | float     | 收盘价（当K线为最晚的一根时，是最新成交价）
-low       | float     | 最低价
-high      | float     | 最高价
-vol       | float     | 成交额, 即 sum(每一笔成交价 * 该笔的成交量)
+id        | integer   | unix 시간, K-차트 ID로도 사용
+amount    | float     | 거래 수량 
+count     | integer   | 거래 건수
+open      | float     | 시작가
+close     | float     | 종가 (K-차트가 마지막 1개일 경우 최신 거래 가격 기준) 
+low       | float     | 최저가
+high      | float     | 최고가
+vol       | float     | 총 거래대금 (각 거래가격 * 거래량)
 
 
 
-### 数据请求
+### 요청 데이터
 
-用请求方式一次性获取K线数据需要额外提供以下参数：
+K-차트 데이터를 일괄 요청 시 다음 추가 매개 변수를 제공해야합니다.
 
 ```json
 {
@@ -2030,16 +1978,16 @@ vol       | float     | 成交额, 即 sum(每一笔成交价 * 该笔的成交�
 }
 ```
 
-参数 | 数据类型 | 是否必需 | 缺省值                          | 描述      | 取值范围
+매개 변수 | 데이터 유형 | 필수 여부 | 설명                                | 기본값 | 값의 범위 
 --------- | --------- | -------- | -------------                          | -----------      | -----------
-from      | integer   | false    | 1501174800(2017-07-28T00:00:00+08:00)  | 起始时间 (epoch time in second)   | [1501174800, 2556115200]
-to        | integer   | false    | 2556115200(2050-01-01T00:00:00+08:00)  | 结束时间 (epoch time in second)      | [1501174800, 2556115200] or ($from, 2556115200] if "from" is set
+from      | integer   | false    | 시작시간 (epoch time in second) | 1501174800(2017-07-28T00:00:00+08:00)  | [1501174800, 2556115200]
+to        | integer   | false    | 종료시간(epoch time in second) | 2556115200(2050-01-01T00:00:00+08:00)  | [1501174800, 2556115200] or ($from, 2556115200] if "from" is set
 
-## 市场深度行情数据
+## depth of market 시세 데이터
 
-当市场深度发生变化时，此主题发送最新市场深度更新数据。
+depth of the market 변화시 최신 depth of the market 데이터를 전송합니다.
 
-### 主题订阅
+### 구독 주제
 
 `market.$symbol.depth.$type`
 
@@ -2052,23 +2000,23 @@ to        | integer   | false    | 2556115200(2050-01-01T00:00:00+08:00)  | 结�
 }
 ```
 
-### 参数
+### 매개 변수
 
-参数 | 数据类型 | 是否必需 | 缺省值         | 描述                                       | 取值范围
+매개 변수 | 데이터 유형 | 필수여부 | 설명 | 기본값  | 값의 범위 
 --------- | --------- | -------- | -------------         | -----------                                       | -----------
-symbol    | string    | true     | NA                    | 交易代码                   | All supported trading symbols, e.g. btcusdt, bccbtc
-type      | string    | true     | step0                 | 合并深度类型     | step0, step1, step2, step3, step4, step5
+symbol    | string    | true     | 거래 코드             | N/A                    | All supported trading symbols, e.g. btcusdt, bccbtc
+type      | string    | true     | depth유형 조합 |  step0                 | step0, step1, step2, step3, step4, step5
 
-**"type" 合并深度类型**
+**"type" depth 유형 조합**
 
 Value     | Description
 --------- | ---------
-step0     | 不合并深度
-step1     | Aggregation level = precision*10
-step2     | Aggregation level = precision*100
-step3     | Aggregation level = precision*1000
-step4     | Aggregation level = precision*10000
-step5     | Aggregation level = precision*100000
+step0     | 통합하지 않음
+step1     | 통합 수준 = 정밀도 * 10
+step2     | 통합 수준 = 정밀도 * 100
+step3     | 통합 수준 = 정밀도 * 1000
+step4     | 통합 수준 = 정밀도 * 10000
+step5     | 통합 수준 = 정밀도 * 100000
 
 > Response
 
@@ -2102,16 +2050,18 @@ step5     | Aggregation level = precision*100000
 }
 ```
 
-### 数据更新字段列表
+### 데이터 업데이트 필드 목록
 
-字段     | 数据类型 | 描述
+매개 변수     | 데이터 유형 | 설명
 --------- | --------- | -----------
 bids      | object    | The current all bids in format [price, quote volume]
 asks      | object    | The current all asks in format [price, quote volume]
 
-### 数据请求
 
-支持数据请求方式一次性获取市场深度数据：
+
+### 요청 데이터
+
+depth of market 데이터를 일괄 요청합니다.
 
 ```json
 {
@@ -2120,11 +2070,11 @@ asks      | object    | The current all asks in format [price, quote volume]
 }
 ```
 
-## 成交明细
+## 거래 상세 조회
 
-### 主题订阅
+### 구독 주제
 
-此主题提供市场最新成交明细。
+본 주제는 Market의 최신 거래에 대한 내역을 제공합니다.
 
 `market.$symbol.trade.detail`
 
@@ -2137,11 +2087,11 @@ asks      | object    | The current all asks in format [price, quote volume]
 }
 ```
 
-### 参数
+### 매개 변수
 
-参数 | 数据类型 | 是否必需 | 缺省值         | 描述                                       | 取值范围
+매개 변수 | 데이터 유형 | 필수 여부 | 설명 | 기본값 | 값의 범위 
 --------- | --------- | -------- | -------------         | -----------                                       | -----------
-symbol    | string    | true     | NA                    | 交易代码                     | All supported trading symbols, e.g. btcusdt, bccbtc
+symbol    | string    | true     | 거래 코드 | N/A | 모든 거래 지원, 예) btcusdt, bccbtc
 
 > Response
 
@@ -2177,19 +2127,19 @@ symbol    | string    | true     | NA                    | 交易代码         
 }
 ```
 
-### 数据更新字段列表
+### 데이터 업데이트 필드 리스트
 
-字段      | 数据类型 | 描述
+매개 변수 | 데이터 유형 | 설명
 --------- | --------- | -----------
-id        | integer   | 唯一成交ID
-amount    | float     | 成交量
-price     | float     | 成交价
-ts        | integer   | 成交时间 (UNIX epoch time in millisecond)
-direction | string    | 成交主动方 (taker的订单方向) : 'buy' or 'sell'
+id        | integer   | 고유 거래 ID
+amount    | float     | 거래 수량
+price     | float     | 거래 가격
+ts        | integer   | 거래 시간 (UNIX epoch time in millisecond)
+direction | string    | 활성 거래자 (taker 주문 입장): 매수 또는 매도
 
-### 数据请求
+### 요청 데이터
 
-支持数据请求方式一次性获取成交明细数据（仅能获取最多最近300个成交记录）：
+- 한 번에 거래 세부 사항 데이터를 수집하기 위한 지원 데이터 요청 방법 (가장 최근 300개의 거래 내역을 받습니다.)
 
 ```json
 {
@@ -2198,11 +2148,11 @@ direction | string    | 成交主动方 (taker的订单方向) : 'buy' or 'sell'
 }
 ```
 
-## 市场概要
+## Market 개요
 
-### 主题订阅
+### 구독 주제
 
-此主题提供24小时内最新市场概要。
+- 본 주제는 24시간 내에 Market에 대한 최신 개요를 제공합니다.
 
 `market.$symbol.detail`
 
@@ -2215,11 +2165,11 @@ direction | string    | 成交主动方 (taker的订单方向) : 'buy' or 'sell'
 }
 ```
 
-### 参数
+### 매개 변수
 
-参数 | 数据类型 | 是否必需 | 缺省值         | 描述                                       | 取值范围
+매개 변수 | 데이터 유형 | 필수 여부 | 설명 | 기본값 | 값의 범위 
 --------- | --------- | -------- | -------------         | -----------                                       | -----------
-symbol    | string    | true     | NA                    | 交易代码                     | All supported trading symbols, e.g. btcusdt, bccbtc
+symbol    | string    | true     | 거래 코드  | N/A   | 모든 거래 지원, 예) btcusdt, bccbtc
 
 > Response
 
@@ -2248,23 +2198,23 @@ symbol    | string    | true     | NA                    | 交易代码         
   }
 ```
 
-### 数据更新字段列表
+### 데이터 업데이트 필드 리스트
 
-字段     | 数据类型 | 描述
+필드     | 데이터 유형 | 설명
 --------- | --------- | -----------
-id        | integer   | unix时间，同时作为消息ID
-ts        | integer   | unix系统时间
-amount    | float     | 24小时成交量
-count     | integer   | 24小时成交笔数
-open      | float     | 24小时开盘价
-close     | float     | 最新价
-low       | float     | 24小时最低价
-high      | float     | 24小时最高价
-vol       | float     | 24小时成交额
+id        | integer   | unix시간，동시에 메시지 ID로 사용 
+ts        | integer   | unix 시스템 시간 
+amount    | float     | 24시간내 거래량 
+count     | integer   | 24시간내 체결건수 
+open      | float     | 24시간 시작가 
+close     | float     | 종가 
+low       | float     | 24시간내 최저가 
+high      | float     | 24시간내 최고가 
+vol       | float     | 24시간 총 거래대금 
 
-### 数据请求
+### 요청 데이터
 
-支持数据请求方式一次性获取市场概要数据：
+한 번에 Market 요약 데이터를 얻기 위한 지원 데이터 요청 방법은 다음과 같습니다.
 
 ```json
 {
@@ -2273,36 +2223,42 @@ vol       | float     | 24小时成交额
 }
 ```
 
-# Websocket资产及订单
 
-## 简介
+---
+title: websocket_asset_and_order
+---
 
-### 接入URL
+# 9. Websocket자산 및 주문서
 
-**Websocket资产及订单**
+## 소개
+
+### Access URL
+
+**WebSocket 자산 및 주문**
 
 **`wss://api-cloud.huobi.co.kr/ws/v1`**
 
-请使用中国大陆以外的服务器访问火币韩国 API。
+중국 이외의 IP를 통해 후오비 코리아 API로 접속해주시기 바랍니다.
 
-### 数据压缩
+### 데이터 압축
 
-WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在收到数据之后解压。
+WebSocket API에서 반환된 모든 데이터는 GZIP로 압축되어 있으며 데이터 수신 후 클라이언트의 압축을 해제해야 합니다.
 
-### 心跳消息
+### Heartbeat Message
 
-当用户的Websocket客户端连接到火币Websocket服务器后，服务器会定期（当前设为5秒）向其发送`ping`消息并包含一整数值如下：
+회원님의 WebSocket 클라이언트가 후오비 코리아 WebSocket 서버에 연결되면 서버는 정기적으로(현재 5초로 설정) `ping` 메세지를 발송하며 메시지에 아래와 같은 데이터를 포함합니다.
 
 > {"ping": 1492420473027}
 
-当用户的Websocket客户端接收到此心跳消息后，应返回`pong`消息并包含同一整数值：
+회원님의 Websocket클라이언트가  Heartbeat Message를 접수후 `pong` 메시지를 반환하여야 하며 메시지에 같은 데이터를 포함 하여야 합니다:
 
 > {"pong": 1492420473027}
 
-<aside class="warning">当Websocket服务器连续两次发送了`ping`消息却没有收到任何一次`pong`消息返回后，服务器将主动断开与此客户端的连接。</aside>
-### 订阅主题
+WebSocket 서버가 `pong` 메세지를 수신하지 못하고 `ping` 메세지를 2회 연속 보낼 경우 서버는 클라이언트와의 연결을 종료합니다.
 
-成功建立与Websocket服务器的连接后，Websocket客户端发送如下请求以订阅特定主题：
+### 구독 주제
+
+WebSocket 서버에 성공적으로 연결되면 WebSocket 클라이언트는 특정 주제를 구독하기 위해 다음 요청을 보냅니다.
 
 ```json
 {
@@ -2312,7 +2268,7 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 }
 ```
 
-成功订阅后，Websocket客户端将收到确认：
+구독이 정상적으로 완료될 경우 WebSocket 클라이언트는 확인을 받습니다.
 
 ```json
 {
@@ -2324,7 +2280,7 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 }
 ```
 
-之后, 一旦所订阅的主题有更新，Websocket客户端将收到服务器推送的更新消息（push）：
+이후 구독한 주제가 업데이트될 시 WebSocket 클라이언트는 서버가 발송한 업데이트 메시지를 받습니다.（push）
 
 ```json
 {
@@ -2337,9 +2293,9 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 }
 ```
 
-### 取消订阅
+### 구독취소
 
-取消订阅的格式如下：
+구독 취소 양식은 다음과 같습니다.
 
 ```json
 {
@@ -2349,7 +2305,7 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 }
 ```
 
-取消订阅成功确认：
+구독 취소 확인 완료
 
 ```json
 {
@@ -2361,28 +2317,28 @@ WebSocket API 返回的所有数据都进行了 GZIP 压缩，需要 client 在�
 }
 ```
 
-### 请求数据
+### 요청 데이터
 
-Websocket服务器同时支持一次性请求数据（pull）。
+WebSocket 서버는 동시에 일괄적으로 요청 받는 데이터(Pull)에 대해 모두 지원합니다.
 
-当与Websocket服务器成功建立连接后，以下三个主题可供用户请求：
+WebSocket 서버와 성공적으로 연결 시 회원님은 다음 3가지 주제를 요청할 수 있습니다.
 
 * accounts.list
 * orders.list
 * orders.detail
 
-具体请求方式请见后文。
+요청 데이터의 형식은 다음과 같습니다.
 
-**数据请求限频规则**
+**데이터 요청 제한 규정**
 
-限频规则基于API key而不是连接。当请求频率超出限值时，Websocket客户端将收到"too many request"错误码。以下为各主题当前限频设定：
+빈도 제한 규정은 연결(connect) 대신 API Key를 기반으로 합니다. 요청 빈도가 제한 초과 시 WebSocket 클라이언트는 "too many request" 오류 코드를 수신 받습니다. 다음은 각 주제에 대한 현재 주파수 제한 설정입니다.
 
 * accounts.list: once every 25 seconds
 * orders.list AND orders.detail: once every 5 seconds
 
-### 鉴权
+### 인증
 
-资产及订单主题鉴权请求数据格式如下：
+자산 및 주문 주체에 대한 인증 요청 데이터 형식은 다음과 같습니다.
 
 ```json
 {
@@ -2395,29 +2351,30 @@ Websocket服务器同时支持一次性请求数据（pull）。
 }
 ```
 
-**鉴权请求数据格式说明**
+**인증 요청 데이터 유형 설명**
 
-  filed              |type   |  instruction|
-  ------------------ |----   |  -----------------------------------------------------
-  op                 |string | 必填；操作名称，鉴权固定值为 auth；
-  cid                |string | 选填；Client 请求唯一 ID
-  AccessKeyId        |string | 必填；API 访问密钥, 您申请的 APIKEY 中的 AccessKey
-  SignatureMethod    |string | 必填；签名方法, 用户计算签名的基于哈希的协议，此处使用 HmacSHA256
-  SignatureVersion   |string | 必填；签名协议的版本，此处使用 2
-  Timestamp          |string | 必填；时间戳, 您发出请求的时间 (UTC 时区) (UTC 时区) (UTC 时区) 。在查询请求中包含此值有助于防止第三方截取您的请求。如：2017-05-11T16:22:06。再次强调是 (UTC 时区)
-  Signature          |string |必填；签名, 计算得出的值，用于确保签名有效和未被篡改
+  매개 변수             | 데이터 유형 | 설명 |
+  ------------------ |----   |  ----------------------------------------------------- |  ----------------------------------------------------- 
+  op                 | string | 필수, 작업명, 인증 고정값은 auth |
+  cid                | string | 선택, 클라이언트 요청 고유 ID |
+  AccessKeyId        | string | 필수, 요청한 API Key의 API Access Key |
+  SignatureMethod    | string | 선택, 서명 방법, 회원 서명 계산의 hash 기반 프로토콜, 여기서는 HmacSHA256를 사용합니다 |
+  SignatureVersion   |string | 필수, 서명 프로토콜 버젼, 여기서는 버전 2를 사용합니다 |
+  Timestamp          |string | 선택, 회원님이 요청한 시간(UTC 시간대), 쿼리 요청 시 해당 값을 포함하면 제3자가 회원님의 요청을 가로챌 수 없습니다. 예) 2017-05-11 T16:22:06. |
+  Signature          |string | 필수, 서명이 유효하고 변조되지 않았음을 보장하기 위해 서명에 의해 계산된 값입니다. |
 
-> **注：**
-> - 参考[https://huobiapi.github.io/docs/v1/cn/#c64cd15fdc] 生成有效签名
-> - 签名计算中请求方法固定值为`GET`
+> **참고**
+>
+> - [http://alphaex-api.github.io/api_access/#%EC%84%9C%EB%AA%85-%EC%9D%B8%EC%A6%9D]를 참조하여 유효한 서명을 생성해주세요.
+> - 요청 메소드는 서명 계산에서 고정된 GET 값을 갖습니다.
 
-## 订阅账户更新
+## 구독 계정 업데이트
 
-API Key 权限：读取
+API Key 권한：읽기
 
-订阅账户资产变动更新。
+구독 계정의 자산 변화 업데이트.
 
-### 主题订阅
+### 구독 주제
 
 `accounts`
 
@@ -2432,13 +2389,14 @@ API Key 权限：读取
 }
 ```
 
-### 参数
+### 매개 변수
 
-参数 | 数据类型 | 是否必需 | 缺省值         | 描述                                       | 取值范围
+매개 변수 | 데이터 유형 | 필수 여부 | 기본값      | 설명                                       | 값의 범위 
 --------- | --------- | -------- | -------------         | -----------                                       | -----------
-model     | string    | false    | 0                     | 是否包含已冻结余额                 | 1 to include frozen balance, 0 to not
+model     | string    | false    | 0                     | 동결 잔액 포함 여부      | 1 to include frozen balance, 0 to not
 
-<aside class="notice">如果同时订阅可用和总余额，需要为 0 和 1 各开启一条websocket连接</aside>
+만약 사용가능한 총잔액 구독시 0과 1로 별도로 Websocket연결 하여야 합니다.
+
 > Response
 
 ```json
@@ -2473,23 +2431,23 @@ model     | string    | false    | 0                     | 是否包含已冻结
 
 ```
 
-### 数据更新字段列表
+### 테이터 업데이트 필드 리스트
 
-字段     | 数据类型 | 描述
+필드     | 데이터 유형 | 설명
 --------- | --------- | -----------
-event     | string    | 资产变化通知相关事件说明，比如订单创建(order.place) 、订单成交(order.match)、订单成交退款（order.refund)、订单撤销(order.cancel) 、点卡抵扣交易手续费（order.fee-refund)、其他资产变化(other) 
-account-id| integer   | 账户 id
-currency  | string    | 币种
-type      | string    | 账户类型 
-balance   | string    | 账户余额 (当订阅mode=0时，该余额为可用余额；当订阅mode=1时，该余额为总余额）
+event     | string    | 자산 변동 통지 관련 설명, 예를 들면 주문서 생성(order.place), 주문 체결(order.match), 주문 체결 환불（order.refund), 주문 철회(order.cancel), 쿠폰 포인트 삭감 수수료（order.fee-refund), 기타 자산 변동(other) 
+account-id| integer   |  
+currency  | string    | 코인 종류 
+type      | string    | 계정 유형 
+balance   | string    | 계정 잔액 (구독 mode=0 일때 해당 잔액은 사용가능한 잔액 입니다；구독 mode=1时，해당 잔액은 총잔액 입니다）
 
-## 订阅订单更新
+## 구독 주문서 업데이트
 
-API Key 权限：读取
+API Key 권한：읽기
 
-订阅账户下的订单更新。
+구독 계정에 있는 주문서 업데이트
 
-### 主题订阅
+### 구독 주제
 
 `orders.$symbol`
 
@@ -2503,11 +2461,11 @@ API Key 权限：读取
 }
 ```
 
-### 参数
+### 매개 변수
 
-参数 | 数据类型 | 是否必需 | 缺省值         | 描述                                    | 取值范围
+매개 변수 | 데이터 유형 | 필수여부 | 기본값 | 설명 | 값의 범위 
 --------- | --------- | -------- | -------------         | -----------                                       | -----------
-symbol    | string    | true     | NA                    | 交易代码                       | All supported trading symbols, e.g. btcusdt, bccbtc
+symbol    | string    | true     | N/A                    | 거래 코드   | 모든 거래 지원, 예) btcusdt, bccbtc
 
 > Response
 
@@ -2549,34 +2507,34 @@ symbol    | string    | true     | NA                    | 交易代码         
 }
 ```
 
-### 数据更新字段列表
+### 데이터 업데이트 필드 목록
 
-字段               | 数据类型 | 描述
+필드               | 데이터 유형 | 설명
 ---------           | --------- | -----------
-seq-id              | integer   | 流水号(不连续)
-order-id            | integer   | 订单 id
-symbol              | string    | 交易对
-account-id          | string    | 账户 id
-order-amount        | string    | 订单数量
-order-price         | string    | 订单价格
-created-at          | int       | 订单创建时间 (UNIX epoch time in millisecond)
-order-type          | string    | 订单类型, 有效取值: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker
-order-source        | string    | 订单来源, 有效取值: sys, web, api, app
-order-state         | string    | 订单状态, 有效取值: submitted, partical-filled, cancelling, filled, canceled, partial-canceled
-role                | string    | 成交角色: taker or maker
-price               | string    | 成交价格
-filled-amount       | string    | 单次成交数量
-filled-cash-amount  | string    | 单次未成交数量
-filled-fees         | string    | 单次成交金额
-unfilled-amount     | string    | 单次成交手续费（买入为币，卖出为钱）
+seq-id              | integer   | 시리얼 넘버(연속된 번호가 아님) 
+order-id            | integer   | 주문서 id 
+symbol              | string    | 거래쌍 
+account-id          | string    | 계정 id 
+order-amount        | string    | 주문서 수량 
+order-price         | string    | 주문 가격 
+created-at          | int       | 주문 생성 시간 (UNIX epoch time in millisecond) 
+order-type          | string    | 주문서 유형, 유효치: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker 
+order-source        | string    | 주문 경로, 유효치: sys, web, api, app 
+order-state         | string    | 주문 상태, 유효치: submitted, partical-filled, cancelling, filled, canceled, partial-canceled 
+role                | string    | 체결 role: taker or maker 
+price               | string    | 체결 가격 
+filled-amount       | string    | 단일 체결 수량 
+filled-cash-amount  | string    | 단일 미체결 수량 
+filled-fees         | string    | 단일 체결 금액 
+unfilled-amount     | string    | 단인 체결 수수료（매수시 거래 화폐, 매도시 마켓 화폐） 
 
-## 订阅订单更新 (NEW)
+## 구독 주문서 업데이트 (NEW)
 
-API Key 权限：读取
+API Key 권한：읽기
 
-相比现有用户订单更新推送主题“orders.symbol”， 新增主题“orders.​symbol.update”拥有更低的数据延迟以及更准确的消息顺序。建议API用户订阅此新主题接收订单更新推送，以替代现有订阅主题 “orders.symbol”。（现有订阅主题 “orders.​symbol”仍将在Websocket API服务中被保留直至另行通知。）
+**현재 회원 주문서 업데이트 PUSH“orders.symbol”에 비하여 새로 증가 된 “orders.symbol.update”는 딜레이가 작고 메시지가 더 정확합니다. API 회원께서는 새로운 주제를 구독하여 “orders.symbol”를 PUSH 하기 바라는 바 입니다.（기존 구독 주제  “orders.symbol”는 별도로 통지 하기 전까지 Websocket API에서 보류 중입니다.）**
 
-### 主题订阅
+### 구독 주제
 
 `orders.$symbol.update`
 
@@ -2590,11 +2548,11 @@ API Key 权限：读取
 }
 ```
 
-### 参数
+### 매개 변수
 
-参数 | 数据类型 | 是否必需 | 缺省值         | 描述                                       | 取值范围
+매개 변수 | 데이터 유형 | 필수 여부 | 기본값   | 설명                                       | 값의 범위 
 --------- | --------- | -------- | -------------         | -----------                                       | -----------
-symbol    | string    | true     | NA                    | 交易代码                       | All supported trading symbols, e.g. btcusdt, bccbtc
+symbol    | string    | true     | N/A                    | 거래 코드              | 모든 거래 지원, 예) btcusdt, bccbtc
 
 
 
@@ -2631,28 +2589,28 @@ symbol    | string    | true     | NA                    | 交易代码         
 }
 ```
 
-### 数据更新字段列表
+### 데이트 업데이트 필드 목록
 
-Field               | Data Type | Description
+필드               | 데이터 유형 | 설명
 ---------           | --------- | -----------
-match-id              | integer   | 最近撮合编号（当order-state = submitted, canceled, partial-canceled时，match-id 为消息序列号；当order-state = filled, partial-filled 时，match-id 为最近撮合编号。）
-order-id            | integer   | 订单编号
-symbol              | string    | 交易代码
-order-state         | string    | 订单状态, 有效取值: submitted, partical-filled, cancelling, filled, canceled, partial-canceled
-role                | string    | 最近成交角色（当order-state = submitted, canceled, partial-canceled时，role 为缺省值taker；当order-state = filled, partial-filled 时，role 取值为taker 或maker。）
-price               | string    | 最新价（当order-state = submitted 时，price 为订单价格；当order-state = canceled, partial-canceled 时，price 为零；当order-state = filled, partial-filled 时，price 为最近成交价。当role = taker，且该订单同时与多张对手方订单撮合时，price 为多笔成交均价。）
-filled-amount       | string    | 最近成交数量
-filled-cash-amount  | string    | 最近成交数额
-unfilled-amount     | string    | 最近未成交数量（当order-state = submitted 时，unfilled-amount 为原始订单量；当order-state = canceled OR partial-canceled 时，unfilled-amount 为未成交数量；当order-state = filled 时，如果 order-type = buy-market，unfilled-amount 可能为一极小值；如果order-type <> buy-market 时，unfilled-amount 为零；当order-state = partial-filled AND role = taker 时，unfilled-amount 为未成交数量；当order-state = partial-filled AND role = maker 时，unfilled-amount 为零。（后续将支持此场景下的未成交量，时间另行通知。））
+match-id              | integer   | 최근 매칭 번호（order-state = submitted, canceled, partial-canceled 일때 match-id 는 메시지 넘버 입니다. order-state = filled, partial-filled 일때 match-id 는 최근 매칭 번호 입니다.） 
+order-id            | integer   | 주문서 번호 
+symbol              | string    | 거래 코드 
+order-state         | string    | 주문서 상태, 유효치: submitted, partical-filled, cancelling, filled, canceled, partial-canceled 
+role                | string    | 최근 체결 role（order-state = submitted, canceled, partial-canceled 일때 role은 디폴트 taker입니다. order-state = filled, partial-filled 일때 role 값은taker 혹은 maker 입니다.） 
+price               | string    | 현재가（order-state = submitted 일때 price 는 주문 가격 입니다. order-state = canceled, partial-canceled 일때 price 는 0입니다. order-state = filled, partial-filled 일때 price는 최근 체결가 입니다. role = taker 이고 해당 주문서가 여러 다른 회원의 주문서와 매칭시 price 는 여러 체결된 평균가 입니다.） 
+filled-amount       | string    | 최근 체결 수량 
+filled-cash-amount  | string    | 최근 체결 금액 
+unfilled-amount     | string    | 최근 미체결 수량（order-state = submitted 일때 unfilled-amount 는 처음 주문량 입니다. order-state = canceled OR partial-canceled 일때 unfilled-amount 는 미체결 수량 입니다. order-state = filled 일때 만약 order-type = buy-market, unfilled-amount 는 극히 작은 수 일수 있습니다. 만약 order-type <> buy-market 일때 unfilled-amount 는 0 입니다. order-state = partial-filled AND role = taker 일때 unfilled-amount 는 미체결 수량 입니다. order-state = partial-filled AND role = maker 일때 unfilled-amount 는 0 입니다.（추후 해당 환경하에 미체결 수량을 지원할 예정입니다,시간은 따로 통보 토록 하겠습니다.） 
 
 
-## 请求用户资产数据
+## 회원 자산 데이터 요청
 
-API Key 权限：读取
+API Key 권한：읽기
 
-查询当前用户的所有账户余额数据。
+해당 회원의 모든 계정 잔액 조회
 
-### 数据请求
+### 요청 데이터
 
 `accounts.list`
 
@@ -2665,15 +2623,15 @@ API Key 权限：读取
   "topic": "accounts.list",
 }
 ```
-成功建立和 WebSocket API 的连接之后，向 Server发送如下格式的数据来查询账户数据：
+WebSocket API와 접속 후 Server에 다음 양식과 같은 데이터를 발송하여 계정 데이터를 조회 합니다：
 
-参数  | 数据类型   |  描述|
-----------| --------| -------------------------------------------------------|
-op         |string  | 必填；操作名称，固定值为 req|
-cid        |string  | 选填；Client 请求唯一 ID|
-topic      |string   |必填；固定值为accounts.list|
+매개 변수  | 데이터 유형 |  설명|
+----------| --------| ------------------------------------------------------- | ------------------------------------------------------- 
+op         |string  | 필수, 작업 명칭, 고정값은 req |
+cid        |string  | 선택, Client 유일한 ID 요청 |
+topic      |string   |필수, 고정값은 accounts.list |
 
-### 返回
+### 반환
 
 > Successful
 
@@ -2736,23 +2694,23 @@ topic      |string   |必填；固定值为accounts.list|
     }
 ```
 
-字段                |数据类型 |    描述|
+매개 변수                |데이터 유형 |    설명|
 -------------------- |--------| ------------------------------------ | ------------------------------------ 
-id                   |long    | 账户ID|
-type              |string   |账户类型|
-state           |string     |账户状态|
-list               |string   |账户列表|
-currency                |string   |子账户币种|
-type           |string     |子账户类型|
-balance           |string     |子账户余额|
+id                   |long    | 계정ID |
+type              |string   |계정 유형|
+state           |string     |계정 상태|
+list               |string   |계정 리스트|
+currency                |string   |부계정 코인 종류|
+type           |string     |부계정 유형|
+balance           |string     |부계정 잔액|
 
-## 请求当前及历史订单
+## 현재 및 과거 주문 리스트 요청
 
-API Key 权限：读取
+API Key 권한：읽기
 
-根据设定条件查询当前委托、历史委托。
+설정한 조건에 의하여 현재 주문 및 과거 주문 조회.
 
-### 数据请求
+### 요청 데이터
 
 `order.list`
 
@@ -2768,21 +2726,21 @@ API Key 权限：读取
 }
 ```
 
-### 参数
+### 매개 변수
 
-参数  | 数据类型 | 是否必需 | 缺省值 | 描述                                   | 取值范围
+매개 변수  | 데이터 유형 | 필수 여부 | 기본값 | 설명                                   | 값의 범위 
 ---------  | --------- | -------- | ------- | -----------                                   | ----------
-account-id | int       | true     | NA      | 账户 id                        | NA
-symbol     | string    | true     | NA      | 交易对                | All supported trading symbols, e.g. btcusdt, bccbtc
-types      | string    | false    | NA      | 查询的订单类型组合，使用','分割   | buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc
-states     | string    | false    | NA      | 查询的订单状态组合，使用','分割  | submitted, partial-filled, partial-canceled, filled, canceled
-start-date | string    | false    | -61d    | 查询开始日期, 日期格式yyyy-mm-dd      | NA
-end-date   | string    | false    | today   | 查询结束日期, 日期格式yyyy-mm-dd        | NA
-from       | string    | false    | NA      | 查询起始 ID                 | NA
-direct     | string    | false    | next    | 查询方向          | next, prev
-size       | int       | false    | 100     | 查询记录大小               | [1, 100]
+account-id | int       | true     | N/A      | 계정ID                  | N/A
+symbol     | string    | true     | N/A      | 거래쌍             | 모든 거래 지원, 예) btcusdt, bccbtc
+types      | string    | false    | N/A      | 조회한 주문서 유형 조합, 부호 ',' 로 분리 | buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc
+states     | string    | false    | N/A      | 조회한 주문서 상태 조합, 부호 ',' 로 분리 | submitted, partial-filled, partial-canceled, filled, canceled
+start-date | string    | false    | -61d    | 조회 시작일자, 일자 양식 yyyy-mm-dd | N/A
+end-date   | string    | false    | today   | 조회 종료일자, 일자 양식 yyyy-mm-dd | N/A
+from       | string    | false    | N/A      | 조회 처음 ID          | N/A
+direct     | string    | false    | next    | 조회 방향     | next, prev
+size       | int       | false    | 100     | 조회 내역 크기       | [1, 100]
 
-### 数据更新字段列表
+### 데이터 업데이트 필드 목록
 
 > Successful
 
@@ -2814,31 +2772,31 @@ size       | int       | false    | 100     | 查询记录大小               |
 }
 ```
 
-字段                 |数据类型 |    描述|
--------------------- |--------| ------------------------------------|
-id                   |long    | 订单ID|
-symbol               |string   |交易对|
-account-id           |long     |账户ID|
-amount               |string   |订单数量|
-price                |string   |订单价格|
-created-at           |long     |订单创建时间|
-type                 |string   |订单类型，请参考订单类型说明|
-filled-amount        |string   |已成交数量|
-filled-cash-amount   |string   |已成交总金额|
-filled-fees          |string   |已成交手续费|
-finished-at          |string   |最后成交时间|
-source               |string   |订单来源，请参考订单来源说明|
-state                |string   |订单状态，请参考订单状态说明|
-cancel-at            |long     |撤单时间|
+필드                 | 데이터 유형 | 설명 |
+-------------------- |--------| ------------------------------------ | ------------------------------------ 
+id                   |long    | 주문서 ID |
+symbol               |string   |거래쌍|
+account-id           |long     |계정ID|
+amount               |string   |주문서 수량|
+price                |string   |주문 가격|
+created-at           |long     |주문 생성 시간|
+type                 |string   |주문서 유형, 주문서 유형 설명을 참고 하세요.|
+filled-amount        |string   |체결 수량|
+filled-cash-amount   |string   |체결 총금액|
+filled-fees          |string   |체결 수수료|
+finished-at          |string   |체결 종료 시간|
+source               |string   |주문 경로, 주문 경로 설명을 참고 하세요.|
+state                |string   |주문서 상태, 주문서 상태 설명을 참고 하세요.|
+cancel-at            |long     |주문 철회 시간|
 
 
-## 以订单编号请求订单
+## 주문서 ID로 주문서 요청
 
-API Key 权限：读取
+API Key 권한：읽기
 
-以订单编号请求订单数据
+주문서 ID로 주문서 데이터 요청
 
-### 数据请求
+### 요청 데이터
 
 `order.detail`
 
@@ -2853,17 +2811,17 @@ API Key 权限：读取
 }
 ```
 
-### 参数
+### 매개 변수
 
-参数  | 是否必需 |  数据类型    | 描述       |                                      缺省值  | 取值范围|
-----------| ----------| --------| ------------------------------------------------ |--------| ----------|
-op         |true       |string   |操作名称，固定值为 req    |||                                
-cid        |true       |string   |Client 请求唯一 ID        |||                                
-topic      |false      |string   |固定值为 orders.detail  |||          
-order-id   |true       |string   |订单ID    |||                                                
+매개 변수  | 데이터 유형 | 필수여부 | 설명       | 
+----------| ----------| --------| ------------------------------------------------ |--------| ---------- | ---------- 
+op         | string       | true   | 작업 명칭, 고정치는 req    |
+cid        | string       | true   | Client 유일한 ID 요청        |
+topic      | string      | false   | 고정치는 orders.detail  |
+order-id   | string       | true   | 오더 ID    |                                                
 
 
-### 返回
+### Response
 
 > Successful
 
@@ -2892,25 +2850,21 @@ order-id   |true       |string   |订单ID    |||
   }
 }
 ```
-字段                 |数据类型 |    描述|
--------------------- |--------| ------------------------------------|
-id                   |long    | 订单ID|
-symbol               |string   |交易对|
-account-id           |long     |账户ID|
-amount               |string   |订单数量|
-price                |string   |订单价格|
-created-at           |long     |订单创建时间|
-type                 |string   |订单类型，请参考订单类型说明|
-filled-amount        |string   |已成交数量|
-filled-cash-amount   |string   |已成交总金额|
-filled-fees          |string   |已成交手续费|
-finished-at          |string   |最后成交时间|
-source               |string   |订单来源，请参考订单来源说明|
-state                |string   |订单状态，请参考订单状态说明|
-cancel-at            |long     |撤单时间|
+필드                 | 데이터 유형 |    설명|
+-------------------- |--------| ------------------------------------ | ------------------------------------ 
+id                   |long    | 주문서 ID |
+symbol               |string   | 거래쌍 |
+account-id           |long     | 계정 ID |
+amount               |string   | 주문서 수량 |
+price                |string   | 주문 가격 |
+created-at           |long     | 주문 생성 시간 |
+type                 |string   | 주문서 유형，주문서 유형 설명을 참고 하세요. |
+filled-amount        |string   | 체결 수량 |
+filled-cash-amount   |string   | 체결 총금액 |
+filled-fees          |string   | 체결 수수료 |
+finished-at          |string   | 체결 종료 시간 |
+source               |string   | 주문 경로, 주문 경로 설명을 참고 하세요. |
+state                |string   | 주문서 상태, 주문서 상태 설명을 참고 하세요. |
+cancel-at            |long     | 주문 철회 시간 |
 
-<br>
-<br>
-<br>
-<br>
-<br>
+
