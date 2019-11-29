@@ -1,5 +1,14 @@
 ---
-title: 소개
+title: 후오비 코리아 API 문서
+
+language_tabs: # must be one of https://git.io/vQNgJ
+  - shell
+
+toc_footers:
+  - <a href='https://www.huobi.kr/ko-kr/api/'>API Key 생성</a>
+includes:
+
+search: true
 ---
 
 # 1. 소개
