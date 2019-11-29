@@ -8,7 +8,7 @@ toc_footers:
   - <a href='https://www.hbg.com/zh-cn/apikey/'>创建 API Key </a>
 includes:
 
-search: False
+search: true
 
 # 1.简介
 
