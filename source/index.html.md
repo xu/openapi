@@ -20,7 +20,7 @@ search: false
 
 API key 발급 신청과 변경은 API 관리 메뉴를 통해 진행할 수 있으며 경로는 다음과 같습니다. 
 > 후오비 코리아(www.huobi.co.kr) 로그인 > 마이페이지 > API 관리
-API 관련하여 궁금증 또는 문의사항이 있을 경우 ‘자주 묻는 질문(FAQ)’을 참고하거나 ‘후오비 코리아 API 커뮤니티 텔레그램(http://bit.ly/2jXMzEN) 채팅방’을 통해 상담 받을 수 있습니다.
+API 관련하여 궁금증 또는 문의사항이 있을 경우 ‘자주 묻는 질문(FAQ)’을 참고하거나 ‘후오비 코리아 API 커뮤니티 텔레그램(<a href='http://bitly.kr/g7mKe7j' target='_blank'>http://bitly.kr/g7mKe7j</a>) 채팅방’을 통해 상담 받을 수 있습니다.
 
    
 
