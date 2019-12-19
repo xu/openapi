@@ -771,7 +771,6 @@ curl "https://api-cloud.huobi.co.kr/v1/common/symbols"
 | min-order-amt    | long     | 交易对最小下单量 (下单量指当订单类型为限价单或sell-market时，下单接口传的'amount') |
 | max-order-amt    | long     | 交易对最大下单量                                             |
 | min-order-value  | long     | 最小下单金额 （下单金额指当订单类型为限价单时，下单接口传入的(amount * price)。当订单类型为buy-market时，下单接口传的'amount'） |
-| leverage-ratio   | int      | 交易对杠杆最大倍数                                           |
 
 ## 获取所有币种
 
@@ -2793,10 +2792,10 @@ API Key 权限：读取
 
 | 字段       | 数据类型 | 描述                                                         |
 | ---------- | -------- | ------------------------------------------------------------ |
-| event      | string   | 资产变化通知相关事件说明，比如订单创建(order.place) 、订单成交(order.match)、订单成交退款（order.refund)、订单撤销(order.cancel) 、点卡抵扣交易手续费（order.fee-refund)、杠杆账户划转（margin.transfer)、借币本金（margin.loan)、借币计息（margin.interest)、归还借币本金利息(margin.repay)、其他资产变化(other) |
+| event      | string   | 资产变化通知相关事件说明，比如订单创建(order.place) 、订单成交(order.match)、订单成交退款（order.refund)、订单撤销(order.cancel) 、点卡抵扣交易手续费（order.fee-refund)、其他资产变化(other) |
 | account-id | integer  | 账户 id                                                      |
 | currency   | string   | 币种                                                         |
-| type       | string   | 账户类型, 交易子账户（trade),借币子账户（loan），利息子账户（interest) |
+| type       | string   | 账户类型, 交易子账户（trade) |
 | balance    | string   | 账户余额 (当订阅model=0时，该余额为可用余额；当订阅model=1时，该余额为总余额） |
 
 ## 订阅订单更新
@@ -3335,7 +3334,7 @@ v2.1版本签名与v2.0版本签名步骤相似，具体区别如下：
 
 3. signatureVersion版本升级为2.1
 
-v2版本签名步骤,您可以点击 <a href='https://huobiapi.github.io/docs/spot/v1/cn/#c64cd15fdc'>这里 </a> 获取。
+v2版本签名步骤,您可以点击 <a href='#c64cd15fdc'>这里 </a> 获取。
 
 签名前最后生成的字符串如下：
 
@@ -3570,7 +3569,7 @@ accounts.update#1：
 | accountId   | long     | 账户ID                                                       |
 | balance     | string   | 账户余额（仅当账户余额发生变动时推送）                       |
 | available   | string   | 可用余额（仅当可用余额发生变动时推送）                       |
-| changeType  | string   | 余额变动类型，有效值：order-place(订单创建)，order-match(订单成交)，order-refund(订单成交退款)，order-cancel(订单撤销)，order-fee-refund(点卡抵扣交易手续费)，margin-transfer(杠杆账户划转)，margin-loan(借贷本金)，margin-interest(借贷计息)，margin-repay(归还借贷本金利息)，other(其他资产变化) |
+| changeType  | string   | 余额变动类型，有效值：order-place(订单创建)，order-match(订单成交)，order-refund(订单成交退款)，order-cancel(订单撤销)，order-fee-refund(点卡抵扣交易手续费)，other(其他资产变化) |
 | accountType | string   | 账户类型，有效值：trade, frozen, loan, interest              |
 | changeTime  | long     | 余额变动时间，unix time in millisecond                       |
 
