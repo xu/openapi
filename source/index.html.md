@@ -8,7 +8,7 @@ toc_footers:
   - <a href='https://www.huobi.kr/zh-cn/api/'>创建 API Key </a>
 includes:
 
-search: true
+search: false
 ---
 
 
@@ -2005,6 +2005,897 @@ API Key 权限：读取
 | confirm-error   | 区块确认错误 |
 | repealed        | 已撤销       |
 
+
+
+# 现货
+
+<aside class="notice">访问交易相关的接口需要进行签名认证。</aside>
+
+## 下单
+
+API Key 权限：交易
+
+发送一个新订单到火币以进行撮合。
+
+### HTTP 请求
+
+- POST ` /v1/order/orders/place`
+
+```json
+{
+  "account-id": "100009",
+  "amount": "10.1",
+  "price": "100.1",
+  "source": "api",
+  "symbol": "ethusdt",
+  "type": "buy-limit",
+  "client-order-id": "a0001"
+}
+```
+
+### 请求参数
+
+参数名称 | 数据类型 | 是否必需 | 默认值 | 描述
+---------  | --------- | -------- | ------- | -----------
+account-id | string    | true     | NA      | 账户 ID，取值参考 `GET /v1/account/accounts`。现货交易使用 ‘spot’ 账户的 account-id；
+symbol     | string    | true     | NA      | 交易对,即btcusdt, ethbtc...（取值参考`GET /v1/common/symbols`）
+type       | string    | true     | NA      | 订单类型，包括buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker（说明见下文）, buy-stop-limit, sell-stop-limit
+amount     | string    | true     | NA      | 订单交易量（市价买单此字段为订单交易额）
+price      | string    | false    | NA      | limit order的交易价格
+source     | string    | false    | api     | 现货交易填写“api”
+client-order-id| string    | false    | NA     | 用户自编订单号（最大长度64个字符，须在24小时内保持唯一性）
+
+
+**buy-limit-maker**
+
+当“下单价格”>=“市场最低卖出价”，订单提交后，系统将拒绝接受此订单；
+
+当“下单价格”<“市场最低卖出价”，提交成功后，此订单将被系统接受。
+
+**sell-limit-maker**
+
+当“下单价格”<=“市场最高买入价”，订单提交后，系统将拒绝接受此订单；
+
+当“下单价格”>“市场最高买入价”，提交成功后，此订单将被系统接受。
+
+> Response:
+
+```json
+{  
+  "data": "59378"
+}
+```
+
+### 响应数据
+
+返回的主数据对象是一个对应下单单号的字符串。
+
+如client order ID（在24小时内）被复用，节点返回先前订单的client order ID。
+
+## 撤销订单
+
+API Key 权限：交易
+
+此接口发送一个撤销订单的请求。
+
+<aside class="warning">此接口只提交取消请求，实际取消结果需要通过订单状态，撮合状态等接口来确认。</aside>
+### HTTP 请求
+
+- POST ` /v1/order/orders/{order-id}/submitcancel`
+
+
+### 请求参数
+
+| 参数名称     | 是否必须 | 类型     | 描述           | 默认值  | 取值范围 |
+| -------- | ---- | ------ | ------------ | ---- | ---- |
+| order-id | true | string | 订单ID，填在path中 |      |      |
+
+
+> Response:
+
+```json
+{  
+  "data": "59378"
+}
+```
+
+### 响应数据
+
+返回的主数据对象是一个对应下单单号的字符串。
+
+### 错误码
+
+> Response:
+
+```json
+{
+  "status": "error",
+  "err-code": "order-orderstate-error",
+  "err-msg": "订单状态错误",
+  "order-state":-1 // 当前订单状态
+}
+```
+
+返回字段列表中，order-state的可能取值包括 -
+
+order-state           |  Description
+---------       | -----------
+-1| order was already closed in the long past (order state = canceled, partial-canceled, filled, partial-filled)
+5| partial-canceled
+6| filled
+7| canceled
+10| cancelling
+
+## 撤销订单（基于client order ID）
+
+API Key 权限：交易
+
+此接口发送一个撤销订单的请求。
+
+<aside class="warning">此接口只提交取消请求，实际取消结果需要通过订单状态，撮合状态等接口来确认。</aside>
+### HTTP 请求
+
+- POST ` /v1/order/orders/submitCancelClientOrder`
+
+```json
+{
+  "client-order-id": "a0001"
+}
+```
+
+
+### 请求参数
+
+| 参数名称     | 是否必须 | 类型     | 描述           | 默认值  | 取值范围 |
+| -------- | ---- | ------ | ------------ | ---- | ---- |
+| client-order-id | true | string | 用户自编订单号 |      |      |
+
+
+> Response:
+
+```json
+{  
+  "data": "10"
+}
+```
+### 响应数据
+
+字段名称          | 数据类型 | 描述
+---------           | --------- | -----------
+data                  | integer   | 撤单状态码
+
+Status Code           |  Description
+---------       | -----------
+-1| order was already closed in the long past (order state = canceled, partial-canceled, filled, partial-filled)
+0| client-order-id not found
+5| partial-canceled
+6| filled
+7| canceled
+10| cancelling
+
+
+## 查询当前未成交订单
+
+API Key 权限：读取
+
+查询已提交但是仍未完全成交或未被撤销的订单。
+
+```json
+{
+   "account-id": "100009",
+   "symbol": "ethusdt",
+   "side": "buy"
+}
+```
+
+### HTTP 请求
+
+- GET `/v1/order/openOrders`
+
+
+### 请求参数
+
+参数名称 | 数据类型 | 是否必需 | 默认值 | 描述
+---------  | --------- | -------- | ------- | -----------
+account-id | string    | true    | NA      | 账户 ID，取值参考 `GET /v1/account/accounts`。现货交易使用‘spot’账户的 account-id
+symbol     | string    | ture    | NA      | 交易对,即btcusdt, ethbtc...（取值参考`GET /v1/common/symbols`）
+side       | string    | false    | both    | 指定只返回某一个方向的订单，可能的值有: buy, sell. 默认两个方向都返回。
+from       | string | false | |查询起始 ID
+direct     | string | false (如字段'from'已设定，此字段'direct'为必填) | |查询方向 (prev - 以起始ID升序检索；next - 以起始ID降序检索)
+size       | int       | false    | 100      | 返回订单的数量，最大值500。
+
+> Response:
+
+```json
+{  
+  "data": [
+    {
+      "id": 5454937,
+      "symbol": "ethusdt",
+      "account-id": 30925,
+      "amount": "1.000000000000000000",
+      "price": "0.453000000000000000",
+      "created-at": 1530604762277,
+      "type": "sell-limit",
+      "filled-amount": "0.0",
+      "filled-cash-amount": "0.0",
+      "filled-fees": "0.0",
+      "source": "web",
+      "state": "submitted"
+    }
+  ]
+}
+```
+
+### 响应数据
+
+字段名称          | 数据类型 | 描述
+---------           | --------- | -----------
+id                  | integer   | 订单id
+symbol              | string    | 交易对, 例如btcusdt, ethbtc
+price               | string    | limit order的交易价格
+created-at          | int       | 订单创建的调整为新加坡时间的时间戳，单位毫秒 
+type                | string    | 订单类型
+filled-amount       | string    | 订单中已成交部分的数量
+filled-cash-amount  | string    | 订单中已成交部分的总价格
+filled-fees         | string    | 已交交易手续费总额
+source              | string    | 现货交易填写“api”
+state               | string    | 订单状态，包括submitted, partial-filled, cancelling, created
+stop-price|string|止盈止损订单触发价格
+operator|string|止盈止损订单触发价运算符
+
+## 批量撤销订单（open orders）
+
+API Key 权限：交易
+
+此接口发送批量撤销订单的请求。
+
+<aside class="warning">此接口只提交取消请求，实际取消结果需要通过订单状态，撮合状态等接口来确认。</aside>
+### HTTP 请求
+
+- POST ` /v1/order/orders/batchCancelOpenOrders`
+
+
+### 请求参数
+
+| 参数名称     | 是否必须 | 类型     | 描述           | 默认值  | 取值范围 |
+| -------- | ---- | ------ | ------------ | ---- | ---- |
+| account-id | true  | string | 账户ID，取值参考 `GET /v1/account/accounts`     |     |      |
+| symbol     | false | string | 交易代码列表（最多10 个symbols，多个交易代码间以逗号分隔），btcusdt, ethbtc...（取值参考`/v1/common/symbols`）     |  all    |     |
+| side | false | string | 主动交易方向 |      |   “buy”或“sell”，缺省将返回所有符合条件尚未成交订单   |
+| size | false | int | 所需返回记录数  |  100 |   [0,100]   |
+
+
+> Response:
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "success-count": 2,
+    "failed-count": 0,
+    "next-id": 5454600
+  }
+}
+```
+
+
+### 响应数据
+
+
+| 参数名称 | 是否必须 | 数据类型   | 描述    | 取值范围 |
+| ---- | ---- | ------ | ----- | ---- |
+| success-count | true | int | 成功取消的订单数 |     |
+| failed-count | true | int | 取消失败的订单数 |     |
+| next-id | true | long | 下一个符合取消条件的订单号 |    |
+
+## 批量撤销订单
+
+API Key 权限：交易
+
+此接口同时为多个订单（基于id）发送取消请求。
+
+### HTTP 请求
+
+- POST ` /v1/order/orders/batchcancel`
+
+```json
+{
+  "order-ids": [
+    "1", "2", "3"
+  ]
+}
+```
+
+### 请求参数
+
+| 参数名称  | 是否必须 | 类型   | 描述   | 默认值  | 取值范围 |
+| ---- | ---- | ---- | ----  | ---- | ---- |
+| order-ids | true | list | 撤销订单ID列表 |  |单次不超过50个订单id|
+
+
+> Response:
+
+```json
+{  
+  "data": {
+    "success": [
+      "1",
+      "3"
+    ],
+    "failed": [
+      {
+        "err-msg": "记录无效",
+        "order-id": "2",
+        "err-code": "base-record-invalid"
+        "order-state":-1 // 当前订单状态
+      }
+    ]
+  }
+}
+```
+
+### 响应数据
+
+| 字段名称 | 数据类型 | 描述
+| ---- | ----- | ---- |
+| data | map | 撤单结果
+
+### 错误码
+
+> Response:
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "success": ["123","456"],
+    "failed": [
+      {
+        "err-msg": "订单状态错误",
+        "order-id": "12345678",
+        "err-code": "order-orderstate-error",
+        "order-state":-1 // 当前订单状态
+      }
+    ]
+  }
+}
+```
+
+返回字段列表中，order-state的可能取值包括 -
+
+order-state           |  Description
+---------       | -----------
+-1| order was already closed in the long past (order state = canceled, partial-canceled, filled, partial-filled)
+5| partial-canceled
+6| filled
+7| canceled
+10| cancelling
+
+## 查询订单详情
+
+API Key 权限：读取
+
+此接口返回指定订单的最新状态和详情。
+
+### HTTP 请求
+
+- GET `/v1/order/orders/{order-id}`
+
+
+### 请求参数
+
+| 参数名称     | 是否必须 | 类型  | 描述   | 默认值  | 取值范围 |
+| -------- | ---- | ------ | -----  | ---- | ---- |
+| order-id | true | string | 订单ID，填在path中 |      |      |
+
+
+> Response:
+
+```json
+{  
+  "data": 
+  {
+    "id": 59378,
+    "symbol": "ethusdt",
+    "account-id": 100009,
+    "amount": "10.1000000000",
+    "price": "100.1000000000",
+    "created-at": 1494901162595,
+    "type": "buy-limit",
+    "field-amount": "10.1000000000",
+    "field-cash-amount": "1011.0100000000",
+    "field-fees": "0.0202000000",
+    "finished-at": 1494901400468,
+    "user-id": 1000,
+    "source": "api",
+    "state": "filled",
+    "canceled-at": 0
+  }
+}
+```
+
+### 响应数据
+
+| 字段名称     | 是否必须  | 数据类型   | 描述   | 取值范围     |
+| ----------------- | ----- | ------ | -------  | ----  |
+| account-id        | true  | long   | 账户 ID    |       |
+| amount            | true  | string | 订单数量              |    |
+| canceled-at       | false | long   | 订单撤销时间    |     |
+| created-at        | true  | long   | 订单创建时间    |   |
+| field-amount      | true  | string | 已成交数量    |     |
+| field-cash-amount | true  | string | 已成交总金额     |      |
+| field-fees        | true  | string | 已成交手续费（买入为币，卖出为钱） |     |
+| finished-at       | false | long   | 订单变为终结态的时间，不是成交时间，包含“已撤单”状态    |     |
+| id                | true  | long   | 订单ID    |     |
+| price             | true  | string | 订单价格       |     |
+| source            | true  | string | 订单来源   | api |
+| state             | true  | string | 订单状态   | submitted 已提交, partial-filled 部分成交, partial-canceled 部分成交撤销, filled 完全成交, canceled 已撤销， created |
+| symbol            | true  | string | 交易对   | btcusdt, ethbtc, rcneth ... |
+| type              | true  | string | 订单类型   | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单， buy-limit-maker, sell-limit-maker, buy-stop-limit，sell-stop-limit  |
+| stop-price              | false  | string | 止盈止损订单触发价格   | |
+| operator              | false  | string | 止盈止损订单触发价运算符   | gte,lte |
+
+
+## 查询订单详情（基于client order ID）
+
+API Key 权限：读取
+
+此接口返回指定订单的最新状态和详情。
+
+### HTTP 请求
+
+- GET `/v1/order/orders/getClientOrder`
+
+```json
+{
+  "clientOrderId": "a0001"
+}
+```
+
+### 请求参数
+
+| 参数名称     | 是否必须 | 类型  | 描述   | 默认值  | 取值范围 |
+| -------- | ---- | ------ | -----  | ---- | ---- |
+| clientOrderId | true | string | 用户自编订单号 |      |      |
+
+> Response:
+
+```json
+{  
+  "data": 
+  {
+    "id": 59378,
+    "symbol": "ethusdt",
+    "account-id": 100009,
+    "amount": "10.1000000000",
+    "price": "100.1000000000",
+    "created-at": 1494901162595,
+    "type": "buy-limit",
+    "field-amount": "10.1000000000",
+    "field-cash-amount": "1011.0100000000",
+    "field-fees": "0.0202000000",
+    "finished-at": 1494901400468,
+    "user-id": 1000,
+    "source": "api",
+    "state": "filled",
+    "canceled-at": 0
+  }
+}
+```
+
+### 响应数据
+
+| 字段名称     | 是否必须  | 数据类型   | 描述   | 取值范围     |
+| ----------------- | ----- | ------ | -------  | ----  |
+| account-id        | true  | long   | 账户 ID    |       |
+| amount            | true  | string | 订单数量              |    |
+| canceled-at       | false | long   | 订单撤销时间    |     |
+| created-at        | true  | long   | 订单创建时间    |   |
+| field-amount      | true  | string | 已成交数量    |     |
+| field-cash-amount | true  | string | 已成交总金额     |      |
+| field-fees        | true  | string | 已成交手续费（买入为币，卖出为钱） |     |
+| finished-at       | false | long   | 订单变为终结态的时间，不是成交时间，包含“已撤单”状态    |     |
+| id                | true  | long   | 订单ID    |     |
+| price             | true  | string | 订单价格       |     |
+| source            | true  | string | 订单来源   | api |
+| state             | true  | string | 订单状态   | submitted 已提交, partial-filled 部分成交, partial-canceled 部分成交撤销, filled 完全成交, canceled 已撤销，created |
+| symbol            | true  | string | 交易对   | btcusdt, ethbtc, rcneth ... |
+| type              | true  | string | 订单类型   | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单， buy-limit-maker, sell-limit-maker, buy-stop-limit，sell-stop-limit |
+| stop-price              | false  | string | 止盈止损订单触发价格   | |
+| operator              | false  | string | 止盈止损订单触发价运算符   | gte,lte |
+
+如client order ID不存在，返回如下错误信息 
+{
+    "status": "error",
+    "err-code": "base-record-invalid",
+    "err-msg": "record invalid",
+    "data": null
+}
+
+## 成交明细
+
+API Key 权限：读取
+
+此接口返回指定订单的成交明细。
+
+### HTTP 请求
+
+- GET `/v1/order/orders/{order-id}/matchresults`
+
+
+
+### 请求参数
+
+| 参数名称  | 是否必须 | 类型  | 描述  | 默认值  | 取值范围 |
+| -------- | ---- | ------ | -----  | ---- | ---- |
+| order-id | true | string | 订单ID，填在path中 |      |      |
+
+
+> Response:
+
+```json
+{  
+  "data": [
+    {
+      "id": 29553,
+      "order-id": 59378,
+      "match-id": 59335,
+      "trade-id": 100282808529,
+      "symbol": "ethusdt",
+      "type": "buy-limit",
+      "source": "api",
+      "price": "100.1000000000",
+      "filled-amount": "9.1155000000",
+      "filled-fees": "0.0182310000",
+      "created-at": 1494901400435,
+      "role": "maker",
+      "filled-points": "0.0",
+      "fee-deduct-currency": ""
+    }
+    ...
+  ]
+}
+```
+
+### 响应数据
+
+<aside class="notice">返回的主数据对象为一个对象数组，其中每一个元件代表一个交易结果。</aside>
+| 字段名称    | 是否必须 | 数据类型   | 描述   | 取值范围     |
+| ------------- | ---- | ------ | -------- | -------- |
+| created-at    | true | long   | 成交时间     |    |
+| filled-amount | true | string | 成交数量     |    |
+| filled-fees   | true | string | 成交手续费，如果为空或为0，代表使用了其他币种进行了抵扣，可根据filled-points和fee-deduct-currency字段判断    |     |
+| id            | true | long   | 订单成交记录ID |     |
+| match-id      | true | long   | 撮合ID，订单在撮合中执行的顺序ID     |     |
+| order-id      | true | long   | 订单ID，成交所属订单的ID    |      |
+| trade-id      | false | integer   | Unique trade ID (NEW)唯一成交编号，成交时产生的唯一编号ID    |     |
+| price         | true | string | 成交价格  |    |
+| source        | true | string | 订单来源  | api      |
+| symbol        | true | string | 交易对   | btcusdt, ethbtc, rcneth ...  |
+| type          | true | string | 订单类型   | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单， buy-limit-maker, sell-limit-maker, buy-stop-limit，sell-stop-limit |
+| role      | true | string   | 成交角色    |maker,taker      |
+| filled-points      | true | string   | 抵扣数量（可为ht或hbpoint）    |     |
+| fee-deduct-currency      | true | string   | 抵扣类型    |如果为空，代表扣除的手续费是原币；如果为"ht"，代表抵扣手续费的是HT；如果为"hbpoint"，代表抵扣手续费的是点卡     |
+
+## 搜索历史订单
+
+API Key 权限：读取
+
+此接口基于搜索条件查询历史订单。
+
+### HTTP 请求
+
+- GET `/v1/order/orders`
+
+```json
+{
+   "account-id": "100009",
+   "amount": "10.1",
+   "price": "100.1",
+   "source": "api",
+   "symbol": "ethusdt",
+   "type": "buy-limit"
+}
+```
+
+
+### 请求参数
+
+| 参数名称   | 是否必须  | 类型     | 描述   | 默认值  | 取值范围   |
+| ---------- | ----- | ------ | ------  | ---- | ----  |
+| symbol     | true  | string | 交易对      |      |btcusdt, ethbtc...（取值参考`GET /v1/common/symbols`）  |
+| types      | false | string | 查询的订单类型组合，使用','分割  |      | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单， buy-limit-maker, sell-limit-maker, buy-stop-limit，sell-stop-limit |
+| start-date | false | string | 查询开始日期, 日期格式yyyy-mm-dd。 以订单生成时间进行查询 | -1d 查询结束日期的前1天 | 取值范围 [((end-date) – 1), (end-date)] ，查询窗口最大为2天，窗口平移范围为最近180天，已完全撤销的历史订单的查询窗口平移范围只有最近7天(state="canceled") |
+| end-date   | false | string | 查询结束日期, 日期格式yyyy-mm-dd。 以订单生成时间进行查询 | today     | 取值范围 [(today-179), today] ，查询窗口最大为2天，窗口平移范围为最近180天，已完全撤销的历史订单的查询窗口平移范围只有最近7天(state="canceled")   |
+| states     | true  | string | 查询的订单状态组合，使用','分割  |      | submitted 已提交, partial-filled 部分成交, partial-canceled 部分成交撤销, filled 完全成交, canceled 已撤销，created|
+| from       | false | string | 查询起始 ID   |      |    |
+| direct     | false | string | 查询方向   |      | prev 向前，时间（或 ID）正序；next 向后，时间（或 ID）倒序）    |
+| size       | false | string | 查询记录大小      | 100     |  [1, 100]       |
+
+
+
+> Response:
+
+```json
+{  
+  "data": [
+    {
+      "id": 59378,
+      "symbol": "ethusdt",
+      "account-id": 100009,
+      "amount": "10.1000000000",
+      "price": "100.1000000000",
+      "created-at": 1494901162595,
+      "type": "buy-limit",
+      "field-amount": "10.1000000000",
+      "field-cash-amount": "1011.0100000000",
+      "field-fees": "0.0202000000",
+      "finished-at": 1494901400468,
+      "user-id": 1000,
+      "source": "api",
+      "state": "filled",
+      "canceled-at": 0
+    }
+    ...
+  ]
+}
+```
+
+### 响应数据
+
+| 参数名称    | 是否必须  | 数据类型   | 描述   | 取值范围   |
+| ----------------- | ----- | ------ | ----------------- | ----  |
+| account-id        | true  | long   | 账户 ID    |     |
+| amount            | true  | string | 订单数量    |   |
+| canceled-at       | false | long   | 接到撤单申请的时间   |    |
+| created-at        | true  | long   | 订单创建时间   |    |
+| field-amount      | true  | string | 已成交数量   |    |
+| field-cash-amount | true  | string | 已成交总金额    |    |
+| field-fees        | true  | string | 已成交手续费（买入为基础币，卖出为计价币） |       |
+| finished-at       | false | long   | 最后成交时间    |   |
+| id                | true  | long   | 订单ID    |    |
+| price             | true  | string | 订单价格  |    |
+| source            | true  | string | 订单来源   | api  |
+| state             | true  | string | 订单状态    | submitted 已提交, partial-filled 部分成交, partial-canceled 部分成交撤销, filled 完全成交, canceled 已撤销，created |
+| symbol            | true  | string | 交易对    | btcusdt, ethbtc, rcneth ... |
+| type              | true  | string | 订单类型  | submit-cancel：已提交撤单申请  ,buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单， buy-limit-maker, sell-limit-maker, buy-stop-limit，sell-stop-limit |
+| stop-price              | false  | string | 止盈止损订单触发价格   | |
+| operator              | false  | string | 止盈止损订单触发价运算符   | gte,lte |
+
+### start-date, end-date相关错误码
+
+|错误码|对应错误场景|
+|------------|----------------------------------------------|
+|invalid_interval| start date小于end date; 或者 start date 与end date之间的时间间隔大于2天|
+|invalid_start_date|start date是一个180天之前的日期；或者start date是一个未来的日期|
+|invalid_end_date|end date 是一个180天之前的日期；或者end date是一个未来的日期|
+
+## 搜索最近48小时内历史订单
+
+API Key 权限：读取
+
+此接口基于搜索条件查询最近48小时内历史订单。
+
+### HTTP 请求
+
+- GET `/v1/order/history`
+
+```json
+{
+   "symbol": "btcusdt",
+   "start-time": "1556417645419",
+   "end-time": "1556533539282",
+   "direct": "prev",
+   "size": "10"
+}
+```
+
+
+### 请求参数
+
+| 参数名称   | 是否必须  | 类型     | 描述   | 默认值  | 取值范围   |
+| ---------- | ----- | ------ | ------  | ---- | ----  |
+| symbol     | false  | string | 交易对      |all      |btcusdt, ethbtc...（取值参考`GET /v1/common/symbols`）  |
+| start-time      | false | long | 查询起始时间（含）  |48小时前的时刻      |UTC time in millisecond |
+| end-time | false | long | 查询结束时间（含） | 查询时刻     |UTC time in millisecond |
+| direct   | false | string | 订单查询方向（注：仅在检索出的总条目数量超出size字段限定时起作用；如果检索出的总条目数量在size 字段限定内，direct 字段不起作用。） | next     |prev, next   |
+| size     | false  | int | 每次返回条目数量  |100      | [10,1000] |
+
+
+
+> Response:
+
+```json
+{
+    "status": "ok",
+    "data": [
+        {
+            "id": 31215214553,
+            "symbol": "btcusdt",
+            "account-id": 4717043,
+            "amount": "1.000000000000000000",
+            "price": "1.000000000000000000",
+            "created-at": 1556533539282,
+            "type": "buy-limit",
+            "field-amount": "0.0",
+            "field-cash-amount": "0.0",
+            "field-fees": "0.0",
+            "finished-at": 1556533568953,
+            "source": "web",
+            "state": "canceled",
+            "canceled-at": 1556533568911
+        }
+    ]
+}
+```
+
+### 响应数据
+
+| 参数名称    | 是否必须  | 数据类型   | 描述   | 取值范围   |
+| ----------------- | ----- | ------ | ----------------- | ----  |
+| {account-id        | true  | long   | 账户 ID    |     |
+| amount            | true  | string | 订单数量    |   |
+| canceled-at       | false | long   | 接到撤单申请的时间   |    |
+| created-at        | true  | long   | 订单创建时间   |    |
+| field-amount      | true  | string | 已成交数量   |    |
+| field-cash-amount | true  | string | 已成交总金额    |    |
+| field-fees        | true  | string | 已成交手续费（买入为基础币，卖出为计价币） |       |
+| finished-at       | false | long   | 最后成交时间    |   |
+| id                | true  | long   | 订单ID    |    |
+| price             | true  | string | 订单价格  |    |
+| source            | true  | string | 订单来源   | api  |
+| state             | true  | string | 订单状态    | partial-canceled 部分成交撤销, filled 完全成交, canceled 已撤销 |
+| symbol            | true  | string | 交易对    | btcusdt, ethbtc, rcneth ... |
+| stop-price              | false  | string | 止盈止损订单触发价格   | |
+| operator              | false  | string | 止盈止损订单触发价运算符   | gte,lte |
+| type}              | true  | string | 订单类型  | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单, buy-limit-maker, sell-limit-maker, buy-limit-maker, sell-limit-maker |
+| next-time            | false  | long |下一查询起始时间（当请求字段”direct”为”prev”时有效）, 下一查询结束时间（当请求字段”direct”为”next”时有效）。注：仅在检索出的总条目数量超出size字段限定时，此返回字段存在。 |UTC time in millisecond   |
+
+
+## 当前和历史成交
+
+API Key 权限：读取
+
+此接口基于搜索条件查询当前和历史成交记录。
+
+### HTTP 请求
+
+- GET `/v1/order/matchresults`
+
+
+### 请求参数
+
+| 参数名称   | 是否必须  | 类型  | 描述   | 默认值  | 取值范围    |
+| ---------- | ----- | ------ | ------ | ---- | ----------- |
+| symbol     | true  | string | 交易对   | NA |  btcusdt, ethbtc...（取值参考`GET /v1/common/symbols`）|
+| types      | false | string | 查询的订单类型组合，使用','分割   |  all    | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单, buy-limit-maker, sell-limit-maker, buy-stop-limit, sell-stop-limit |
+| start-date | false | string | 查询开始日期, 日期格式yyyy-mm-dd | -1d 查询结束日期的前1天     | 取值范围 [((end-date) – 1), (end-date)] ，查询窗口最大为2天，窗口平移范围为最近61天 |
+| end-date   | false | string | 查询结束日期, 日期格式yyyy-mm-dd |   today   | 取值范围 [(today-60), today] ，查询窗口最大为2天，窗口平移范围为最近61天  |
+| from       | false | string | 查询起始 ID    |   订单成交记录ID（最大值）   |     |
+| direct     | false | string | 查询方向    |   默认 next， 成交记录 ID 由大到小排序   | prev 向前，时间（或 ID）正序；next 向后，时间（或 ID）倒序）   |
+| size       | false | string | 查询记录大小    |   100   | [1，100]  |
+
+> Response:
+
+```json
+{  
+  "data": [
+    {
+      "id": 29553,
+      "order-id": 59378,
+      "match-id": 59335,
+      "symbol": "ethusdt",
+      "type": "buy-limit",
+      "source": "api",
+      "price": "100.1000000000",
+      "filled-amount": "9.1155000000",
+      "filled-fees": "0.0182310000",
+      "created-at": 1494901400435,
+      "trade-id": 100282808529,
+      "role": taker,
+      "filled-points": "0.0",
+      "fee-deduct-currency": ""
+    }
+    ...
+  ]
+}
+```
+
+### 响应数据
+
+<aside class="notice">返回的主数据对象为一个对象数组，其中每一个元件代表一个交易结果。</aside>
+| 参数名称   | 是否必须 | 数据类型   | 描述   | 取值范围   |
+| ------------- | ---- | ------ | -------- | ------- |
+| created-at    | true | long   | 成交时间     |    |
+| filled-amount | true | string | 成交数量     |    |
+| filled-fees   | true | string | 成交手续费    |    |
+| id            | true | long   | 订单成交记录 ID |    |
+| match-id      | true | long   | 撮合 ID     |    |
+| order-id      | true | long   | 订单 ID    |    |
+| trade-id      | false | integer   | Unique trade ID (NEW)唯一成交编号    |      |
+| price         | true | string | 成交价格     |    |
+| source        | true | string | 订单来源     | api   |
+| symbol        | true | string | 交易对      | btcusdt, ethbtc, rcneth ...  |
+| type          | true | string | 订单类型     | buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖, buy-ioc：IOC买单, sell-ioc：IOC卖单， buy-limit-maker, sell-limit-maker, buy-stop-limit，sell-stop-limit |
+| role      | true | string   | 成交角色    |maker,taker      |
+| filled-points      | true | string   | 抵扣数量（hbpoint）    |     |
+| fee-deduct-currency      | true | string   | 抵扣类型    |hbpoint     |
+
+### start-date, end-date相关错误码 
+
+|错误码|对应错误场景|
+|------------|----------------------------------------------|
+|invalid_interval| start date小于end date; 或者 start date 与end date之间的时间间隔大于2天|
+|invalid_start_date|start date是一个61天之前的日期；或者start date是一个未来的日期|
+|invalid_end_date|end date 是一个61天之前的日期；或者end date是一个未来的日期|
+
+
+## 获取用户当前手续费率
+
+Api用户查询交易对费率，一次限制最多查10个交易对，子用户的费率和母用户保持一致
+
+API Key 权限：读取
+
+```shell
+curl "https://api.huobi.pro/v1/fee/fee-rate/get?symbols=btcusdt,ethusdt,ltcusdt"
+```
+
+### HTTP 请求
+
+- GET `/v1/fee/fee-rate/get`
+
+### 请求参数
+
+参数       | 数据类型 | 是否必须 | 默认值 | 描述 | 取值范围
+--------- | --------- | -------- | ------- | ------ | ------
+symbols    | string    | true     | NA      | 交易对，可多填，逗号分隔 |btcusdt, ethbtc...（取值参考`GET /v1/common/symbols`）>
+
+> Response:
+
+```json
+{
+  "status": "ok",
+  "data": [
+     {
+        "symbol": "btcusdt",
+        "maker-fee":"0.0001",
+        "taker-fee":"0.0002"
+     },
+     {
+        "symbol": "ethusdt",
+        "maker-fee":"0.002",
+        "taker-fee":"0.002"
+    },
+     {
+        "symbol": "ltcusdt",
+        "maker-fee":"0.0015",
+        "taker-fee":"0.0018"
+    }
+  ]
+}
+```
+### 响应数据
+
+字段名称      | 数据类型 | 是否强制| 描述
+--------- | --------- | -----------| -----------
+status        | string  |Y | 响应状态
+err-code    | string   |N  | 响应码
+err-msg     | string |N   | 响应信息
+data|list|Y|交易对费率列表
+
+### List
+属性|	数据类型|	说明
+--------- | --------- | ------
+symbol|	string|	交易对
+maker-fee|	string|	挂单手续费率
+taker-fee|	string|	吃单手续费率
+
+### 响应码
+响应码|	说明|	类型|	备注
+--------- | --------- | ------ | ------
+base-symbol-error|	无效的交易对|	string|	-
+base-too-many-symbol|	最大支持 10 个交易对|	string|	-
 
 
 # Websocket行情数据
