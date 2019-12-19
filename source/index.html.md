@@ -673,12 +673,10 @@ A：请参考/v2/account/withdraw/quota接口返回值，返回信息中包含�
 备注：若您有大额提币需求，且提币数额超出相关限额，可联系官方客服（发送信息至MM-kr@huobi.com邮箱）进行沟通。  
 
 
-
-
 ## 技术支持
 若以上内容任未帮助到您，可选择以下任一方式联系我们：  
 1、火币韩国API交流Telegram群（http://bit.ly/2jXMzEN）
-2、发送邮件至api_service@huobi.com
+2、发送邮件至MM-kr@huobi.com
 为了能够更快的了解和调查您反馈的问题，请按照如下模板向我们反馈问题。  
 
 `1. UID`  
