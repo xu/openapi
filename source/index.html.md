@@ -40,7 +40,7 @@ search: true
 
 ## 联系我们
 
-API 使用中如有疑问或咨询事项，请参考‘咨询事项 Q&A’或者通过加入‘火币韩国API交流Telegram群（http://bit.ly/2jXMzEN）‘咨询。
+API 使用中如有疑问或咨询事项，请参考`咨询事项 Q&A`或者通过加入`火币韩国API交流Telegram群（http://bit.ly/2jXMzEN）`咨询。
 
 
 
@@ -129,9 +129,6 @@ WebSocket是HTML5一种新的协议（Protocol）。它实现了客户端与服�
 
 **`wss://api-cloud.huobi.co.kr/ws/v1`**  
 
-<aside class="notice">
-请使用中国大陆以外的IP访问火币韩国API。
-</aside>
 <aside class="notice">
 鉴于延迟高和稳定性差等原因，不建议通过代理的方式访问火币韩国API。
 </aside>
@@ -605,10 +602,10 @@ A： 可使用 Rest API `GET /v1/common/symbols` 获取相关币对信息， 下
 - order-limitorder-amount-max-error : 限价单数量高于限价阈值  
 - order-limitorder-amount-min-error : 限价单数量低于限价阈值  
 
-### Q4：WebSocket 订单更新推送主题orders.\$symbol 和 orders.$symbol.update的区别？
+### Q4：WebSocket 订单更新推送主题orders.$symbol 和 orders.$symbol.update的区别？
 A： 区别如下：
 
-1. order.\$symbol 主题作为老的推送主题，会在一段时间后停止主题的维护和使用， 推荐使用order.$symbol.update主题。
+1. order.$symbol 主题作为老的推送主题，会在一段时间后停止主题的维护和使用， 推荐使用order.$symbol.update主题。
 
 2. 新主题orders.$symbol.update具有严格的时序性，保证数据严格按照撮合成交顺序进行推送，且具有更快的时效性以及更低的时延。
 
@@ -1491,7 +1488,7 @@ API Key 权限：读取
 | -------------- | -------- | -------- | ------------------------------------------------------------ | -------------------- | ------------------------------------------------------------ |
 | account-id     | true     | string   | 账户编号,取值参考 `GET /v1/account/accounts`                 |                      |                                                              |
 | currency       | false    | string   | 币种,即btc, ltc, bch, eth, etc ...(取值参考`GET /v1/common/currencys`) |                      |                                                              |
-| transact-types | false    | string   | 变动类型，可多选                                             | all                  | trade (交易),etf（ETF申购）, transact-fee（交易手续费）, deduction（手续费抵扣）, transfer（划转）, credit（借贷）, liquidation（清仓）, interest（利息）, deposit-withdraw（充提）, withdraw-fee（提币手续费）, exchange（兑换）, other-types（其他） |
+| transact-types | false    | string   | 变动类型，可多选                                             | all                  | trade (交易), transact-fee（交易手续费）, deduction（手续费抵扣）, transfer（划转）, deposit-withdraw（充提）, withdraw-fee（提币手续费）, other-types（其他） |
 | start-time     | false    | long     | 远点时间 unix time in millisecond. 以transact-time为key进行检索. 查询窗口最大为1小时. 窗口平移范围为最近30天. | ((end-time) – 1hour) | [((end-time) – 1hour), (end-time)]                           |
 | end-time       | false    | long     | 近点时间unix time in millisecond. 以transact-time为key进行检索. 查询窗口最大为1小时. 窗口平移范围为最近30天. | current-time         | [(current-time) – 29days,(current-time)]                     |
 | sort           | false    | string   | 检索方向                                                     | asc                  | asc or desc                                                  |
@@ -1542,95 +1539,6 @@ API Key 权限：读取
 | transact-time | long     | 交易时间（数据库记录时间）       |          |
 | record-id }   | string   | 数据库记录编号（全局唯一）       |          |
 
-## 币币现货账户与合约账户划转
-
-API Key 权限：交易
-
-此接口用户币币现货账户与合约账户之间的资金划转。
-
-从现货现货账户转至合约账户，类型为`pro-to-futures`; 从合约账户转至现货账户，类型为`futures-to-pro`
-
-该接口的访问频次的限制为1分钟10次。
-
-### HTTP 请求
-
-- POST ` /v1/futures/transfer`
-
-```json
-{
-  "currency": "btc",
-  "amount": "0.001",
-  "type": "pro-to-futures"
-}
-```
-
-### 请求参数
-
-|参数名称 | 数据类型 | 是否必需 | 默认值 | 描述|取值范围
-|---------  | --------- | -------- | ------- | -----------|---------|
-|currency     | string    | true     | NA      | 币种, e.g. btc||
-|amount   | decimal    | true     | NA      | 划转数量||
-|type     | string    | true     | NA      | 划转类型| 从合约账户到现货账户：“futures-to-pro”，从现货账户到合约账户： “pro-to-futures”|
-
-
-> Response:
-
-```json
-{  
-  "data": 12345
-  "status": "ok"
-}
-```
-
-### 响应数据
-
-| 参数名称 | 数据类型 | 描述                         |
-| -------- | -------- | ---------------------------- |
-| data     | Long     | Transfer id                  |
-| status   | string   | "ok" or "error"              |
-| err-code | string   | 错误码，具体错误码请见列表   |
-| err-msg  | string   | 错误消息，具体消息内容请列表 |
-
-### err-code列表
-
-| err-code | err-msg(中文）                                 | err-msg(Englis)                                              | 补充说明                                                     |
-| -------- | ---------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-|          | base-msg                                       |                                                              |                                                              |
-|          | base-currency-error                            | 币种无效                                                     | The currency is invalid                                      |
-|          | frequent-invoke                                | 操作过于频繁，请稍后重试。（如果超过1分钟10次，系统返回该error-code） | the operation is too frequent. Please try again later        |
-|          | banned-by-blacklist                            | 黑名单限制                                                   | Blacklist restriction                                        |
-|          | dw-insufficient-balance                        | 可划转余额不足，最大可划转 {0}。（币币账户的余额不足。）     | Insufficient balance. You can only transfer {0} at most.     |
-|          | dw-account-transfer-unavailable                | 转账暂时不可用                                               | account transfer unavailable                                 |
-|          | dw-account-transfer-error                      | 由于其他服务不可用导致的划转失败                             | account transfer error                                       |
-|          | dw-account-transfer-failed                     | 划转失败。请稍后重试或联系客服                               | Failed to transfer. Please try again later.                  |
-|          | dw-account-transfer-failed-account-abnormality | 账户异常，划转失败。请稍后重试或联系客服                     | Account abnormality, failed to transfer。Please try again later. |
-
-### base-msg对应的err-msg列表
-| err-code | err-msg(中文） | err-msg(Englis)                              | 补充说明                                                     |
-| -------- | -------------- | -------------------------------------------- | ------------------------------------------------------------ |
-|          | base-msg       | 用户没有入金权限                             | Unable to transfer in currently. Please contact customer service. |
-|          | base-msg       | 用户没有出金权限                             | Unable to transfer out currently. Please contact customer service. |
-|          | base-msg       | 合约状态异常，无法出入金                     | Abnormal contracts status. Can’t transfer.                   |
-|          | base-msg       | 子账号没有入金权限，请联系客服               | Sub-account doesn't own the permissions to transfer in. Please contact customer service. |
-|          | base-msg       | 子账号没有出金权限，请联系客服               | Sub-account doesn't own the permissions to transfer out. Please contact customer service. |
-|          | base-msg       | 子账号没有划转权限，请登录主账号授权         | The sub-account does not have transfer permissions. Please login main account to authorize. |
-|          | base-msg       | 可划转余额不足                               | Insufficient amount available.                               |
-|          | base-msg       | 单笔转出的数量不能低于{0}{1}                 | The single transfer-out amount must be no less than {0}{1}.  |
-|          | base-msg       | 单笔转出的数量不能高于{0}{1}                 | The single transfer-out amount must be no more than {0}{1}.  |
-|          | base-msg       | 单笔转入的数量不能低于{0}{1}                 | The single transfer-in amount must be no less than {0}{1}.   |
-|          | base-msg       | 单笔转入的数量不能高于{0}{1}                 | The single transfer-in amount must be no more than {0}{1}.   |
-|          | base-msg       | 您当日累计转出量超过{0}{1}，暂无法转出       | Your accumulative transfer-out amount is over the daily maximum, {0}{1}. You can't transfer out for the time being. |
-|          | base-msg       | 您当日累计转入量超过{0}{1}，暂无法转入       | Your accumulative transfer-in amount is over the daily maximum, {0}{1}. You can't transfer in for the time being. |
-|          | base-msg       | 您当日累计净转出量超过{0}{1}，暂无法转出     | Your accumulative net transfer-out amount is over the daily maximum, {0}{1}. You can't transfer out for the time being. |
-|          | base-msg       | 您当日累计净转入量超过{0}{1}，暂无法转入     | Your accumulative net transfer-in amount is over the daily maximum, {0}{1}. You can't transfer in for the time being. |
-|          | base-msg       | 超过平台当日累计最大转出量限制，暂无法转出   | The platform's accumulative transfer-out amount is over the daily maximum. You can't transfer out for the time being. |
-|          | base-msg       | 超过平台当日累计最大转入量限制，暂无法转入   | The platform's accumulative transfer-in amount is over the daily maximum. You can't transfer in for the time being. |
-|          | base-msg       | 超过平台当日累计最大净转出量限制，暂无法转出 | The platform's accumulative net transfer-out amount is over the daily maximum. You can't transfer out for the time being. |
-|          | base-msg       | 超过平台当日累计最大净转入量限制，暂无法转入 | The platform's accumulative net transfer-in amount is over the daily maximum. You can't transfer in for the time being. |
-|          | base-msg       | 划转失败，请稍后重试或联系客服               | Transfer failed. Please try again later or contact customer service. |
-|          | base-msg       | 服务异常，划转失败，请稍后再试               | Abnormal service, transfer failed. Please try again later.   |
-|          | base-msg       | 您尚未开通合约交易，无访问权限               | You don’t have access permission as you have not opened contracts trading. |
-|          | base-msg       | 合约品种不存在                               | This contract type doesn't exist.                            |
 
 
 ## 资产划转（母子账号之间）
@@ -2110,10 +2018,6 @@ API Key 权限：读取
 **Global站行情请求地址**
 
 **`wss://api-cloud.huobi.co.kr/ws`**  
-
-**`wss://api-aws.huobi.pro/ws`**  
-
-注：api-aws.huobi.pro域名对使用aws云服务的用户做了一定的链路延迟优化。  
 
 请使用中国大陆以外的服务器访问火币 API
 
@@ -2660,10 +2564,6 @@ Websocket服务器同时支持一次性请求数据（pull）。
 **Websocket资产及订单**
 
 **`wss://api-cloud.huobi.co.kr/ws/v1`**  
-
-**`wss://api-aws.huobi.pro/ws/v1`**   
-
-注：api-aws.huobi.pro域名对使用aws云服务的用户做了一定的链路延迟优化。  
 
 请使用中国大陆以外的服务器访问火币 API。
 
@@ -3343,12 +3243,6 @@ API Key 权限：读取
 **Websocket资产及订单（v2）**
 
 **`wss://api-cloud.huobi.co.kr/ws/v2`**  
-
-**`wss://api-aws.huobi.pro/ws/v2`**   
-
-注：api-aws.huobi.pro域名对使用aws云服务的用户做了一定的链路延迟优化。  
-
-请使用中国大陆以外的服务器访问火币 API。
 
 ### 数据压缩
 
