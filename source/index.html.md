@@ -2838,7 +2838,7 @@ Api用户查询交易对费率，一次限制最多查10个交易对，子用户
 API Key 权限：读取
 
 ```shell
-curl "https://api.huobi.pro/v1/fee/fee-rate/get?symbols=btcusdt,ethusdt,ltcusdt"
+curl "https://api-cloud.huobi.co.kr/v1/fee/fee-rate/get?symbols=btcusdt,ethusdt,ltcusdt"
 ```
 
 ### HTTP 请求
