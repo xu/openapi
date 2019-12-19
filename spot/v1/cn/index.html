@@ -364,9 +364,6 @@
                     <a href="#84f1b5486d" class="toc-h2 toc-link" data-title="账户流水">账户流水</a>
                   </li>
                   <li>
-                    <a href="#e227a2a3e8" class="toc-h2 toc-link" data-title="币币现货账户与合约账户划转">币币现货账户与合约账户划转</a>
-                  </li>
-                  <li>
                     <a href="#48dc4a34e1" class="toc-h2 toc-link" data-title="资产划转（母子账号之间）">资产划转（母子账号之间）</a>
                   </li>
                   <li>
@@ -493,7 +490,7 @@
 做市商项目不支持点卡抵扣、VIP、交易量相关活动以及任何形式的返佣活动。
 </aside>
 <h2 id='152d3db758'>联系我们</h2>
-<p>API 使用中如有疑问或咨询事项，请参考‘咨询事项 Q&amp;A’或者通过加入‘火币韩国API交流Telegram群（http://bit.ly/2jXMzEN）‘咨询。</p>
+<p>API 使用中如有疑问或咨询事项，请参考<code>咨询事项 Q&amp;A</code>或者通过加入<code>火币韩国API交流Telegram群（http://bit.ly/2jXMzEN）</code>咨询。</p>
 <h1 id='25e54147de'>快速入门</h1><h2 id='c1ae0a8486'>接入准备</h2>
 <p>如需使用API ，请先登录网页端，完成API key的申请和权限配置，再据此文档详情进行开发和交易。  </p>
 
@@ -569,10 +566,6 @@
 <p><strong>Websocket Feed（资产和订单）</strong></p>
 
 <p><strong><code>wss://api-cloud.huobi.co.kr/ws/v1</code></strong>  </p>
-
-<aside class="notice">
-请使用中国大陆以外的IP访问火币韩国API。
-</aside>
 
 <aside class="notice">
 鉴于延迟高和稳定性差等原因，不建议通过代理的方式访问火币韩国API。
@@ -1169,11 +1162,11 @@ api-cloud.huobi.co.kr\n
 <li>order-limitorder-amount-max-error : 限价单数量高于限价阈值<br></li>
 <li>order-limitorder-amount-min-error : 限价单数量低于限价阈值<br></li>
 </ul>
-<h3 id='q4-websocket-orders-symbol-orders-symbol-update'>Q4：WebSocket 订单更新推送主题orders.\$symbol 和 orders.$symbol.update的区别？</h3>
+<h3 id='q4-websocket-orders-symbol-orders-symbol-update'>Q4：WebSocket 订单更新推送主题orders.$symbol 和 orders.$symbol.update的区别？</h3>
 <p>A： 区别如下：</p>
 
 <ol>
-<li><p>order.\$symbol 主题作为老的推送主题，会在一段时间后停止主题的维护和使用， 推荐使用order.$symbol.update主题。</p></li>
+<li><p>order.$symbol 主题作为老的推送主题，会在一段时间后停止主题的维护和使用， 推荐使用order.$symbol.update主题。</p></li>
 <li><p>新主题orders.$symbol.update具有严格的时序性，保证数据严格按照撮合成交顺序进行推送，且具有更快的时效性以及更低的时延。</p></li>
 <li><p>为减少重复数据推送量以及更快的速度，在orders.$symbol.update推送中并未携带原始订单数量，价格信息，若需要此信息，建议可在下单时在本地维护订单信息，或在接收到推送消息后，使用Rest接口进行查询。</p></li>
 </ol>
@@ -2684,7 +2677,7 @@ api-cloud.huobi.co.kr\n
 <td>string</td>
 <td>变动类型，可多选</td>
 <td>all</td>
-<td>trade (交易),etf（ETF申购）, transact-fee（交易手续费）, deduction（手续费抵扣）, transfer（划转）, credit（借贷）, liquidation（清仓）, interest（利息）, deposit-withdraw（充提）, withdraw-fee（提币手续费）, exchange（兑换）, other-types（其他）</td>
+<td>trade (交易), transact-fee（交易手续费）, deduction（手续费抵扣）, transfer（划转）, deposit-withdraw（充提）, withdraw-fee（提币手续费）, other-types（其他）</td>
 </tr>
 <tr>
 <td>start-time</td>
@@ -2818,317 +2811,15 @@ api-cloud.huobi.co.kr\n
 <td></td>
 </tr>
 </tbody></table>
-<h2 id='e227a2a3e8'>币币现货账户与合约账户划转</h2>
-<p>API Key 权限：交易</p>
-
-<p>此接口用户币币现货账户与合约账户之间的资金划转。</p>
-
-<p>从现货现货账户转至合约账户，类型为<code>pro-to-futures</code>; 从合约账户转至现货账户，类型为<code>futures-to-pro</code></p>
-
-<p>该接口的访问频次的限制为1分钟10次。</p>
-<h3 id='http-14'>HTTP 请求</h3>
-<ul>
-<li>POST <code>/v1/futures/transfer</code></li>
-</ul>
-<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-  </span><span class="s2">"currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"btc"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"amount"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.001"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pro-to-futures"</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre><h3 id='1f9ac54b15-15'>请求参数</h3>
-<table><thead>
-<tr>
-<th>参数名称</th>
-<th>数据类型</th>
-<th>是否必需</th>
-<th>默认值</th>
-<th>描述</th>
-<th>取值范围</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>currency</td>
-<td>string</td>
-<td>true</td>
-<td>NA</td>
-<td>币种, e.g. btc</td>
-<td></td>
-</tr>
-<tr>
-<td>amount</td>
-<td>decimal</td>
-<td>true</td>
-<td>NA</td>
-<td>划转数量</td>
-<td></td>
-</tr>
-<tr>
-<td>type</td>
-<td>string</td>
-<td>true</td>
-<td>NA</td>
-<td>划转类型</td>
-<td>从合约账户到现货账户：“futures-to-pro”，从现货账户到合约账户： “pro-to-futures”</td>
-</tr>
-</tbody></table>
-
-<blockquote>
-<p>Response:</p>
-</blockquote>
-<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">  
-  </span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="mi">12345</span><span class="w">
-  </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ok"</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre><h3 id='2213f4c32f-12'>响应数据</h3>
-<table><thead>
-<tr>
-<th>参数名称</th>
-<th>数据类型</th>
-<th>描述</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>data</td>
-<td>Long</td>
-<td>Transfer id</td>
-</tr>
-<tr>
-<td>status</td>
-<td>string</td>
-<td>&quot;ok&quot; or &quot;error&quot;</td>
-</tr>
-<tr>
-<td>err-code</td>
-<td>string</td>
-<td>错误码，具体错误码请见列表</td>
-</tr>
-<tr>
-<td>err-msg</td>
-<td>string</td>
-<td>错误消息，具体消息内容请列表</td>
-</tr>
-</tbody></table>
-<h3 id='err-code'>err-code列表</h3>
-<table><thead>
-<tr>
-<th>err-code</th>
-<th>err-msg(中文）</th>
-<th>err-msg(Englis)</th>
-<th>补充说明</th>
-</tr>
-</thead><tbody>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>base-currency-error</td>
-<td>币种无效</td>
-<td>The currency is invalid</td>
-</tr>
-<tr>
-<td></td>
-<td>frequent-invoke</td>
-<td>操作过于频繁，请稍后重试。（如果超过1分钟10次，系统返回该error-code）</td>
-<td>the operation is too frequent. Please try again later</td>
-</tr>
-<tr>
-<td></td>
-<td>banned-by-blacklist</td>
-<td>黑名单限制</td>
-<td>Blacklist restriction</td>
-</tr>
-<tr>
-<td></td>
-<td>dw-insufficient-balance</td>
-<td>可划转余额不足，最大可划转 {0}。（币币账户的余额不足。）</td>
-<td>Insufficient balance. You can only transfer {0} at most.</td>
-</tr>
-<tr>
-<td></td>
-<td>dw-account-transfer-unavailable</td>
-<td>转账暂时不可用</td>
-<td>account transfer unavailable</td>
-</tr>
-<tr>
-<td></td>
-<td>dw-account-transfer-error</td>
-<td>由于其他服务不可用导致的划转失败</td>
-<td>account transfer error</td>
-</tr>
-<tr>
-<td></td>
-<td>dw-account-transfer-failed</td>
-<td>划转失败。请稍后重试或联系客服</td>
-<td>Failed to transfer. Please try again later.</td>
-</tr>
-<tr>
-<td></td>
-<td>dw-account-transfer-failed-account-abnormality</td>
-<td>账户异常，划转失败。请稍后重试或联系客服</td>
-<td>Account abnormality, failed to transfer。Please try again later.</td>
-</tr>
-</tbody></table>
-<h3 id='base-msg-err-msg'>base-msg对应的err-msg列表</h3>
-<table><thead>
-<tr>
-<th>err-code</th>
-<th>err-msg(中文）</th>
-<th>err-msg(Englis)</th>
-<th>补充说明</th>
-</tr>
-</thead><tbody>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>用户没有入金权限</td>
-<td>Unable to transfer in currently. Please contact customer service.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>用户没有出金权限</td>
-<td>Unable to transfer out currently. Please contact customer service.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>合约状态异常，无法出入金</td>
-<td>Abnormal contracts status. Can’t transfer.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>子账号没有入金权限，请联系客服</td>
-<td>Sub-account doesn&#39;t own the permissions to transfer in. Please contact customer service.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>子账号没有出金权限，请联系客服</td>
-<td>Sub-account doesn&#39;t own the permissions to transfer out. Please contact customer service.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>子账号没有划转权限，请登录主账号授权</td>
-<td>The sub-account does not have transfer permissions. Please login main account to authorize.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>可划转余额不足</td>
-<td>Insufficient amount available.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>单笔转出的数量不能低于{0}{1}</td>
-<td>The single transfer-out amount must be no less than {0}{1}.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>单笔转出的数量不能高于{0}{1}</td>
-<td>The single transfer-out amount must be no more than {0}{1}.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>单笔转入的数量不能低于{0}{1}</td>
-<td>The single transfer-in amount must be no less than {0}{1}.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>单笔转入的数量不能高于{0}{1}</td>
-<td>The single transfer-in amount must be no more than {0}{1}.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>您当日累计转出量超过{0}{1}，暂无法转出</td>
-<td>Your accumulative transfer-out amount is over the daily maximum, {0}{1}. You can&#39;t transfer out for the time being.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>您当日累计转入量超过{0}{1}，暂无法转入</td>
-<td>Your accumulative transfer-in amount is over the daily maximum, {0}{1}. You can&#39;t transfer in for the time being.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>您当日累计净转出量超过{0}{1}，暂无法转出</td>
-<td>Your accumulative net transfer-out amount is over the daily maximum, {0}{1}. You can&#39;t transfer out for the time being.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>您当日累计净转入量超过{0}{1}，暂无法转入</td>
-<td>Your accumulative net transfer-in amount is over the daily maximum, {0}{1}. You can&#39;t transfer in for the time being.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>超过平台当日累计最大转出量限制，暂无法转出</td>
-<td>The platform&#39;s accumulative transfer-out amount is over the daily maximum. You can&#39;t transfer out for the time being.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>超过平台当日累计最大转入量限制，暂无法转入</td>
-<td>The platform&#39;s accumulative transfer-in amount is over the daily maximum. You can&#39;t transfer in for the time being.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>超过平台当日累计最大净转出量限制，暂无法转出</td>
-<td>The platform&#39;s accumulative net transfer-out amount is over the daily maximum. You can&#39;t transfer out for the time being.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>超过平台当日累计最大净转入量限制，暂无法转入</td>
-<td>The platform&#39;s accumulative net transfer-in amount is over the daily maximum. You can&#39;t transfer in for the time being.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>划转失败，请稍后重试或联系客服</td>
-<td>Transfer failed. Please try again later or contact customer service.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>服务异常，划转失败，请稍后再试</td>
-<td>Abnormal service, transfer failed. Please try again later.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>您尚未开通合约交易，无访问权限</td>
-<td>You don’t have access permission as you have not opened contracts trading.</td>
-</tr>
-<tr>
-<td></td>
-<td>base-msg</td>
-<td>合约品种不存在</td>
-<td>This contract type doesn&#39;t exist.</td>
-</tr>
-</tbody></table>
 <h2 id='48dc4a34e1'>资产划转（母子账号之间）</h2>
 <p>API Key 权限：交易</p>
 
 <p>母账户执行母子账号之间的划转</p>
-<h3 id='http-15'>HTTP 请求</h3>
+<h3 id='http-14'>HTTP 请求</h3>
 <ul>
 <li>POST <code>/v1/subuser/transfer</code></li>
 </ul>
-<h3 id='1f9ac54b15-16'>请求参数</h3>
+<h3 id='1f9ac54b15-15'>请求参数</h3>
 <table><thead>
 <tr>
 <th>参数</th>
@@ -3180,7 +2871,7 @@ api-cloud.huobi.co.kr\n
   </span><span class="s2">"data"</span><span class="p">:</span><span class="mi">123456</span><span class="p">,</span><span class="w">
   </span><span class="s2">"status"</span><span class="p">:</span><span class="s2">"ok"</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre><h3 id='2213f4c32f-13'>响应数据</h3>
+</span></code></pre><h3 id='2213f4c32f-12'>响应数据</h3>
 <table><thead>
 <tr>
 <th>参数</th>
@@ -3237,11 +2928,11 @@ api-cloud.huobi.co.kr\n
 <p>API Key 权限：读取</p>
 
 <p>母账户查询其下所有子账号的各币种汇总余额</p>
-<h3 id='http-16'>HTTP 请求</h3>
+<h3 id='http-15'>HTTP 请求</h3>
 <ul>
 <li>GET <code>/v1/subuser/aggregate-balance</code></li>
 </ul>
-<h3 id='1f9ac54b15-17'>请求参数</h3>
+<h3 id='1f9ac54b15-16'>请求参数</h3>
 <p>无</p>
 
 <blockquote>
@@ -3268,7 +2959,7 @@ api-cloud.huobi.co.kr\n
       </span><span class="err">...</span><span class="w">
    </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre><h3 id='2213f4c32f-14'>响应数据</h3>
+</span></code></pre><h3 id='2213f4c32f-13'>响应数据</h3>
 <table><thead>
 <tr>
 <th>参数</th>
@@ -3347,11 +3038,11 @@ api-cloud.huobi.co.kr\n
 <p>API Key 权限：读取</p>
 
 <p>母账户查询子账号各币种账户余额</p>
-<h3 id='http-17'>HTTP 请求</h3>
+<h3 id='http-16'>HTTP 请求</h3>
 <ul>
 <li>GET <code>/v1/account/accounts/{sub-uid}</code></li>
 </ul>
-<h3 id='1f9ac54b15-18'>请求参数</h3>
+<h3 id='1f9ac54b15-17'>请求参数</h3>
 <table><thead>
 <tr>
 <th>参数</th>
@@ -3404,7 +3095,7 @@ api-cloud.huobi.co.kr\n
     </span><span class="p">}</span><span class="w">
   </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre><h3 id='2213f4c32f-15'>响应数据</h3>
+</span></code></pre><h3 id='2213f4c32f-14'>响应数据</h3>
 <table><thead>
 <tr>
 <th>参数</th>
@@ -3496,12 +3187,12 @@ api-cloud.huobi.co.kr\n
 <p>API Key 权限：读取</p>
 
 <aside class="notice"> 充币地址查询暂不支持IOTA币 </aside>
-<h3 id='http-18'>HTTP 请求</h3>
+<h3 id='http-17'>HTTP 请求</h3>
 <ul>
 <li>GET <code>/v2/account/deposit/address</code></li>
 </ul>
 <pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://api-cloud.huobi.co.kr/v2/account/deposit/address?currency=btc"</span>
-</code></pre><h3 id='1f9ac54b15-19'>请求参数</h3>
+</code></pre><h3 id='1f9ac54b15-18'>请求参数</h3>
 <table><thead>
 <tr>
 <th>字段名称</th>
@@ -3534,7 +3225,7 @@ api-cloud.huobi.co.kr\n
         </span><span class="p">}</span><span class="w">
     </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre><h3 id='2213f4c32f-16'>响应数据</h3>
+</span></code></pre><h3 id='2213f4c32f-15'>响应数据</h3>
 <table><thead>
 <tr>
 <th>字段名称</th>
@@ -3637,12 +3328,12 @@ api-cloud.huobi.co.kr\n
 <p>此节点用于查询各币种提币额度</p>
 
 <p>API Key 权限：读取</p>
-<h3 id='http-19'>HTTP 请求</h3>
+<h3 id='http-18'>HTTP 请求</h3>
 <ul>
 <li>GET <code>/v2/account/withdraw/quota</code></li>
 </ul>
 <pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://api-cloud.huobi.co.kr/v2/account/withdraw/quota?currency=btc"</span>
-</code></pre><h3 id='1f9ac54b15-20'>请求参数</h3>
+</code></pre><h3 id='1f9ac54b15-19'>请求参数</h3>
 <table><thead>
 <tr>
 <th>字段名称</th>
@@ -3683,7 +3374,7 @@ api-cloud.huobi.co.kr\n
         </span><span class="p">}</span><span class="w">
     </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre><h3 id='2213f4c32f-17'>响应数据</h3>
+</span></code></pre><h3 id='2213f4c32f-16'>响应数据</h3>
 <table><thead>
 <tr>
 <th>字段名称</th>
@@ -3823,7 +3514,7 @@ api-cloud.huobi.co.kr\n
 <p>API Key 权限：提币</p>
 
 <aside class="notice">仅支持在官网上相应币种 <a href='https://www.huobi.co.kr/zh-CN/address//'>地址列表 </a> 中的地址。</aside>
-<h3 id='http-20'>HTTP 请求</h3>
+<h3 id='http-19'>HTTP 请求</h3>
 <ul>
 <li>POST <code>/v1/dw/withdraw/api/create</code></li>
 </ul>
@@ -3833,7 +3524,7 @@ api-cloud.huobi.co.kr\n
   </span><span class="s2">"currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"eth"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"fee"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.01"</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre><h3 id='1f9ac54b15-21'>请求参数</h3>
+</span></code></pre><h3 id='1f9ac54b15-20'>请求参数</h3>
 <table><thead>
 <tr>
 <th>参数名称</th>
@@ -3893,7 +3584,7 @@ api-cloud.huobi.co.kr\n
 <pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
   </span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="mi">700</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre><h3 id='2213f4c32f-18'>响应数据</h3>
+</span></code></pre><h3 id='2213f4c32f-17'>响应数据</h3>
 <table><thead>
 <tr>
 <th>参数名称</th>
@@ -3913,11 +3604,11 @@ api-cloud.huobi.co.kr\n
 </tbody></table>
 <h2 id='c9d941b159'>取消提现</h2>
 <p>API Key 权限：提币</p>
-<h3 id='http-21'>HTTP 请求</h3>
+<h3 id='http-20'>HTTP 请求</h3>
 <ul>
 <li>POST <code>/v1/dw/withdraw-virtual/{withdraw-id}/cancel</code></li>
 </ul>
-<h3 id='1f9ac54b15-22'>请求参数</h3>
+<h3 id='1f9ac54b15-21'>请求参数</h3>
 <table><thead>
 <tr>
 <th>参数名称</th>
@@ -3944,7 +3635,7 @@ api-cloud.huobi.co.kr\n
 <pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
   </span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="mi">700</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre><h3 id='2213f4c32f-19'>响应数据</h3>
+</span></code></pre><h3 id='2213f4c32f-18'>响应数据</h3>
 <table><thead>
 <tr>
 <th>参数名称</th>
@@ -3966,11 +3657,11 @@ api-cloud.huobi.co.kr\n
 <p>API Key 权限：读取</p>
 
 <p>查询充提记录</p>
-<h3 id='http-22'>HTTP 请求</h3>
+<h3 id='http-21'>HTTP 请求</h3>
 <ul>
 <li>GET <code>/v1/query/deposit-withdraw</code></li>
 </ul>
-<h3 id='1f9ac54b15-23'>请求参数</h3>
+<h3 id='1f9ac54b15-22'>请求参数</h3>
 <table><thead>
 <tr>
 <th>参数名称</th>
@@ -4045,7 +3736,7 @@ api-cloud.huobi.co.kr\n
       </span><span class="err">...</span><span class="w">
     </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre><h3 id='2213f4c32f-20'>响应数据</h3>
+</span></code></pre><h3 id='2213f4c32f-19'>响应数据</h3>
 <table><thead>
 <tr>
 <th>参数名称</th>
@@ -4232,10 +3923,6 @@ api-cloud.huobi.co.kr\n
 <p><strong>Global站行情请求地址</strong></p>
 
 <p><strong><code>wss://api-cloud.huobi.co.kr/ws</code></strong>  </p>
-
-<p><strong><code>wss://api-aws.huobi.pro/ws</code></strong>  </p>
-
-<p>注：api-aws.huobi.pro域名对使用aws云服务的用户做了一定的链路延迟优化。  </p>
 
 <p>请使用中国大陆以外的服务器访问火币 API</p>
 <h3 id='7ee1785123'>数据压缩</h3>
@@ -4976,10 +4663,6 @@ api-cloud.huobi.co.kr\n
 <p><strong>Websocket资产及订单</strong></p>
 
 <p><strong><code>wss://api-cloud.huobi.co.kr/ws/v1</code></strong>  </p>
-
-<p><strong><code>wss://api-aws.huobi.pro/ws/v1</code></strong>   </p>
-
-<p>注：api-aws.huobi.pro域名对使用aws云服务的用户做了一定的链路延迟优化。  </p>
 
 <p>请使用中国大陆以外的服务器访问火币 API。</p>
 <h3 id='7ee1785123-2'>数据压缩</h3>
@@ -6160,12 +5843,6 @@ api-cloud.huobi.co.kr\n
 <p><strong>Websocket资产及订单（v2）</strong></p>
 
 <p><strong><code>wss://api-cloud.huobi.co.kr/ws/v2</code></strong>  </p>
-
-<p><strong><code>wss://api-aws.huobi.pro/ws/v2</code></strong>   </p>
-
-<p>注：api-aws.huobi.pro域名对使用aws云服务的用户做了一定的链路延迟优化。  </p>
-
-<p>请使用中国大陆以外的服务器访问火币 API。</p>
 <h3 id='7ee1785123-3'>数据压缩</h3>
 <p>无</p>
 <h3 id='1853724646-3'>心跳消息</h3>
