@@ -1369,11 +1369,6 @@ api-cloud.huobi.co.kr\n
 <td>long</td>
 <td>最小下单金额 （下单金额指当订单类型为限价单时，下单接口传入的(amount * price)。当订单类型为buy-market时，下单接口传的&#39;amount&#39;）</td>
 </tr>
-<tr>
-<td>leverage-ratio</td>
-<td>int</td>
-<td>交易对杠杆最大倍数</td>
-</tr>
 </tbody></table>
 <h2 id='7393cc8596'>获取所有币种</h2>
 <p>此接口返回所有火币韩国站支持的币种。</p>
@@ -4932,7 +4927,7 @@ api-cloud.huobi.co.kr\n
 <tr>
 <td>event</td>
 <td>string</td>
-<td>资产变化通知相关事件说明，比如订单创建(order.place) 、订单成交(order.match)、订单成交退款（order.refund)、订单撤销(order.cancel) 、点卡抵扣交易手续费（order.fee-refund)、杠杆账户划转（margin.transfer)、借币本金（margin.loan)、借币计息（margin.interest)、归还借币本金利息(margin.repay)、其他资产变化(other)</td>
+<td>资产变化通知相关事件说明，比如订单创建(order.place) 、订单成交(order.match)、订单成交退款（order.refund)、订单撤销(order.cancel) 、点卡抵扣交易手续费（order.fee-refund)、其他资产变化(other)</td>
 </tr>
 <tr>
 <td>account-id</td>
@@ -4947,7 +4942,7 @@ api-cloud.huobi.co.kr\n
 <tr>
 <td>type</td>
 <td>string</td>
-<td>账户类型, 交易子账户（trade),借币子账户（loan），利息子账户（interest)</td>
+<td>账户类型, 交易子账户（trade)</td>
 </tr>
 <tr>
 <td>balance</td>
@@ -5977,7 +5972,7 @@ api-cloud.huobi.co.kr\n
 <li><p>signatureVersion版本升级为2.1</p></li>
 </ol>
 
-<p>v2版本签名步骤,您可以点击 <a href='https://huobiapi.github.io/docs/spot/v1/cn/#c64cd15fdc'>这里 </a> 获取。</p>
+<p>v2版本签名步骤,您可以点击 <a href='#c64cd15fdc'>这里 </a> 获取。</p>
 
 <p>签名前最后生成的字符串如下：</p>
 <pre class="highlight plaintext"><code>GET\n
@@ -6269,7 +6264,7 @@ accounts.update#1<br>
 <tr>
 <td>changeType</td>
 <td>string</td>
-<td>余额变动类型，有效值：order-place(订单创建)，order-match(订单成交)，order-refund(订单成交退款)，order-cancel(订单撤销)，order-fee-refund(点卡抵扣交易手续费)，margin-transfer(杠杆账户划转)，margin-loan(借贷本金)，margin-interest(借贷计息)，margin-repay(归还借贷本金利息)，other(其他资产变化)</td>
+<td>余额变动类型，有效值：order-place(订单创建)，order-match(订单成交)，order-refund(订单成交退款)，order-cancel(订单撤销)，order-fee-refund(点卡抵扣交易手续费)，other(其他资产变化)</td>
 </tr>
 <tr>
 <td>accountType</td>
