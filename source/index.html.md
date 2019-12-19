@@ -113,9 +113,8 @@ WebSocket是HTML5一种新的协议（Protocol）。它实现了客户端与服�
 私有接口可用于交易管理和账户管理。每个私有请求必须使用您的API Key进行签名验证。
 
 ## 接入URLs
-您可以自行比较使用api-cloud.huobi.co.kr和api-aws.huobi.pro两个域名的延迟情况，选择延迟低的进行使用。     
+您可以自行比较使用api-cloud.huobi.co.kr和krapi.huobi.pro(日本aws专用)两个域名的延迟情况，选择延迟低的进行使用。     
 
-其中，api-aws.huobi.pro域名对使用aws云服务的用户做了一定的链路延迟优化。  
 
 **REST API**
 
