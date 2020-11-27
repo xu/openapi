@@ -4227,7 +4227,7 @@ The signature generation method v2.1 is similar with v2.0, with only following d
 2. The involved field names in v2 signature generation are: accessKey，signatureMethod，signatureVersion，timestamp
 3. The valid value of signatureVersion is 2.1.
 
-Please refer to detailed signature generation steps from: [https://huobiapi.github.io/docs/spot/v1/cn/#c64cd15fdc]
+Please refer to detailed signature generation steps from: [https://alphaex-api.github.io/openapi/spot/v1/en/#authentication]
 
 The final string involved in signature generation should be like below:
 
