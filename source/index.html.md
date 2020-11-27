@@ -1,11 +1,12 @@
 ---
-title: Huobi API Reference v1.0
+title: Huobi Korea API Reference v1.0
 
 language_tabs: # must be one of https://git.io/vQNgJ
   - shell
+  - json
 
 toc_footers:
-  - <a href='https://www.huobi.kr/en-us/api/'>Sign Up for a Huobi API key </a>
+  - <a href='https://www.huobi.kr/zh-cn/api/'>Sign Up for a Huobi Korea API key </a>
   - Login is required for creating an API key
 
 includes:
@@ -15,173 +16,379 @@ search: true
 
 # Introduction
 
-## Documentation Summary
+## API Introduction
 
-Welcome to the Huobi API! You can use our API to access all market data, trading, and account management endpoints.
+Welcome to Huobi Korea API！  
 
-We have code example in Shell! You can view code examples in the dark area to the right.
+This is the official Huobi Korea API document, and will be continue updating, please follow us to get latest news.
 
-You can use the drop down list above to change the API version. You can also use the language option at the top right to switch documentation language.
+You can switch to different API business in the top menu, and switch to different language by clicking the button in the top right.
+
+The example of request and response is showing in the right hand side.
+
+**Huobi Korea REST API URL**
+
+**https://api-cloud.huobi.co.kr**
+
+
+
+**Huobi Korea Websocket Feed (Market) **
+
+**`wss://api-cloud.huobi.co.kr/ws`**
+
+
+
+**REST API URL used by professional traders** 
+
+**https://krapi-cloud.huobi.co.kr** **(AWS Tokyo Only)**
+
+- We provide a dedicated URL service for pre-applicants and selected members. 
+- For details, please refer to the `API service guide for professional traders`（https://support.huobi.co.kr/hc/en/articles/360035235091）。
 
 ## Market Maker Program
 
-Market maker program gives clients with good market making strategy an opportunity to access customized trading fee structure.
+It is very welcome for market maker who has good market making strategy and large trading volume. If your Huobi Spot account or Contract account has at least 10 BTC, you can send your email to:
+
+- [MM-kr@huobi.com](mailto:MM-kr@huobi.com) for Huobi Korea (spot) market maker
+
+And provide below details:
+
+1. UID (not linked to any rebate program in any accounts)
+2. Screenshot of trading volume in other transaction platform (such as trading volume within 30 days, or VIP status)
+3. A brief description of your market-making strategy 
 
 <aside class="notice">
 Market makers will not be able to use point cards, VIP rate, rebate or any other fee promotion.
 </aside>
 
-### Eligibility Criteria as a Market Maker on Huobi Global
+## Contact Us
 
-1. You should possess good market strategy
-2. You must have at least 20 BTC or equivalent assets, not including rebates in your account with Huobi Global
+If you have any questions or inquiries using API, please refer to the `Inquiry Q&A` or join the `Huobi Korea API Communication Telegram Group` (http://bit.ly/2lY4o7v) for consultation. 
 
-### Application Process as Market Maker on Huobi Global
+# Quick Start
 
-If you satisfied our eligibility criteria and is interested to participate in our market-making project, please email to MM_service@huobi.com with following information:
+## Preparation
 
-1. UIDs (not linked to any rebate program in any accounts)
-2. Provide screenshot of trading volume for the past 30 days or VIP/corporate status with other Exchanges
-3. A brief description in writing of your market-making strategy
+Before you use API, you need to login the website to create API Key with proper permissions.
 
+You can manage your API Key <a href='https://www.huobi.kr/zh-cn/api/'>here</a>.
 
-# Changelog
+Every user can create at most 5 API Key, each of them has three permissions:
 
-| Live Date Time (UTC+8) | Change Detail |
-|-----                   | -----         |
-|  ||
+- Read permission: It is used to query the data, such as order query, trade query.
+- Trade permission: It is used to create order, cancel order and transfer, etc.
+- Withdraw permission: It is used to create withdraw order, cancel withdraw order, etc.
 
+Please remember below information after creation:
 
-# API Access
+- `Access Key`  It is used in API request
+  
+- `Secret Key`  It is used to generate the signature (only visible once after creation)
+
+<aside class="notice">
+The API Key can bind one or more IP addresses, we strongly suggest you bind IP address for security purpose. The API Key without IP binding will be expired after 90 days.
+</aside>
+<aside class="warning">
+<red><b>Warning</b></red>: These two keys are important to your account safety, please don't share <b>both</b> of them together to anyone else. If you find your API Key is disposed, please remove it immediately.
+</aside> 
+
+## SDK and Demo
+
+**SDK (Suggested)**
+
+[Java](https://github.com/huobiapi/huobi_Java)
+
+[Python3](https://github.com/huobiapi/huobi_Python)
+
+[C++](https://github.com/huobiapi/huobi_Cpp)
+
+**其它代码示例**
+
+https://github.com/huobiapi?tab=repositories
+
+## Interface Type
+
+There are two types of interface, you can choose the proper one according to your scenario and preferences.
+
+### REST API
+
+REST (Representational State Transfer) is one of the most popular communication mechanism under HTTP, each URL represents a type of resource.
+
+It is suggested to use Rest API for one-off operation, like trading and withdraw.
+
+### WebSocket API
+
+WebSocket is a new protocol in HTML5. It is full-duplex between client and server. The connection can be established by a single handshake, and then server can push the notification to client actively.
+
+It is suggest to use WebSocket API to get data update, like market data and order update.
+
+**Authentication**
+
+Both API has two levels of authentication:
+
+Public API: It is for basic information and market data. It doesn't need authentication.
+
+Private API: It is for account related operation like trading and account management. Each private API must be authenticated with API Key.
 
 ## Access URLs
+You can compare the network latency between two domain <u>api-cloud.huobi.co.kr</u> and <u>krapi-cloud.huobi.co.kr</u>(AWS Tokyo), and then choose the better one for you.
 
 **REST API**
 
-**`https://api-cloud.huobi.co.kr`**
+**`https://api-cloud.huobi.co.kr`**   
 
-<aside class="notice">
-Please initiate API calls with non-China IP.
-</aside>
+**Websocket Feed (market)**
+
+**`wss://api-cloud.huobi.co.kr/ws`**
+
+**Websocket Feed (account and order)**
+
+**`wss://api-cloud.huobi.co.kr/ws/v1`** 
 
 <aside class="notice">
 It is not recommended to use proxy to access Huobi API because it will introduce high latency and low stability.
 </aside>
-
-<aside class="notice">In this document, only the fields under "data" will be explained and shown in query example.</aside>
-
-## Endpoint Rate Limit
-
-Each API Key can send maximum of 100 https requests within 10 seconds. Please contact customer support if you believe you need higher limit rate.
+<aside class="notice">
+It is recommended to access Huobi API from AWS Japan for better stability. If your server is in China mainland, it may be not stable.
+</aside> 
 
 ## Authentication
 
-To protect API communication from unauthorized change, all non-public API calls are required to be signed.
+### Overview
 
-### Create API Key
+The API request may be tampered during internet, therefore all private API must be signed by your API Key (Secrete Key).
 
-To be able to create signature you should first acquire an API key and the corresponding secret key. You can manage you API keys by login to your account at huobi.com and go to "API Management" under "Account" section. On June 5th, 2019, Huobi introduced API Key permission management, allow user to assign 3 permissions to each of their API Keys: Read-only, Withdraw, and Trade. Please check each endpoint below for its permission type. Only the API Key with proper permission could access the respective endpoints requiring authentication.
+Each API Key has permission property, please check the API permission, and make sure your API key has proper permission.
 
-<aside class="notice">You can bind an API key with an IP to prevent the key from expiring, otherwise a key will expire in 90 days</aside>
+A valid request consists of below parts:
 
-<aside class="warning">You should never disclose your key to others</aside>
+- API Path: for example <u>api-cloud.huobi.co.kr/v1/order/orders</u>
+- API Access Key: The 'Access Key' in your API Key
+- Signature Method: The Hash method that is used to sign, it uses **HmacSHA256**
+- Signature Version: The version for the signature protocol, it uses **2**
+- Timestamp: The UTC time when the request is sent, e.g. 2017-05-11T16:22:06. It is useful to prevent the request to be intercepted by third-party.
+- Parameters: Each API Method has a group of parameters, you can refer to detailed document for each of them. 
+  - For GET request, all the parameters must be signed.
+  - For POST request, the parameters needn't be signed and they should be put in request body.
+- Signature: The value after signed, it is guarantee the signature is valid and the request is not be tempered.
 
 ### Signature Method
 
-To sign a call, you need to a few key components of the call to generate a query string, and then a hash is generated with this string, finally the hash is added to the call.
+The signature may be different if the request text is different, therefore the request should be normalized before signing. Below signing steps take the order query as an example:
 
-In order to successfully sign a request, you need to follow below steps
+This is a full URL to query one order:
 
-1. Generate the "Query String" for your query
+`https://api-cloud.huobi.co.kr/v1/order/orders?`
 
-2. Use "Query String" and your secret key to to created a signature
+`AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx`
 
-3. Add the signature as a path parameter to your query
+`&SignatureMethod=HmacSHA256`
 
-### Generate the "Query String" for your query
+`&SignatureVersion=2`
 
-> Add the query path section of the query string
+`&Timestamp=2017-05-11T15:19:30`
 
-```shell
-[HTTP Method]\n[URL Root]\n[Query Path]\n
-```
+`&order-id=1234567890`
 
-> For example below
+#### 1. The request Method (GET or POST), append line break “\n”
 
-```shell
-GET\napi.huobi.pro\n/v1/order/orders\n
-```
 
-> Add the authentication section of the query string
+`GET\n`
 
-```shell
-AccessKeyId=[Your API key]&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=[Your Request Timestamp]
-```
+#### 2. The host with lower case, append line break “\n”
 
-> For example below
+`api-cloud.huobi.co.kr\n`
 
-```shell
-AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2017-05-11T15%3A19%3A30
-```
+#### 3. The path, append line break “\n”
 
-> Add the parameter section of the query string, for example
+`
+/v1/order/orders\n
+`
 
-```shell
-&order-id=1234567890
-```
+#### 4. The parameters are URI encoded, and ordered based on ASCII
 
-> The final query string will be this
+For example below is the original parameters:
 
-```shell
-GET\napi.huobi.pro\n/v1/order/orders\nAccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2017-05-11T15%3A19%3A30&order-id=1234567890
-```
+`AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx`
 
-1. Add the query path to the query string
+`order-id=1234567890`
 
-2. Add mandatory authentication parameters to the query string
+`SignatureMethod=HmacSHA256`
 
-3. Add other path parameters to the query string ordered by parameter name (asc)
+`SignatureVersion=2`
+
+`Timestamp=2017-05-11T15%3A19%3A30`
 
 <aside class="notice">
-The timestamp should be in YYYY-MM-DDThh:mm:ss format with URL encoding.
+Use UTF-8 encoding and URI encoded, the hex must be upper case. For example, The semicolon ':' should be encoded as '%3A', The space should be encoded as '%20'.
+</aside>
+<aside class="notice">
+The 'timestamp' should be formated as 'YYYY-MM-DDThh:mm:ss' and URI encoded.
 </aside>
 
-### Use "Query String" and your secret key to to created a signature
+Then above parameter should be ordered like below:
 
-> The result signature will look like
 
-```shell
-4F65x5A2bLyMWVQj3Aqp+B4w+ivaA7n5Oi2SuYtCJ9o=
-```
+`AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx`
 
-1. Apply HmacSHA256 hash function with inputs (query string, secret key) to get the hashed string
+`SignatureMethod=HmacSHA256`
 
-2. Encode the hashed string with base-64
+`SignatureVersion=2`
 
-### Add the signature as a path parameter to your query
+`Timestamp=2017-05-11T15%3A19%3A30`
 
-> The final request with signature will look like
+`order-id=1234567890`
 
-```shell
-https://api.huobi.pro/v1/order/orders?AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx&order-id=1234567890&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2017-05-11T15%3A19%3A30&Signature=4F65x5A2bLyMWVQj3Aqp%2BB4w%2BivaA7n5Oi2SuYtCJ9o%3D
+#### 5. Use char  “&” to concatenate all parameters
 
-```
 
-1. Add all mandatory authentication parameters to your path parameter
+`AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2017-05-11T15%3A19%3A30&order-id=1234567890`
 
-2. Add "&Signature=[Your request signature with URL encode]" to your path parameter
+#### 6. Assemble the pre-signed text
+
+`GET\n`
+
+`api-cloud.huobi.co.kr\n`
+
+`/v1/order/orders\n`
+
+`AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2017-05-11T15%3A19%3A30&order-id=1234567890`
+
+
+#### 7. Use the pre-signed text and your Secret Key to generate a signature
+
+- Use the pre-signed text in above step and your API Secret Key to generate hash code by HmacSHA256 hash function.
+- Encode the hash code with base-64 to generate the signature.
+
+`4F65x5A2bLyMWVQj3Aqp+B4w+ivaA7n5Oi2SuYtCJ9o=`
+
+#### 8. Put the signature into request URL
+
+- Put all the parameters in the URL
+- Append the signature in the URL, with parameter name “Signature”.
+
+Finally, the request sent to API should be:
+
+`https://api-cloud.huobi.co.kr/v1/order/orders?AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx&order-id=1234567890&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2017-05-11T15%3A19%3A30&Signature=4F65x5A2bLyMWVQj3Aqp%2BB4w%2BivaA7n5Oi2SuYtCJ9o%3D`
+
+## Sub User
+
+Sub user can be used to isolate the assets and trade, the assets can be transferred between parent and sub users. Sub user can only trade with the sub user. The assets can not be transferred between sub users, only parent user has the transfer permission.  
+
+Sub user has independent login password and API Key, they are managed under parent user in website.
+
+Each parent user can create **200** sub user, each sub user can create at most **5** API Key, each API key can have two permissions: **read** and **trade**.
+
+The sub user API Key can also bind IP address, the expiry policy is the same with parent user.
+
+You can access <a href='https://www.huobi.co.kr/zh-cn/sub-account/'>here</a> to create and manage sub user.
+
+The sub user can access all public API (including basic information and market data), below are the private APIs that sub user can access:
+
+API|Description
+----------------------|---------------------
+[POST /v1/order/orders/place](#fd6ce2a756)  |Create and execute an order
+[POST /v1/order/orders/{order-id}/submitcancel](#4e53c0fccd)  |Cancel an order
+[POST /v1/order/orders/batchcancel](#ad00632ed5)  |Cancel multiple orders
+[POST /v1/order/orders/batchCancelOpenOrders](#open-orders) |Cancel the open orders
+[GET /v1/order/orders/{order-id}](#92d59b6aad)  |Query a specific order
+[GET /v1/order/orders](#d72a5b49e7) |Query orders with criteria
+[GET /v1/order/openOrders](#95f2078356) |Query open orders
+[GET /v1/order/matchresults](#0fa6055598) |Query the order matching result
+[GET /v1/order/orders/{order-id}/matchresults](#56c6c47284) |Query a specific order matching result
+[GET /v1/account/accounts](#bd9157656f) |Query all accounts in current user
+[GET /v1/account/accounts/{account-id}/balance](#870c0ab88b)  |Query the specific account balance
+[POST /v1/futures/transfer](#e227a2a3e8)  |Transfer with future account
+
+<aside class="notice">
+All other APIs couldn't be accessed by sub user, otherwise the API will return “error-code 403”。
+</aside>
+
+## Glossary
+
+### Trading symbols
+
+The trading symbols are consist of base currency and quote currency. Take the symbol `BTC/USDT` as an example, `BTC` is the base currency, and `USDT` is the quote currency.  
+
+The corresponding field of the base currency is base-currency.
+
+The corresponding field of the quote currency is quote-currency.
+
+### Account
+
+The `account-id` defines the Identity for different business type, it can be retrieved from API `/v1/account/accounts` , where the `account-type` is the business types.
+The types include:
+
+* spot: Spot account
+* point: Point card account
+
+### Identity
+
+* order-id: The unique identity for order.
+* client-order-id: The identity that defined by client. This id is included in order creation request, and will be returned as order-id. This id is valid within 24 hours.
+* match-id : The identity for order matching.
+* trade-id : The unique identity for the trade.
+
+### Order Type
+The order type is consist of trade direction and order classification. Take `buy-market` as an example, the trade direction is `buy`, the operation type is `market`.  
+
+Trade direction includes:
+
+* buy
+* sell  
+
+Order classification includes:
+
+* limit: Both of the price and amount should be specified in order creation request.
+* market : The price is not required in order creation request, you only need to specify either money or amount. The matching and trade will happen automatically according to the request.
+* limit-maker: The price is specified in order creation request as market maker. It will not be matched in the matching queue.
+* ioc: ioc stands for "immediately or cancel", it means the order will be canceled if it couldn't be matched. If the order is partially traded, the remaining part will be canceled.
+* stop-limit: The price in order creation request is the trigger price. The order will be put into matching queue only when the market price reaches the trigger price.
+
+### Order Status
+
+* submitted: The order is submitted, and already in the matching queue, waiting for deal.
+* partial-filled: The order is already in the matching queue and partially traded, and is waiting for further matching and trade.
+* filled: The order is already traded and not in the matching queue any more.
+* partial-canceled: The order is not in the matching queue any more. The status is transferred from 'partial-filled', the order is partially trade, but remaining is canceled.
+* canceled: The order is not in the matching queue any more, and completely canceled. There is no trade associated with this order.
+* canceling: The order is under canceling, but haven't been removed from matching queue yet.
+
+# API Access
+
+## Overview
+
+Category| URL Path | Description 
+--------- | --------- | -----------
+Common |/v1/common/* | Common interface, including currency, currency pair, timestamp, etc 
+Market Data |/market/*| Market data interface, including trading, depth, quotation, etc 
+Account |/v1/account/*  /v1/subuser/* | Account interface, including account information, sub-account ,etc 
+Order |/v1/order/* | Order interface, including order creation, cancellation, query, etc 
+
+Above is a general category, it doesn't cover all API, you can refer to detailed API document according to your requirement.
+
+## Rate Limiting Rule
+
+* Each API Key is limited to 10 times per second
+* If API Key is empty in request, then each IP is limited to 10 times per second
+
+For example
+
+* Order interface is limited by API Key: no more than 10 times within 1 sec
+* Market data interface is limited by IP: no more than 10 times within 1 sec
 
 ## Request Format
 
-All API requests are in either GET or POST method. For GET request, all parameters are path parameters. For POST request, all parameters are in POST body and in JSON format.
+The API is restful and there are two method: GET and POST.
+
+* GET request: All parameters are included in URL
+* POST request: All parameters are formatted as JSON and put int the request body
 
 ## Response Format
 
-All response will be returned in JSON format. The top level JSON is a wrapper object which provides three metadata in "status", "ch", and "ts". The actual per API response data is in "data" field.
+The response is JSON format.There are four fields in the top level: `status`, `ch`, `ts` and `data`. The first three fields indicate the general status, the business data is is under `data` field.
 
-### Response JSON Wrapper Content
-
-> Response wrapper content example:
+Below is an example of response:
 
 ```json
 {
@@ -192,123 +399,320 @@ All response will be returned in JSON format. The top level JSON is a wrapper ob
 }
 ```
 
-Field     | Data Type | Description
+Field| Data Type | Description 
 --------- | --------- | -----------
-status    | string    | The overall API call result status
-ch        | string    | The data channel this response was originated from. Some API return does not have this field.
-ts        | int       | The timestamp in milliseconds for when the response is created
-data      | object    | The actual response content per API
+status    | string    | Status of API response 
+ch        | string    | The data stream. It may be empty as some API doesn't have data stream 
+ts        | int       | The UTC timestamp when API respond, the unit is millisecond 
+data      | object    | The body data in response 
 
-## Error Information
+## Error Message
 
-Each error will have a code and err-msg which explain the details of the error.
+### Market Data  API Error Message
 
-### Market Data API Error Message
-
-| Error Code  | Description |
+| Error Message | Description |
 |-----|-----|
-| bad-request | Bad request |
-| invalid-parameter | Request parameter is invalid |
-| invalid-command | Request options are wrong |
+| bad-request | The request is wrong |
+| invalid-parameter | The parameter is invalid |
+| invalid-command | The command is invalid |
+### Order API Error Message
 
-### Trading API Error Message
+| Error Message | Description |
+|-----|-----|
+| base-symbol-error | Trade pair doesn't exist |
+| base-currency-error | Currency doesn't exist |
+| base-date-error | The date format is wrong |
+| account for id `12,345` and user id `6,543,210` does not exist| The`account-id` is wrong, please use GET `/v1/account/accounts` to get account |
+| account-frozen-balance-insufficient-error | Can not froze due to insufficient balance |
+| account-transfer-balance-insufficient-error | Can not transfer due to insufficient balance |
+| bad-argument | The arugment is wrong |
+| api-signature-not-valid | The API signature is wrong |
+| gateway-internal-error | System is too busy |
+| ad-ethereum-addresss| The Ethereum address is required |
+| order-accountbalance-error| Insufficient balance in account |
+| order-limitorder-price-error|The limited order price exceeds limitation |
+|order-limitorder-amount-error|The limited order amount exceeds limitation |
+|order-orderprice-precision-error|The limited order price exceeds precision limitation |
+|order-orderamount-precision-error|The limited order amount exceeds precision limitation|
+|order-marketorder-amount-error|The order amount exceeds limitation|
+|order-queryorder-invalid|Can not query the order|
+|order-orderstate-error|The order status is wrong|
+|order-datelimit-error|The query exceeds date limitation|
+|order-update-error|The order fail to update|
 
-| Error Code  | Description |
-|-----        | -----|
-| base-symbol-error |  trading symbol does not exist |
-| base-currency-error |  Trading currency does not exist |
-| base-date-error | Bad date format |
-| account-frozen-balance-insufficient-error | Insufficient balance |
-| account-transfer-balance-insufficient-error | Insufficient balance for transfer |
-| bad-argument | Bad arguments |
-| api-signature-not-valid | API signature not valid |
-| gateway-internal-error | System is busy |
-| ad-ethereum-addresss| Ethereum address is needed |
-| order-accountbalance-error| Account balance insufficient |
-| order-limitorder-price-error| Price of limit order is invalid |
-|order-limitorder-amount-error| Amount of limit order is invalid |
-|order-orderprice-precision-error| Price precision not supported |
-|order-orderamount-precision-error| Amount prevision not supported |
-|order-marketorder-amount-error| Market order amount is invalid|
-|order-queryorder-invalid| Cannot find queried order|
-|order-orderstate-error|Order status is invalid|
-|order-datelimit-error|Order query timeout|
-|order-update-error| Order update error|
+## Suggestions
 
-## SDK & Code Demo
+1. To get market data: Use WebSocket to subscribe the real time data and cache the data for further usage
+2. To get latest trade price: Use `/market/trade` or WebSocket to subscribe `market.$symbol.trade.detail`.
+3. To get successful transaction: Use WebSocket to subscribe `orders.$symbol.update`, it has better performance and time-ordered.
+4. To change account assents: Use WebSocket to subscribe accounts topic, and regularly call API to get latest data.
 
-**SDK(recommended)**
+# Frequently Asked Questions
 
-[Java](https://github.com/huobiapi/huobi_Java)
+## Access and Authentication
 
-[Python3](https://github.com/huobiapi/huobi_Python)
+### Q1：How many API Keys one user can apply?
+A:  Every user can create 5 API Keys, and each API Key can be granted with 3 permissions: **read**, **trade** and **withdraw**.
+Each user could create up to 200 sub users, and each sub user could create 5 API Keys, each API key can be granted with 2 permissions: **read** and **trade**.
 
-[C++](https://github.com/huobiapi/huobi_Cpp)
+Below are the explanation for permissions:
 
+1、Read permission: It is used to query data, for example, **query orders**, **query trades**. 
 
+2、Trade permission: it is used to **place order**, **cancel order** and **transfer**.
 
-**Websocket**
+3、Withdraw permission: it is used to **withdraw**, **cancel withdraw**.
 
-[Python3](https://github.com/huobiapi/Websocket-Python3-demo)
+### Q2：Why APIs are always disconnected or timeout?
+A：Please follow below suggestions:
 
-[Node.js](https://github.com/huobiapi/WebSocket-Node.js-demo)
+1、It is unstable if the client's server locates in China mainland, it is suggested to invoke API from a server at AWS Japan.
 
-[PHP](https://github.com/huobiapi/WebSocket-PHP-demo)
+2、It is suggested to invoke API only to host <u>api-cloud.huobi.co.kr</u> or <u>api-was.huobi.pro</u>.
 
-**REST**
+### Q3：Why the WebSocket is often disconnected?
+A：Please check below possible reasons:
 
-[Python3](https://github.com/huobiapi/REST-Python3-demo)
+1、The client didn't respond 'Pong'. It is requird to respond 'Pong' after receive 'Ping' from server.
 
-[Java](https://github.com/huobiapi/REST-Java-demo)
+2、The server didn't receive 'Pong' successfully due to network issue.
 
-[Node.js](https://github.com/huobiapi/REST-Node.js-demo)
+3、The connection is broken due to network issue.
 
-[C#](https://github.com/huobiapi/REST-CSharp-demo)
+4、It is suggested to implement WebSocket re-connect mechanism. If Ping/Pong works well but the connection is broken, the application should be able to re-connect automatically.
 
-[go](https://github.com/huobiapi/REST-GO-demo)
+### Q4：Why the signature authentication always fail?
+A：Please compare  your signature text with below example: 
 
-[PHP](https://github.com/huobiapi/REST-PHP-demo)
+`GET\n`
 
-[C++](https://github.com/huobiapi/REST-Cpp-demo)
+`api-cloud.huobi.co.kr\n`
 
-[Objective-C](https://github.com/huobiapi/REST-ObjectiveC-demo)
+`/v1/account/accounts\n`
 
-[QTC++](https://github.com/huobiapi/REST-QTCpp-demo)
+`AccessKeyId=rfhxxxxx-950000847-boooooo3-432c0&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2019-10-28T07%3A28%3A38`
 
-[Python2.7](https://github.com/huobiapi/REST-Python2.7-demo)
+Please check whether you follow below rules:
 
-[Ruby](https://github.com/huobiapi/REST-Ruby-demo)
+1、The parameter in signature text should be ordered by ASCII, for example below is the original parameters:
 
-[易语言](https://github.com/huobiapi/REST-YiYuyan-demo)
+`AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx`
 
-## Issue and Solution
+`order-id=1234567890`
 
-### Unstable Connection to API Service
+`SignatureMethod=HmacSHA256`
 
-* Make sure you are using api.huobi.pro as the URL root to access the API
-* Choose to use AWS Tokyo as your hosting server should help
+`SignatureVersion=2`
 
-### Fail to Sign API Request
+`Timestamp=2017-05-11T15%3A19%3A30`
 
-* Check if API key is correct and is still valid (not expired)
-* Check if you have previously set whitelist with your API key and your hosting server is in the whitelist
-* Check if you are using the correct timestamp in your signature
-* Check if you are using the correct encoding in your signature, e.g. base64 for initial signature and URI for final request
-* Check if you added parameters in ASCII order when creating the signature string
+They should be ordered like below:
 
-### Receive "login-required"
+`AccessKeyId=e2xxxxxx-99xxxxxx-84xxxxxx-7xxxx`
 
-* Check for parameter `account-id` if you are using account-id from `/v1/account/accounts`. Make sure you are using those id not your UID.
+`SignatureMethod=HmacSHA256`
 
-### Receive "gateway-internal-error"
+`SignatureVersion=2`
 
-* Check if your post request have set header `Content-Type:application/json`
+`Timestamp=2017-05-11T15%3A19%3A30`
+
+`order-id=1234567890`
+
+2、The signature text should be URI encoded, for example
+
+- The semicolon `:`should be encoded as `%3A`, The space should be encoded as `%20`.
+- The timestamp should be formatted as `YYYY-MM-DDThh:mm:ss` and after encoded it should be like `2017-05-11T15%3A19%3A30`  
+
+3、The signature should be base64 encoded.
+
+4、The parameter for Get request should be included in signature request.
+
+5、The Timestamp should be UTC time and the format should be YYYY-MM-DDTHH:mm:ss.
+
+6、The time difference between your timestamp and standard should be less than 1 minute.
+
+7、The message body doesn't need URI encoded if you are using WebSocket for authentication.
+
+8、The host in signature text should be the same as the host in your API request.
+
+9、The hidden text in API Key and Secret Key may have impact on the signature.
+
+Right now the official SDK supports 3 language: Java, Python3 and C++, you can choose the one that suitable for you. 
+
+<a href='https://github.com/HuobiRDCenter'>Download SDK </a>    
+
+<a href='https://github.com/HuobiRDCenter/huobi_Python/blob/master/example/python_signature_demo.md'>Python signature example</a>   
+
+<a href='https://github.com/HuobiRDCenter/huobi_Java/blob/master/java_signature_demo.md'>JAVA signature example</a>   
+
+<a href='https://github.com/HuobiRDCenter/huobi_Cpp/blob/master/examples/cpp_signature_demo.md'>C++ signature example</a>   
+
+### Q5：Why the API return 'gateway-internal-error'?
+A：Please check below possible reasons:
+
+1、Check the `account-id`, it could be returned from `GET /v1/account/accounts`.
+
+2、It may be due to network issue, please try again later.
+
+3、The data format should be correct (standard JSON).
+
+4、The `Content-Type` in POST header should be `application/json` .
+
+### Q6：Why the API return 'login-required'?
+A：Please check below possible reasons:
+
+1、The parameter should include `AccessKeyId`.
+
+2、Check the `account-id` it could be returned from `GET /v1/account/accounts`.
+
+3、The request body in POST request should NOT be included in signature text.
+
+4、The request parameter in GET request should be ordered by ASCII.
+
+## Market Data
+
+### Q1：What is the update frequency of market depth?
+A：The data is updated **once per second**. But, the BBO (Best Bid/Offer) feed upon WebSocket subscription to `market.$symbol.bbo` is updating in tick by tick mode.
+
+### Q2：Could the total volume of Last 24h Market Summary (GET /v1/market/detail) decrease?
+A：Yes, it is possible that the accumulated volume and the accumulated value counted for current 24h window is smaller than previous.
+
+### Q3：How to retrieve the last trade price in market?
+A：It is suggested to request to `GET /v1/market/trade` to get last market price, or to subscribe WebSocket topic `market.$symbol.trade.detail` for getting the same.
+
+### Q4：Which timezone the start time of candlesticks falls into?
+A： The start time for candlesticks is based on Singapore time (GMT+8), for example, the duration for daily candlesticks is from 00:00:00 to 23:59:59 Singapore time.
+
+## Order and Trade
+
+### Q1：What is account-id?
+A： The `account-id` defines the Identity for different business type, it can be retrieved from API `/v1/account/accounts` , where the `account-type` is the business types.
+
+The types include:
+
+- spot: Spot account
+- point: Point card account
+
+### Q2：What is client-order-id?
+A： The `client-order-id` is an optional request parameter while placing order. It's string type which maximum length is 64. The client order id is generated by client, and is only valid within 24 hours.
+
+### Q3：How to get the order size, price and decimal precision?
+A： You can call API `GET /v1/common/symbols` to get the currency pair information, pay attention to the difference between the minimum amount and the minimum price.   
+
+Below are common errors:
+
+- order-value-min-error: The order price is less than minimum price
+- order-orderprice-precision-error : The precision for limited order price is wrong 
+- order-orderamount-precision-error : The precision for limited order amount is wrong
+- order-limitorder-price-max-error : The limited order price is higher than the threshold
+- order-limitorder-price-min-error : The limited order price is lower than the threshold
+- order-limitorder-amount-max-error : The limited order amount is larger than the threshold
+- order-limitorder-amount-min-error : The limited order amount is smaller than the threshold  
+
+### Q4：What is the difference between two WebSocket topic 'orders.\$symbol' and 'orders.\$symbol.update'?
+A： Below are the difference:
+
+1、The topic `order.$symbol` is the legacy version, which will be no longer supported in the near future. It is strongly recommended to subscribe topic `orders.$symbol.update` instead for getting order updates.
+
+2、The update message sequence of `orders.$symbol.update` strictly follows transaction time, with lower latency.
+
+3、In order to reduce latency, the topic `orders.$symbol.update` doesn't include original order details and transaction fee etc. If you require the original order information or transaction fee details, you may query to corresponding REST API endpoint.
+
+### Q5：Why I got insufficient balance error while placing an order just after a successful order matching?
+A：The time order matching update being sent down, the clearing service of that order may be still in progress at backend. Suggest to follow either of below to ensure a successful order submission:
+
+1、Subscribe to WebSocket topic `accounts` for getting account balance moves to ensure the completion of asset clearing.
+
+2、Check account balance from REST endpoint to ensure sufficient available balance for the next order submission.
+
+3、Leave sufficient balance in your account.
+
+### Q6: What is the difference between 'filled-fees' and 'filled-points' in match result?
+A: Transaction fee can be paid from either of below.
+
+1、filled-fees: Filled-fee is also called transaction fee. It's charged from your income currency from the transaction. For example, if your purchase order of BTC/USDT got matched，the transaction fee will be based on BTC.
+
+2、filled-points: If user enabled transaction fee deduction, the fee should be charged from either HT or Point. User could refer to field `fee-deduct-currency` to get the exact deduction type of the transaction.
+
+### Q7: What is the difference between 'match-id' and 'trade-id' in matching result?
+A: The `match-id` is the identity for order matching, while the `trade-id` is the unique identifier for each trade. One `match-id` may be correlated with multiple `trade-id`, or no `trade-id`(if the order is cancelled). For example, if a taker's order got matched with 3 maker's orders at the same time, it generates 3 trade IDs but only one match ID.
+
+### Q8: Why the order submission could be rejected even though the order price is set as same as current best bid (or best ask)?
+A: For some extreme illiquid trading symbols, the best quote price at particular time might be far away from last trade price. But the price limit is actually based on last trade price which could possibly exclude best quote price from valid range for any new order.
+
+## Deposit and Withdraw
+
+### Q1：Why the API returns error 'api-not-support-temp-addr' when withdrawing?
+A：User has to include the address into the pre-defined address table on Huobi official website before withdrawing through API.
+
+### Q2：Why the API returns error 'Invaild-Address' when withdraw USDT?
+A：USDT locates on multiple chains, therefore the withdraw order should clearly specify which chain the withdrawal goes to. See the table below:
+
+| Chain           | Field Value |
+| --------------- | --------------- |
+| ERC20 (default) | `usdterc20`     |
+| OMNI            | `usdt`          |
+| TRX             | `trc20usdt`     |
+
+If leaving the field empty, default target chain is `ERC20`, or you can explicitly set the chain to `usdterc20`.
+
+If the target chain is `OMNI` or `TRX`, the field value should be `usdt` or `trc20usdt`.
+
+The full chain name list for all currencies can be retrieved from endpoint `GET /v2/reference/currencies`.
+
+### Q3：How to specify 'fee' when creating a withdraw request?
+
+A：Please refer to the response from endpoint `GET /v2/reference/currencies`, where the field `withdrawFeeType` defining different fee types below: 
+
+- transactFeeWithdraw : The withdraw fee per request (only applicable when withdrawFeeType=fixed).      
+- minTransactFeeWithdraw : The minimum withdraw fee per request (only applicable when withdrawFeeType=circulated).
+- maxTransactFeeWithdraw : The maximum withdraw fee per request (only applicable when withdrawFeeType=circulated or ratio).
+- transactFeeRateWithdraw : The withdraw fee rate per request (only applicable when withdrawFeeType=ratio).
+
+### Q4：How to query my withdraw quota?
+A：Please refer to the response from endpoint `GET /v2/account/withdraw/quota`, where quota per request, daily quota, annual quota, overall quota are available.
+
+Note: If you need to withdraw large amount which breaking the limitation, you can contact our official support ( API-kr@huobi.com) for assistance.
+
+## API Technical Support
+If you have any other questions on API, you can contact us by below ways:
+
+1、Huobi Korea API Communication Telegram Group (http://bit.ly/2lY4o7v) 
+
+2、Send email to  API-kr@huobi.com
+In order to better understand your question and respond you quickly, please use below template in your email:
+
+`1. UID`  
+`2. AccessKey`  
+`3. Full URL request`  
+`4. Request parameters`  
+`5. Request time`  
+`6. Original response`  
+`7. Problem description: (such as steps, field question, frequency)`  
+`8. Signature text (mandatory if you have signature authentication issue)`  
+
+Below is an example：
+
+`1. UID：123456`  
+`2. AccessKey:rfhxxxxx-950000847-boooooo3-432c0`  
+`3. Full URL request: https://api-cloud.huobi.co.kr/v1/account/accounts?&SignatureVersion=2&SignatureMethod=HmacSHA256&Timestamp=2019-11-06T03%3A25%3A39&AccessKeyId=rfhxxxxx-950000847-boooooo3-432c0&Signature=HhJwApXKpaLPewiYLczwfLkoTPnFPHgyF61iq0iTFF8%3D`  
+`4. Request parameters: N/A`  
+`5. Request time: 2019-11-06 11:26:14`  
+`6. Original response：{"status":"error","err-code":"api-signature-not-valid","err-msg":"Signature not valid: Incorrect Access key [Access key错误]","data":null}`  
+`7. Problem description: API returns error`  
+`8. Signature text:`  
+`GET\n`  
+`api-cloud.huobi.co.kr\n`  
+`/v1/account/accounts\n`    
+`AccessKeyId=rfhxxxxx-950000847-boooooo3-432c0&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2019-11-06T03%3A26%3A13`
+
+Note：It is safe to share your Access Key, which is to prove your identity, and it will not affect your account safety. Remember do **not** share your `Secret Key` to any one. If you expose your `Secret Key` by accident, please [remove](https://www.huobi.co.kr/zh-cn/api/) the related API Key immediately.
 
 # Reference Data
 
 ## Get all Supported Trading Symbol
 
-This endpoint returns all Huobi's supported trading symbol.
+This endpoint returns all Huobi Korea's supported trading symbol.
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/v1/common/symbols"
@@ -326,21 +730,31 @@ No parameter is needed for this endpoint.
 
 ```json
   "data": [
+   {"base-currency":"etc",
+    "quote-currency":"usdt",
+    "price-precision":6,
+    "amount-precision":4,
+    "symbol-partition":"default",
+    "symbol":"etcusdt",
+    "state":"online",
+    "value-precision":8,
+    "min-order-amt":0.001,
+    "max-order-amt":10000,
+    "min-order-value":0.0001
+    },
     {
-        "base-currency": "btc",
-        "quote-currency": "usdt",
-        "price-precision": 2,
-        "amount-precision": 4,
-        "symbol-partition": "main",
-        "symbol": "btcusdt"
-    }
-    {
-        "base-currency": "eth",
-        "quote-currency": "usdt",
-        "price-precision": 2,
-        "amount-precision": 4,
-        "symbol-partition": "main",
-        "symbol": "ethusdt"
+    "base-currency":"ltc",
+    "quote-currency":"usdt",
+    "price-precision":6,
+    "amount-precision":4,
+    "symbol-partition":"main",
+    "symbol":"ltcusdt",
+    "state":"online",
+    "value-precision":8,
+    "min-order-amt":0.001,
+    "max-order-amt":10000,
+    "min-order-value":100,
+    "leverage-ratio":4
     }
   ]
 ```
@@ -353,11 +767,18 @@ base-currency   | string    | Base currency in a trading symbol
 quote-currency  | string    | Quote currency in a trading symbol
 price-precision | integer   | Quote currency precision when quote price(decimal places)
 amount-precision| integer   | Base currency precision when quote amount(decimal places)
-symbol-partition| string    | Trading section, possible values: [main，innovation，bifurcation]
+symbol-partition| string    | Trading section, possible values: [main，innovation]
+symbol          | string    | 
+state           | string    | The status of the symbol；Allowable values: [online，offline,suspend]. "online" - Listed, available for trading, "offline" - de-listed, not available for trading， "suspend"-suspended for trading
+value-precision | integer   | Precision of value in quote currency (value = price * amount)
+min-order-amt   | long      | Minimum order amount (order amount is the ‘amount’ defined in ‘v1/order/orders/place’ when it’s a limit order or sell-market order)
+max-order-amt   | long      | Max order amount
+min-order-value | long      | Minimum order value (order value refers to ‘amount’ * ‘price’ defined in ‘v1/order/orders/place’ when it’s a limit order or ‘amount’ when it’s a buy-market order)
+
 
 ## Get all Supported Currencies
 
-This endpoint returns all Huobi's supported trading currencies.
+This endpoint returns all Huobi Korea's supported trading currencies.
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/v1/common/currencys"
@@ -384,10 +805,131 @@ No parameter is needed for this endpoint.
 ### Response Content
 
 <aside class="notice">The returned "data" field contains a list of string with each string represents a suppported currency.</aside>
+## APIv2 - Currency & Chains
+
+API user could query static reference information for each currency, as well as its corresponding chain(s). (Public Endpoint)
+
+### HTTP Request
+
+GET `/v2/reference/currencies`
+
+```shell
+curl "https://api-cloud.huobi.co.kr/v2/reference/currencies?currency=usdt"
+```
+
+### Request Parameters
+
+| Field Name       | Mandatory | Data Type     | Description     |Value Range |
+| ---------- | ---- | ------ | ------ | ---- |
+| currency | false | string | Currency   |  btc, ltc, bch, eth, etc ...(available currencies in Huobi Global) |
+| authorizedUser | false | boolean | Authorized user   |  true or false (if not filled, default value is true) |
+
+> Response:
+
+```json
+{
+    "code":200,
+    "data":[
+        {
+            "chains":[
+                {
+                    "chain":"trc20usdt",
+                    "depositStatus":"allowed",
+                    "maxTransactFeeWithdraw":"1.00000000",
+                    "maxWithdrawAmt":"280000.00000000",
+                    "minDepositAmt":"100",
+                    "minTransactFeeWithdraw":"0.10000000",
+                    "minWithdrawAmt":"0.01",
+                    "numOfConfirmations":999,
+                    "numOfFastConfirmations":999,
+                    "withdrawFeeType":"circulated",
+                    "withdrawPrecision":5,
+                    "withdrawQuotaPerDay":"280000.00000000",
+                    "withdrawQuotaPerYear":"2800000.00000000",
+                    "withdrawQuotaTotal":"2800000.00000000",
+                    "withdrawStatus":"allowed"
+                },
+                {
+                    "chain":"usdt",
+                    "depositStatus":"allowed",
+                    "maxWithdrawAmt":"19000.00000000",
+                    "minDepositAmt":"0.0001",
+                    "minWithdrawAmt":"2",
+                    "numOfConfirmations":30,
+                    "numOfFastConfirmations":15,
+                    "transactFeeRateWithdraw":"0.00100000",
+                    "withdrawFeeType":"ratio",
+                    "withdrawPrecision":7,
+                    "withdrawQuotaPerDay":"90000.00000000",
+                    "withdrawQuotaPerYear":"111000.00000000",
+                    "withdrawQuotaTotal":"1110000.00000000",
+                    "withdrawStatus":"allowed"
+                },
+                {
+                    "chain":"usdterc20",
+                    "depositStatus":"allowed",
+                    "maxWithdrawAmt":"18000.00000000",
+                    "minDepositAmt":"100",
+                    "minWithdrawAmt":"1",
+                    "numOfConfirmations":999,
+                    "numOfFastConfirmations":999,
+                    "transactFeeWithdraw":"0.10000000",
+                    "withdrawFeeType":"fixed",
+                    "withdrawPrecision":6,
+                    "withdrawQuotaPerDay":"180000.00000000",
+                    "withdrawQuotaPerYear":"200000.00000000",
+                    "withdrawQuotaTotal":"300000.00000000",
+                    "withdrawStatus":"allowed"
+                }
+            ],
+            "currency":"usdt",
+            "instStatus":"normal"
+        }
+        ]
+}
+
+```
+
+### Response Content
+
+
+| Field Name | Mandatory  | Data Type | Description   | Value Range |
+| ---- | ----- | ---- | ---- | ---- |
+| code| true | int | Status code |      |
+| message| false | string | Error message (if any) |      |
+| data| true | object |  |      |
+|   { currency | true | string | Currency |      |
+|      { chains| true | object |  |      |
+|        chain| true | string | Chain name |      |
+|        numOfConfirmations| true | int | Number of confirmations required for deposit success (trading & withdrawal allowed once reached) |      |
+|        numOfFastConfirmations| true | int | Number of confirmations required for quick success (trading allowed but withdrawal disallowed once reached) |      |
+|        minDepositAmt| true | string | Minimal deposit amount in each request |      |
+|        depositStatus| true | string | Deposit status | allowed,prohibited     |
+|        minWithdrawAmt| true | string | Minimal withdraw amount in each request |      |
+|        maxWithdrawAmt| true | string | Maximum withdraw amount in each request |      |
+|        withdrawQuotaPerDay| true | string | Maximum withdraw amount in a day |      |
+|        withdrawQuotaPerYear| true | string | Maximum withdraw amount in a year |      |
+|        withdrawQuotaTotal| true | string |Maximum withdraw amount in total |      |
+|        withdrawPrecision| true | int |Withdraw amount precision |      |
+|        withdrawFeeType| true | string |Type of withdraw fee (only one type can be applied to each currency)| fixed,circulated,ratio     |
+|        transactFeeWithdraw| false | string |Withdraw fee in each request (only applicable to withdrawFeeType = fixed) |      |
+|        minTransactFeeWithdraw| false | string |Minimal withdraw fee in each request (only applicable to withdrawFeeType = circulated) |      |
+|        maxTransactFeeWithdraw| false | string |Maximum withdraw fee in each request (only applicable to withdrawFeeType = circulated or ratio) |      |
+|        transactFeeRateWithdraw| false | string |Withdraw fee in each request (only applicable to withdrawFeeType = ratio) |      |
+|        withdrawStatus}| true | string | Withdraw status | allowed,prohibited     |
+|      instStatus }| true | string | Instrument status | normal,delisted     |
+
+### Status Code
+
+| Status Code | Error Message  | Scenario |
+| ---- | ----- | ---- |
+| 200| success | Request successful |
+| 500| error |  System error |
+| 2002| invalid field value in "field name" | Invalid field value |
 
 ## Get Current System Time
 
-This endpoint returns the current system time in milliseconds adjusted to Beijing time zone.
+This endpoint returns the current system time in milliseconds adjusted to Singapore time zone.
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/v1/common/timestamp"
@@ -407,10 +949,6 @@ No parameter is needed for this endpoint.
   "data": 1494900087029
 ```
 
-### Response Content
-
-The returned "Data" field contains an integer represents the timestamp in milliseconds adjusted to Beijing time.
-
 # Market Data
 
 ## Get Klines(Candles)
@@ -419,7 +957,7 @@ This endpoint retrieves all klines in a specific range.
 
 ### HTTP Request
 
-`GET https://api-cloud.huobi.co.kr/market/history/kline`
+GET `/market/history/kline`
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/market/history/kline?period=1day&size=200&symbol=btcusdt"
@@ -430,11 +968,12 @@ curl "https://api-cloud.huobi.co.kr/market/history/kline?period=1day&size=200&sy
 Parameter | Data Type | Required | Default | Description                 | Value Range
 --------- | --------- | -------- | ------- | -----------                 | -----------
 symbol    | string    | true     | NA      | The trading symbol to query | All trading symbol supported, e.g. btcusdt, bccbtc
-period    | string    | true     | NA      | The period of each candle   | 1min, 5min, 15min, 30min, 60min, 1day, 1mon, 1week, 1year
+period    | string    | true     | NA      | The period of each candle   | 1min, 5min, 15min, 30min, 60min, 4hour, 1day, 1mon, 1week, 1year
 size      | integer   | false    | 150     | The number of data returns  | [1, 2000]
 
-<aside class="notice">To query hb10, put "hb10" at symbol position.</aside>
-
+<aside class="notice">This API doesn't support customized period, refer to Websocket K line API to get the emurated period value.</aside>
+<aside class="notice">To query HB10, put "hb10" at symbol position.</aside>
+<aside class="notice">The start time for candlesticks is based on Singapore time (GMT+8), for example, the duration for daily candlesticks is from 00:00:00 to 23:59:59 Singapore time.</aside>
 > The above command returns JSON structured like this:
 
 ```json
@@ -471,7 +1010,7 @@ This endpoint retrieves the latest ticker with some important 24h aggregated mar
 
 ### HTTP Request
 
-`GET https://api-cloud.huobi.co.kr/market/detail/merged`
+GET `/market/detail/merged`
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/market/detail/merged?symbol=ethusdt"
@@ -481,7 +1020,7 @@ curl "https://api-cloud.huobi.co.kr/market/detail/merged?symbol=ethusdt"
 
 Parameter | Data Type | Required | Default | Description                  | Value Range
 --------- | --------- | -------- | ------- | -----------                  | --------
-symbol    | string    | true     | NA      | The trading symbol to query  | All supported trading symbol, e.g. btcusdt, bccbtc
+symbol    | string    | true     | NA      | The trading symbol to query  | All supported trading symbol, e.g. btcusdt, bccbtc.Refer to `/v1/common/symbols` 
 
 > The above command returns JSON structured like this:
 
@@ -521,10 +1060,9 @@ ask       | object    | The current best ask in format [price, quote volume]
 This endpoint retrieves the latest tickers for all supported pairs.
 
 <aside class="notice">The returned data object can contain large amount of tickers.</aside>
-
 ### HTTP Request
 
-`GET https://api-cloud.huobi.co.kr/market/tickers`
+GET `/market/tickers`
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/market/tickers"
@@ -582,7 +1120,7 @@ This endpoint retrieves the current order book of a specific pair.
 
 ### HTTP Request
 
-`GET https://api-cloud.huobi.co.kr/market/depth`
+GET `/market/depth`
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/market/depth?symbol=btcusdt&type=step1"
@@ -592,12 +1130,11 @@ curl "https://api-cloud.huobi.co.kr/market/depth?symbol=btcusdt&type=step1"
 
 Parameter | Data Type | Required | Default Value         | Description                                       | Value Range
 --------- | --------- | -------- | -------------         | -----------                                       | -----------
-symbol    | string    | true     | NA                    | The trading symbol to query                       | All supported trading symbols, e.g. btcusdt, bccbtc
+symbol    | string    | true     | NA                    | The trading symbol to query                       | Refer to `GET /v1/common/symbols` 
 depth     | integer   | false    | 20                    | The number of market depth to return on each side | 5, 10, 20
 type      | string    | true     | step0                 | Market depth aggregation level, details below     | step0, step1, step2, step3, step4, step5
 
 <aside class="notice">when type is set to "step0", the default value of "depth" is 150 instead of 20.</aside>
-
 **"type" Details**
 
 Value     | Description
@@ -665,13 +1202,13 @@ step5     | Aggregation level = precision*100000
 ### Response Content
 
 <aside class="notice">The returned data object is under 'tick' object instead of 'data' object in the top level JSON</aside>
-
 Field     | Data Type | Description
 --------- | --------- | -----------
-ts        | integer   | The UNIX timestamp in milliseconds adjusted to Beijing time
+ts        | integer   | The UNIX timestamp in milliseconds adjusted to Singapore time
 version   | integer   | Internal data
 bids      | object    | The current all bids in format [price, quote volume]
 asks      | object    | The current all asks in format [price, quote volume]
+
 
 ## Get the Last Trade
 
@@ -679,7 +1216,7 @@ This endpoint retrieves the latest trade with its price, volume, and direction.
 
 ### HTTP Request
 
-`GET https://api-cloud.huobi.co.kr/market/trade`
+GET `/market/trade`
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/market/trade?symbol=ethusdt"
@@ -689,7 +1226,7 @@ curl "https://api-cloud.huobi.co.kr/market/trade?symbol=ethusdt"
 
 Parameter | Data Type | Required | Default Value         | Description                                       | Value Range
 --------- | --------- | -------- | -------------         | -----------                                       | -----------
-symbol    | string    | true     | NA                    | The trading symbol to query                       | All supported trading symbols, e.g. btcusdt, bccbtc
+symbol    | string    | true     | NA                    | The trading symbol to query                       | Refer to `GET /v1/common/symbols`
 
 > The above command returns JSON structured like this:
 
@@ -700,6 +1237,7 @@ symbol    | string    | true     | NA                    | The trading symbol to
     "data": [
       {
         "id": 600848670,
+        "trade-id": 102043494568,
         "price": 7962.62,
         "amount": 0.0122,
         "direction": "buy",
@@ -712,13 +1250,13 @@ symbol    | string    | true     | NA                    | The trading symbol to
 ### Response Content
 
 <aside class="notice">The returned data object is under 'tick' object instead of 'data' object in the top level JSON</aside>
-
 Parameter | Data Type | Description
 --------- | --------- | -----------
-id        | integer   | The unique trade id of this trade
+id        | integer   | The unique trade id of this trade (to be obsoleted)
+trade-id|integer| The unique trade id (NEW)
 amount    | float     | The trading volume in base currency
 price     | float     | The trading price in quote currency
-ts        | integer   | The UNIX timestamp in milliseconds adjusted to Beijing time
+ts        | integer   | The UNIX timestamp in milliseconds adjusted to Singapore time
 direction | string    | The direction of the taker trade: 'buy' or 'sell'
 
 ## Get the Most Recent Trades
@@ -727,7 +1265,7 @@ This endpoint retrieves the most recent trades with their price, volume, and dir
 
 ### HTTP Request
 
-`GET https://api-cloud.huobi.co.kr/market/history/trade`
+GET `/market/history/trade`
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/market/history/trade?symbol=ethusdt&size=2"
@@ -737,7 +1275,7 @@ curl "https://api-cloud.huobi.co.kr/market/history/trade?symbol=ethusdt&size=2"
 
 Parameter | Data Type | Required | Default Value    | Description                   | Value Range
 --------- | --------- | -------- | -------------    | ----------                    | -----------
-symbol    | string    | true     | NA               | The trading symbol to query   | All supported trading symbols, e.g. btcusdt, bccbtc
+symbol    | string    | true     | NA               | The trading symbol to query   | All supported trading symbol, e.g. btcusdt, bccbtc.Refer to `GET /v1/common/symbols`
 size      | integer   | false    | 1                | The number of data returns    | [1, 2000]
 
 > The above command returns JSON structured like this:
@@ -752,6 +1290,7 @@ size      | integer   | false    | 1                | The number of data returns
             "amount":9.000000000000000000,
             "ts":1544390317905,
             "id":3161878751418918529341,
+            "trade-id": 102043495672,
             "price":94.690000000000000000,
             "direction":"sell"
          },
@@ -759,6 +1298,7 @@ size      | integer   | false    | 1                | The number of data returns
             "amount":73.771000000000000000,
             "ts":1544390317905,
             "id":3161878751418918532514,
+            "trade-id": 102043495673,
             "price":94.660000000000000000,
             "direction":"sell"
          }
@@ -772,24 +1312,25 @@ size      | integer   | false    | 1                | The number of data returns
             "amount":1.000000000000000000,
             "ts":1544390311353,
             "id":3161877698918918522622,
+            "trade-id": 102043495674,
             "price":94.710000000000000000,
             "direction":"buy"
          }
       ]
    }
-]
+}
 ```
 
 ### Response Content
 
 <aside class="notice">The returned data object is an array represents one recent timestamp; each timestamp object again is an array represents all trades occurred at this timestamp.</aside>
-
 Field     | Data Type | Description
 --------- | --------- | -----------
-id        | integer   | The unique trade id of this trade
+id        | integer   | The unique trade id of this trade (to be obsoleted)
+trade-id|integer| The unique trade id (NEW)
 amount    | float     | The trading volume in base currency
 price     | float     | The trading price in quote currency
-ts        | integer   | The UNIX timestamp in milliseconds adjusted to Beijing time
+ts        | integer   | The UNIX timestamp in milliseconds adjusted to Singapore time
 direction | string    | The direction of the taker trade: 'buy' or 'sell'
 
 ## Get the Last 24h Market Summary
@@ -798,7 +1339,7 @@ This endpoint retrieves the summary of trading in the market for the last 24 hou
 
 ### HTTP Request
 
-`GET https://api-cloud.huobi.co.kr/market/detail/`
+GET `/market/detail/`
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/market/detail?symbol=ethusdt"
@@ -808,7 +1349,7 @@ curl "https://api-cloud.huobi.co.kr/market/detail?symbol=ethusdt"
 
 Parameter | Data Type | Required | Default Value    | Description                   | Value Range
 --------- | --------- | -------- | -------------    | ----------                    | -----------
-symbol    | string    | true     | NA               | The trading symbol to query   | All supported trading symbols, e.g. btcusdt, bccbtc
+symbol    | string    | true     | NA               | The trading symbol to query   | Refer to /v1/common/symbols
 
 > The above command returns JSON structured like this:
 
@@ -829,7 +1370,6 @@ symbol    | string    | true     | NA               | The trading symbol to quer
 ### Response Content
 
 <aside class="notice">The returned data object is under 'tick' object instead of 'data' object in the top level JSON</aside>
-
 Field     | Data Type | Description
 --------- | --------- | -----------
 id        | integer   | The UNIX timestamp in seconds as response id
@@ -842,10 +1382,10 @@ high      | float     | The high price of last 24 hours
 vol       | float     | The trading volume in base currency of last 24 hours
 version   | integer   | Internal data
 
+
 # Account
 
 <aside class="notice">All endpoints in this section require authentication</aside>
-
 ## Get all Accounts of the Current User
 
 API Key Permission：Read
@@ -854,7 +1394,7 @@ This endpoint returns a list of accounts owned by this API user.
 
 ### HTTP Request
 
-`GET https://api-cloud.huobi.co.kr/v1/account/accounts`
+GET `/v1/account/accounts`
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/v1/account/accounts"
@@ -863,7 +1403,6 @@ curl "https://api-cloud.huobi.co.kr/v1/account/accounts"
 ### Request Parameters
 
 <aside class="notice">No parameter is available for this endpoint</aside>
-
 > The above command returns JSON structured like this:
 
 ```json
@@ -871,8 +1410,8 @@ curl "https://api-cloud.huobi.co.kr/v1/account/accounts"
     {
       "id": 100009,
       "type": "spot",
-      "state": "working",
-      "user-id": 1000
+      "subtype": "",
+      "state": "working"
     }
   ]
 ```
@@ -883,9 +1422,7 @@ Field               | Data Type | Description              | Value Range
 ---------           | --------- | -----------              | -----------
 id                  | integer   | Unique account id        | NA
 state               | string    | Account state            | working, lock
-type                | string    | The type of this account | spot, margin, otc, point
-
-<aside class="notice">Margin account will only be created after the first margin loan order.</aside>
+type                | string    | The type of this account | spot, point 
 
 ## Get Account Balance of a Specific Account
 
@@ -895,9 +1432,9 @@ This endpoint returns the balance of an account specified by account id.
 
 ### HTTP Request
 
-`GET https://api-cloud.huobi.co.kr/v1/account/accounts/{account-id}/balance`
+GET `/v1/account/accounts/{account-id}/balance`
 
-'account-id': The specified account id to get balance for, can be found by query '/account/accounts' endpoint.
+'account-id': The specified account id to get balance for, can be found by query '/v1/account/accounts' endpoint.
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/v1/account/accounts/100009/balance"
@@ -906,7 +1443,6 @@ curl "https://api-cloud.huobi.co.kr/v1/account/accounts/100009/balance"
 ### Request Parameters
 
 <aside class="notice">No parameter is needed for this endpoint</aside>
-
 > The above command returns JSON structured like this:
 
 ```json
@@ -941,8 +1477,8 @@ Field               | Data Type | Description              | Value Range
 ---------           | --------- | -----------              | -----------
 id                  | integer   | Unique account id        | NA
 state               | string    | Account state            | working, lock
-type                | string    | The type of this account | spot, margin, otc, point
-list                | object    | The balance details of each currency
+type                | string    | The type of this account | spot,  point 
+list                | object    | The balance details of each currency|
 
 **Per list item content**
 
@@ -952,21 +1488,370 @@ currency            | string    | The currency of this balance          | NA
 type                | string    | The balance type                      | trade, frozen
 balance             | string    | The balance in the main currency unit | NA
 
+
+## Get Account History
+
+API Key Permission：Read
+
+This endpoint returns the amount changes of specified user's account.
+
+### HTTP Request
+
+GET `/v1/account/history`
+
+```shell
+curl "https://api-cloud.huobi.co.kr/v1/account/history?account-id=5260185"
+```
+
+### Request Parameters
+
+Parameter  | Required | Data Type | Description | Default Value                                  | Value Range
+---------  | --------- | -------- | ------- | -----------                                   | ----------
+account-id     | true  | string | Account Id, refer to `GET /v1/account/accounts` |     |  
+currency      | false | string | Currency name |       | Refer to /v1/common/currencys 
+transact-types | false | string | Amount change types (multiple selection allowed)  | all     |trade,etf, transact-fee, deduction, transfer, credit, liquidation, interest, deposit-withdraw, withdraw-fee, exchange, other-types 
+start-time   | false | long | Far point of time of the query window (unix time in millisecond). Searching based on transact-time. The maximum size of the query window is 1 hour. The query window can be shifted within 30 days. | ((end-time) – 1hour)     | [((end-time) – 1hour), (end-time)]   
+end-time     | false  | long | Near point of time of the query window (unix time in millisecond). Searching based on transact-time. The maximum size of the query window is 1 hour. The query window can be shifted within 30 days.  |  current-time    |[(current-time) – 29days,(current-time)]
+sort     | false  | string | Sorting order  |  asc    |asc or desc
+size     | false  | int | Maximum number of items in each response  |   100   |[1,500]
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "status": "ok",
+    "data": [
+        {
+            "account-id": 5260185,
+            "currency": "btc",
+            "transact-amt": "0.002393000000000000",
+            "transact-type": "transfer",
+            "record-id": 89373333576,
+            "avail-balance": "0.002393000000000000",
+            "acct-balance": "0.002393000000000000",
+            "transact-time": 1571393524526
+        },
+        {
+            "account-id": 5260185,
+            "currency": "btc",
+            "transact-amt": "-0.002393000000000000",
+            "transact-type": "transfer",
+            "record-id": 89373382631,
+            "avail-balance": "0E-18",
+            "acct-balance": "0E-18",
+            "transact-time": 1571393578496
+        }
+    ]
+}
+```
+
+### Response Content
+
+Field               | Data Type | Description              | Value Range
+---------           | --------- | -----------              | -----------
+status                 | string   | Status code        | 
+data               | object    |             | 
+{ account-id  | long   | Account ID|
+currency               | string    | Currency|
+transact-amt                 | string   | Amount change (positive value if income, negative value if outcome)        | 
+transact-type                 | string   | Amount change types        | 
+avail-balance                 | string   | Available balance        | 
+acct-balance                | string   | Account balance        | 
+transact-time                 | long   | Transaction time (database time)      | 
+record-id }                 | string   | Unique record ID in the database      | 
+
+
+## Transfer Asset between Parent and Sub Account
+
+API Key Permission：Trade
+
+This endpoint allows user to transfer asset between parent and sub account.
+
+### HTTP Request
+
+POST `/v1/subuser/transfer`
+
+### Request Parameters
+
+Parameter  | Data Type | Required | Description                                       | Value Range
+---------  | --------- | -------- | -----------                                       | -----------
+sub-uid    | integer   | true     | The target sub account uid to transfer to or from | NA
+currency   | string    | true     | The crypto currency to transfer                   | NA
+amount     | decimal   | true     | The amount of asset to transfer                   | NA
+type       | string    | true     | The type of transfer                              | master-transfer-in, master-transfer-out, master-point-transfer-in, master-point-transfer-out
+
+> The above command returns JSON structured like this:
+
+```json
+{
+  "data":123456,
+  "status":"ok"
+}
+```
+
+### Response Content
+
+Field               | Data Type | Description
+---------           | --------- | -----------
+data                | integer   | Unique transfer id
+status |  | "OK" or "Error" 
+
+
+## Get the Aggregated Balance of all Sub-accounts of the Current User
+
+API Key Permission：Read
+
+This endpoint returns the balances of all the sub-account aggregated.
+
+### HTTP Request
+
+GET `/v1/subuser/aggregate-balance`
+
+```shell
+curl "https://api-cloud.huobi.co.kr/v1/subuser/aggregate-balance"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+  "data": [
+      {
+        "currency": "eos",
+        "type": "spot",
+        "balance": "1954559.809500000000000000"
+      },
+      {
+        "currency": "btc",
+        "type": "spot",
+        "balance": "0.000000000000000000"
+      },
+      {
+        "currency": "usdt",
+        "type": "spot",
+        "balance": "2925209.411300000000000000"
+      }
+   ]
+```
+
+### Request Parameters
+
+<aside class="notice">No parameter is needed for this endpoint</aside>
+### Response Content
+
+<aside class="notice">The returned "data" object is a list of aggregated balances</aside>
+Field               | Data Type | Description
+---------           | --------- | -----------
+currency            | string    | The currency of this balance
+type|string|account type (spot, point)
+balance             | string    | The total balance in the main currency unit including all balance and frozen banlance
+
+## Get Account Balance of a Sub-Account
+
+API Key Permission：Read
+
+This endpoint returns the balance of a sub-account specified by sub-uid.
+
+### HTTP Request
+
+GET `/v1/account/accounts/{sub-uid}`
+
+### Request Parameters
+
+| Parameter | Required | Data Type | Description     | Value Range |
+| --------- | -------- | --------- | --------------- | ----------- |
+| sub-uid   | true     | long      | Sub account UID |             |
+
+<aside class="notice">No parameter is needed for this endpoint</aside>
+> The above command returns JSON structured like this:
+
+```json
+"data": [
+  {
+    "id": 9910049,
+    "type": "spot",
+    "list": [
+              {
+        "currency": "btc",
+          "type": "trade",
+          "balance": "1.00"
+      },
+      {
+        "currency": "eth",
+        "type": "trade",
+        "balance": "1934.00"
+      }
+      ]
+  },
+  {
+    "id": 9910050,
+    "type": "point",
+    "list": []
+  }
+]
+```
+
+### Response Content
+
+<aside class="notice">The returned "data" object is a list of accounts under this sub-account</aside>
+Field               | Data Type | Description                           | Value Range
+---------           | --------- | -----------                           | -----------
+id                  | integer   | Unique account id                     | NA
+type                | string    | The type of this account              | spot, point 
+list                | object    | The balance details of each currency  | NA
+
+**Per list item content**
+
+Field               | Data Type | Description                           | Value Range
+---------           | --------- | -----------                           | -----------
+currency            | string    | The currency of this balance          | NA
+type                | string    | The balance type                      | trade, frozen
+balance             | string    | The balance in the main currency unit | NA
+
+
 # Wallet (Deposit and Withdraw)
 
 <aside class="notice">All endpoints in this section require authentication</aside>
+## APIv2 - Query Deposit Address
+
+API user could query deposit address of corresponding chain, for a specific crypto currency (except IOTA)
+
+API Key Permission：Read
+
+<aside class="notice"> The endpoint does not support deposit address querying for currency "IOTA" at this moment </aside>
+### HTTP Request
+
+GET `/v2/account/deposit/address`
+
+```shell
+curl "https://api-cloud.huobi.co.kr/v2/account/deposit/address?currency=btc"
+```
+
+### Request Parameters
+
+Field Name  | Data Type | Mandatory | Default Value | Description
+---------  | --------- | -------- | ------- | -----------
+currency   | string    | true     | N/A      | Crypto currency,refer to `GET /v1/common/currencys`
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "code": 200,
+    "data": [
+        {
+            "currency": "btc",
+            "address": "1PSRjPg53cX7hMRYAXGJnL8mqHtzmQgPUs",
+            "addressTag": "",
+            "chain": "btc"
+        }
+    ]
+}
+```
+
+### Response Content
+
+Field Name            | Data Type | Description
+---------           | --------- | -----------
+code                | int   | Status code
+message                | string   | Error message (if any)
+data                | object  | 
+  { currency|string|Crypto currency
+    address|string|Deposit address
+    addressTag|string|Deposit address tag
+    chain }|string|Block chain name
+
+### Status Code
+
+| Status Code | Error Message  | Scenario |
+| ---- | ----- | ---- |
+| 200| success | Request successful |
+| 500| error | System error |
+| 1002| unauthorized | Unauthorized |
+| 1003| invalid signature | Signature failure |
+| 2002| invalid field value in "field name" | Invalid field value |
+| 2003| missing mandatory field "field name" | Mandatory field missing |
+
+
+## APIv2 - Query Withdraw Quota
+
+API user could query withdraw quota for currencies
+
+API Key Permission：Read
+
+### HTTP Request
+
+GET `/v2/account/withdraw/quota`
+
+```shell
+curl "https://api-cloud.huobi.co.kr/v2/account/withdraw/quota?currency=btc"
+```
+
+### Request Parameters
+
+Field Name  | Data Type | Mandatory | Default Value | Description
+---------  | --------- | -------- | ------- | -----------
+currency   | string    | true     | N/A      | Crypto currency,refer to `GET /v1/common/currencys`
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "code": 200,
+    "data": 
+        {
+            "currency": "btc",
+            "chains": [
+                {
+                    "chain": "btc",
+                    "maxWithdrawAmt": "200.00000000",
+                    "withdrawQuotaPerDay": "200.00000000",
+                    "remainWithdrawQuotaPerDay": "200.000000000000000000",
+                    "withdrawQuotaPerYear": "700000.00000000",
+                    "remainWithdrawQuotaPerYear": "700000.000000000000000000",
+                    "withdrawQuotaTotal": "7000000.00000000",
+                    "remainWithdrawQuotaTotal": "7000000.000000000000000000"
+                }
+        }
+    ]
+}
+```
+
+### Response Content
+
+Field Name            | Data Type | Description
+---------           | --------- | -----------
+code                | int   | Status code
+message                | string   | Error message (if any)
+data                | object  | 
+  currency|string|Crypto currency
+    chains|object|
+    { chain |string|Block chain name
+      maxWithdrawAmt |  string | Maximum withdraw amount in each request |      |
+      withdrawQuotaPerDay |  string | Maximum withdraw amount in a day |      |
+      remainWithdrawQuotaPerDay |  string | Remaining withdraw quota in the day |      |
+      withdrawQuotaPerYear |  string | Maximum withdraw amount in a year |      |
+      remainWithdrawQuotaPerYear |  string | Remaining withdraw quota in the year |      |
+      withdrawQuotaTotal |  string | Maximum withdraw amount in total |      |
+      remainWithdrawQuotaTotal }|  string | Remaining withdraw quota in total |      |
+
+### Status Code
+
+| Status Code | Error Message  | Scenario |
+| ---- | ----- | ---- |
+| 200| success | Request successful |
+| 500| error | System error |
+| 1002| unauthorized | Unauthorized |
+| 1003| invalid signature | Signature failure |
+| 2002| invalid field value in "field name" | Invalid field value |
+
 
 ## Create a Withdraw Request
 
 API Key Permission：Withdraw
 
-This endpoint creates a withdraw request from your spot trading account to an external address.
-
-<aside class="notice">Only supported the existed addresses in your withdraw address list</aside>
-
 ### HTTP Request
 
-`POST https://api-cloud.huobi.co.kr/v1/dw/withdraw/api/create`
+POST `/v1/dw/withdraw/api/create`
 
 ```shell
 curl -X POST -H "Content-Type: application/json" "https://api-cloud.huobi.co.kr/v1/dw/withdraw/api/create" -d
@@ -983,10 +1868,10 @@ curl -X POST -H "Content-Type: application/json" "https://api-cloud.huobi.co.kr/
 Parameter  | Data Type | Required | Default | Description
 ---------  | --------- | -------- | ------- | -----------
 address    | string    | true     | NA      | The desination address of this withdraw
-currency   | string    | true     | NA      | The crypto currency to withdraw
+currency   | string    | true     | NA      | Crypto currency,refer to `GET /v1/common/currencys`
 amount     | string    | true     | NA      | The amount of currency to withdraw
-fee        | string    | false    | NA      | The fee to pay with this withdraw
-chain      | string    | false    | NA      | set "usdterc20" to withdraw USDT(erc20)
+fee        | string    | true    | NA      | The fee to pay with this withdraw
+chain      | string    | false    | NA      |Refer to`GET /v2/reference/currencies`.Set as "usdt" to withdraw USDT to OMNI, set as "trc20usdt" to withdraw USDT to TRX
 addr-tag   | string    | false    | NA      | A tag specified for this address
 
 > The above command returns JSON structured like this:
@@ -999,34 +1884,27 @@ addr-tag   | string    | false    | NA      | A tag specified for this address
 
 ### Response Content
 
-<aside class="notice">The return data contains a single value instead of an object</aside>
-
-Field               | Data Type | Description
----------           | --------- | -----------
-data                | integer   | Transfer id
-
-<aside class="notice">All new transfer id will be incremental to the previous ids. This allows search by transfer id sequences</aside>
-
+| Field | Required | Data Type | Description |
+| ----- | -------- | --------- | ----------- |
+| data  | false    | long      | Transfer id |
 
 ## Cancel a Withdraw Request
 
 API Key Permission：Withdraw
 
-This endpoint cancels a previously created withdraw request by its transfer id.
-
 ### HTTP Request
 
-`POST https://api-cloud.huobi.co.kr/v1/dw/withdraw-virtual/{withdraw-id}/cancel`
+POST `/v1/dw/withdraw-virtual/{withdraw-id}/cancel`
 
 ```shell
 curl -X POST "https://api-cloud.huobi.co.kr/v1/dw/withdraw-virtual/1000/cancel"
 ```
 
-'withdraw-id': the id returned when previously created a withdraw request
-
 ### Request Parameters
 
-<aside class="notice">No parameter is needed for this endpoint</aside>
+| Parameter   | Required | Data Type | Description          |
+| ----------- | -------- | --------- | -------------------- |
+| withdraw-id | true     | long      | Withdraw ID，in path |
 
 > The above command returns JSON structured like this:
 
@@ -1037,11 +1915,9 @@ curl -X POST "https://api-cloud.huobi.co.kr/v1/dw/withdraw-virtual/1000/cancel"
 ### Response Content
 
 <aside class="notice">The return data contains a single value instead of an object</aside>
-
-Parameter           | Data Type | Description
----------           | --------- | -----------
-data                | integer   | Withdraw cancel id
-
+| Field | Required | Data Type | Description |
+| ----- | -------- | --------- | ----------- |
+| data  | false    | integer   | Withdraw ID |
 
 ## Search for Existed Withdraws and Deposits
 
@@ -1051,7 +1927,7 @@ This endpoint searches for all existed withdraws and deposits and return their l
 
 ### HTTP Request
 
-`GET https://api-cloud.huobi.co.kr/v1/query/deposit-withdraw`
+GET `/v1/query/deposit-withdraw`
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/v1/query/deposit-withdraw?currency=xrp&type=deposit&from=5&size=12"
@@ -1070,22 +1946,22 @@ direct     | string    | false     | the order of response | 'prev' (ascending),
 > The above command returns JSON structured like this:
 
 ```json
-{  
-    "data": [
-      {
-        "id": 1171,
-        "type": "deposit",
-        "currency": "xrp",
-        "tx-hash": "ed03094b84eafbe4bc16e7ef766ee959885ee5bcb265872baaa9c64e1cf86c2b",
-        "amount": 7.457467,
-        "address": "rae93V8d2mdoUQHwBDBdM4NHCMehRJAsbm",
-        "address-tag": "100040",
-        "fee": 0,
-        "state": "safe",
-        "created-at": 1510912472199,
-        "updated-at": 1511145876575
-      }
-    ]
+{
+  "status": "ok",
+  "data": [{
+    "id": 24383070,
+    "type": "deposit",
+    "currency": "usdt",
+    "chain": "usdterc20",
+    "tx-hash": "16382690",
+    "amount": 4.000000000000000000,
+    "address": "0x138d709030b4e096044d371a27efc5c562889b9b",
+    "address-tag": "",
+    "fee": 0,
+    "state": "safe",
+    "created-at": 1571303815800,
+    "updated-at": 1571303815826
+  }]
 }
 ```
 
@@ -1097,10 +1973,11 @@ id                  | integer   | Transfer id
 type                | string    | Define transfer type to search, possible values: [deposit, withdraw]
 currency            | string    | The crypto currency to withdraw
 tx-hash             | string    | The on-chain transaction hash
-amount              | integer   | The number of crypto asset transfered in its minimum unit
+chain             | string    | Block chain name
+amount              | float   | The number of crypto asset transfered in its minimum unit
 address             | string    | The deposit or withdraw source address
 address-tag         | string    | The user defined address tag
-fee                 | integer   | The amount of fee taken by Huobi in this crypto's minimum unit
+fee                 | float   | Withdraw fee
 state               | string    | The state of this transfer (see below for details)
 created-at          | integer   | The timestamp in milliseconds for the transfer creation
 updated-at          | integer   | The timestamp in milliseconds for the transfer's latest update
@@ -1131,12 +2008,10 @@ confirmed       | On-chain transfer confirmed for at least one block
 safe            | Multiple on-chain confirmation happened
 orphan          | Confirmed but currently in an orphan branch
 
+
 # Trading
 
 <aside class="notice">All endpoints in this section require authentication</aside>
-
-<aside class="warning">When trade with margin loan from your margin account, "account-id" parameter should be set to margin account id, "source" parameter should be set to "margin-api".</aside>
-
 ## Place a New Order
 
 API Key Permission：Trade
@@ -1145,7 +2020,7 @@ This endpoint place a new order and send to the exchange to be matched.
 
 ### HTTP Request
 
-`POST https://api-cloud.huobi.co.kr/v1/order/orders/place`
+POST `/v1/order/orders/place`
 
 ```shell
 curl -X POST -H "Content-Type: application/json" "https://api-cloud.huobi.co.kr/v1/order/orders/place" -d
@@ -1155,7 +2030,8 @@ curl -X POST -H "Content-Type: application/json" "https://api-cloud.huobi.co.kr/
    "price": "100.1",
    "source": "api",
    "symbol": "ethusdt",
-   "type": "buy-limit"
+   "type": "buy-limit",
+   "client-order-id": "a0001"
   }'
 ```
 
@@ -1163,12 +2039,20 @@ curl -X POST -H "Content-Type: application/json" "https://api-cloud.huobi.co.kr/
 
 Parameter  | Data Type | Required | Default | Description                               | Value Range
 ---------  | --------- | -------- | ------- | -----------                               | -----------
-account-id | string    | true     | NA      | The account id used for this trade        | NA
-symbol     | string    | true     | NA      | The trading symbol to trade               | All supported trading symbol, e.g. btcusdt, bccbtc
-type       | string    | true     | NA      | The order type                            | buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker
-amount     | string    | true     | NA      | The amount to buy (quote currency) or to sell (base currency) | NA
+account-id | string    | true     | NA      | The account id used for this trade        | Refer to `GET /v1/account/accounts` 
+symbol     | string    | true     | NA      | The trading symbol to trade               | Refer to `GET /v1/common/symbols` 
+type       | string    | true     | NA      | The order type                            | buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker, buy-stop-limit, sell-stop-limit
+amount     | string    | true     | NA      | order size (for market buy order type, it's order value) | NA
 price      | string    | false    | NA      | The limit price of limit order, only needed for limit order   | NA
-source     | string    | false    | api     | When trade with margin use 'margin-api'   | api, margin-api
+source     | string    | false    | api     |     | api 
+client-order-id| string    | false    | NA     | Client order ID (maximum 64-character length, to be unique within 24 hours)  | 
+
+**buy-limit-maker ** 
+When "Order Price"> = "Minimum Sell Price in the Market", the system will reject the order after it is submitted; 
+When "Order price" <"Market Sell Price in the Market", after successful submission, this order will be accepted by the system. 
+**sell-limit-maker**
+When "Order Price" <= "Highest Market Buy Price", the system will refuse to accept this order when it is submitted; 
+When "Order Price"> "Highest Market Buy Price", this order will be accepted by the system after successful submission.
 
 > The above command returns JSON structured like this:
 
@@ -1179,6 +2063,110 @@ source     | string    | false    | api     | When trade with margin use 'margin
 ### Response Content
 
 <aside class="notice">The returned data object is a single string which represents the order id</aside>
+If client order ID duplicates with a previous order (within 24 hours), the endpoint responds that previous order's client order ID.
+
+
+
+## Submit Cancel for an Order
+
+API Key Permission：Trade
+
+This endpoint submit a request to cancel an order.
+
+<aside class="warning">This only submit the cancel request, the actual result of the canel request needs to be checked by order status or match result endpoints</aside>
+### HTTP Request
+
+POST `/v1/order/orders/{order-id}/submitcancel`
+
+'order-id': the previously returned order id when order was created
+
+```shell
+curl -X POST "https://api-cloud.huobi.co.kr/v1/order/orders/59378/submitcancel"
+```
+
+### Request Parameters
+
+| Parameter | Required | Data Type | Description |
+| --------- | -------- | --------- | ----------- |
+| order-id  | true     | string    | Order ID    |
+
+> The above command returns JSON structured like this:
+
+```json
+  "data": "59378"
+```
+
+### Response Content
+
+<aside class="notice">The returned data object is a single string which represents the order id</aside>
+### Error Code
+
+> Response:
+
+```json
+{
+  "status": "error",
+  "err-code": "order-orderstate-error",
+  "err-msg": "Incorrect order state",
+  "order-state":-1 // current order state
+}
+```
+
+The possible values of "order-state" includes -
+
+order-state           |  Description
+---------       | -----------
+-1| order was already closed in the long past (order state = canceled, partial-canceled, filled, partial-filled)
+5| partial-canceled
+6| filled
+7| canceled
+10| cancelling
+
+## Submit Cancel for an Order (based on client order ID)
+
+API Key Permission：Trade
+
+This endpoint submit a request to cancel an order.
+
+<aside class="warning">This only submit the cancel request, the actual result of the canel request needs to be checked by order status or match result endpoints</aside>
+### HTTP Request
+
+POST `/v1/order/orders/submitCancelClientOrder`
+
+```shell
+curl -X POST -H "Content-Type: application/json" "https://api-cloud.huobi.co.kr/v1/order/orders/submitCancelClientOrder" -d
+'{
+  "client-order-id": "a0001"
+  }'
+```
+
+### Request Parameters
+
+Parameter  | Data Type | Required | Default | Description
+---------  | --------- | -------- | ------- | -----------
+client-order-id     | string    | true     | NA      | Client order ID
+
+> The above command returns JSON structured like this:
+
+```json
+  "data": "59378"
+```
+
+### Response Content
+
+Field           | Data Type | Description
+---------       | --------- | -----------
+data         | integer | Cancellation status code
+
+Status Code           |  Description
+---------       | -----------
+-1| order was already closed in the long past (order state = canceled, partial-canceled, filled, partial-filled)
+0| client-order-id not found
+5| partial-canceled
+6| filled
+7| canceled
+10| cancelling
+
 
 ## Get All Open Orders
 
@@ -1186,9 +2174,17 @@ API Key Permission：Read
 
 This endpoint returns all open orders which have not been filled completely.
 
+```json
+{
+   "account-id": "100009",
+   "symbol": "ethusdt",
+   "side": "buy"
+}
+```
+
 ### HTTP Request
 
-`GET https://api-cloud.huobi.co.kr/v1/order/openOrders`
+GET `/v1/order/openOrders`
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/v1/order/openOrders?account-id=100009&symbol=btcusdt&side=buy&size=5"
@@ -1198,10 +2194,12 @@ curl "https://api-cloud.huobi.co.kr/v1/order/openOrders?account-id=100009&symbol
 
 Parameter  | Data Type | Required | Default | Description                             | Value Range
 ---------  | --------- | -------- | ------- | -----------                             | -----------
-account-id | string    | true    | NA      | The account id used for this trade      | NA
-symbol     | string    | true    | NA      | The trading symbol to trade             | All supported trading symbols, e.g. btcusdt, bccbtc
+account-id | string    | true    | NA      | The account id used for this trade      | Refer to `GET /v1/account/accounts`
+symbol     | string    | true    | NA      | The trading symbol to trade             | Refer to `GET /v1/common/symbols`
 side       | string    | false    | NA      | Filter on the direction of the trade    | buy, sell
-size       | int       | false    | 10      | The number of orders to return          | [1, 2000]
+from       | string    | false    | NA      |  start order ID the searching to begin with   |
+direct       | string    | false (if field "from" is defined, this field "direct" becomes mandatory)   | NA      |  searching direction    | prev - in ascending order from the start order ID; next - in descending order from the start order ID
+size       | int       | false    | 100      | The number of orders to return          | [1, 500]
 
 > The above command returns JSON structured like this:
 
@@ -1232,44 +2230,62 @@ id                  | integer   | order id
 symbol              | string    | The trading symbol to trade, e.g. btcusdt, bccbtc
 price               | string    | The limit price of limit order
 created-at          | int       | The timestamp in milliseconds when the order was created
-type                | string    | The order type, possible values are: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker
+type                | string    | The order type, possible values are: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker, buy-stop-limit, sell-stop-limit
 filled-amount       | string    | The amount which has been filled
 filled-cash-amount  | string    | The filled total in quote currency
 filled-fees         | string    | Transaction fee paid so far
 source              | string    | The source where the order was triggered, possible values: sys, web, api, app
-state               | string    | submitted, partical-filled, cancelling
+state               | string    | submitted, partial-filled, cancelling, created
+stop-price    | string          | false | NA    | Trigger price of stop limit order   | |
+operator       | string       | false  | NA   | operation charactor of stop price   | gte – greater than and equal (>=), lte – less than and equal (<=) |
 
-## Submit Cancel for an Order
+## Submit Cancel for Multiple Orders by Criteria
 
 API Key Permission：Trade
 
-This endpoint submit a request to cancel an order.
-
-<aside class="warning">This only submit the cancel request, the actual result of the canel request needs to be checked by order status or match result endpoints</aside>
+This endpoint submit cancellation for multiple orders at once with given criteria.
 
 ### HTTP Request
 
-`POST https://api-cloud.huobi.co.kr/v1/order/orders/{order-id}/submitcancel`
-
-'order-id': the previously returned order id when order was created
+POST `/v1/order/orders/batchcancelopenorders`
 
 ```shell
-curl -X POST "https://api-cloud.huobi.co.kr/v1/order/orders/59378/submitcancel"
+curl -X POST -H 'Content-Type: application/json' "https://api-cloud.huobi.co.kr/v1/order/orders/batchCancelOpenOrders" -d
+'{
+  "account-id": "100009",
+  "symbol": "btcusdt,btchusd",
+  "side": "buy",
+  "size": 5
+}'
 ```
 
-### Request Parameters
-
-No parameter is needed for this endpoint.
+Parameter  | Data Type | Required | Default | Description                             | Value Range
+---------  | --------- | -------- | ------- | -----------                             | -----------
+account-id | string    | true    | NA      | The account id used for this cancel     | Refer to `GET /v1/account/accounts`
+symbol     | string    | false    | NA      | The trading symbol list (maximum 10 symbols, separated by comma, default value all symbols)            | All supported trading symbol, e.g. btcusdt, bccbtc.Refer to `GET /v1/common/symbols`
+side       | string    | false    | NA      | Filter on the direction of the trade    | buy, sell
+size       | int       | false    | 100     | The number of orders to cancel          | [1, 100]
 
 > The above command returns JSON structured like this:
 
 ```json
-  "data": "59378"
+{
+  "status": "ok",
+  "data": {
+    "success-count": 2,
+    "failed-count": 0,
+    "next-id": 5454600
+  }
+}
 ```
 
 ### Response Content
 
-<aside class="notice">The returned data object is a single string which represents the order id</aside>
+Field           | Data Type | Description
+---------       | --------- | -----------
+success-count   | integer   | The number of cancel request sent successfully
+failed-count    | integer   | The number of cancel request failed
+next-id         | integer   | the next order id that can be cancelled
 
 ## Submit Cancel for Multiple Orders by IDs
 
@@ -1279,7 +2295,7 @@ This endpoint submit cancellation for multiple orders at once with given ids.
 
 ### HTTP Request
 
-`POST https://api-cloud.huobi.co.kr/v1/order/orders/batchcancel`
+POST `/v1/order/orders/batchcancel`
 
 ```shell
 curl -X POST -H 'Content-Type: application/json' "https://api-cloud.huobi.co.kr/v1/order/orders/batchcancel" -d
@@ -1310,6 +2326,7 @@ order-ids  | list      | true     | The order ids to cancel. Max list size is 50
         "err-msg": "记录无效",
         "order-id": "2",
         "err-code": "base-record-invalid"
+        "order-state":-1 // current order state
       }
     ]
   }
@@ -1323,50 +2340,38 @@ Field           | Data Type | Description
 success         | list      | The order ids with thier cancel request sent successfully
 failed          | list      | The details of the failed cancel request
 
-## Submit Cancel for Multiple Orders by Criteria
+### Error Code
 
-API Key Permission：Trade
-
-This endpoint submit cancellation for multiple orders at once with given criteria.
-
-### HTTP Request
-
-`POST https://api-cloud.huobi.co.kr/v1/order/orders/batchcancelopenorders`
-
-```shell
-curl -X POST -H 'Content-Type: application/json' "https://api-cloud.huobi.co.kr/v1/order/orders/batchcancelopenorders" -d
-'{
-  "account-id": "100009",
-  "symbol": "btcusdt",
-  "side": "buy",
-  "size": 5
-}'
-```
-
-Parameter  | Data Type | Required | Default | Description                             | Value Range
----------  | --------- | -------- | ------- | -----------                             | -----------
-account-id | string    | true    | NA      | The account id used for this cancel     | NA
-symbol     | string    | false    | NA      | The trading symbol to cancel            | All supported trading symbols, e.g. btcusdt, bccbtc
-side       | string    | false    | NA      | Filter on the direction of the trade    | buy, sell
-size       | int       | false    | 100     | The number of orders to cancel          | [1, 100]
-
-> The above command returns JSON structured like this:
+> Response:
 
 ```json
+{
+  "status": "ok",
   "data": {
-    "success-count": 2,
-    "failed-count": 0,
-    "next-id": 5454600
+    "success": ["123","456"],
+    "failed": [
+      {
+        "err-msg": "Incorrect order state ",
+        "order-id": "12345678",
+        "err-code": "order-orderstate-error",
+        "order-state":-1 // current order state
+      }
+    ]
   }
+}
+
 ```
 
-### Response Content
+The possible values of "order-state" includes -
 
-Field           | Data Type | Description
----------       | --------- | -----------
-success-count   | integer   | The number of cancel request sent successfully
-failed-count    | integer   | The number of cancel request failed
-next-id         | integer   | the next order id that can be cancelled
+order-state           |  Description
+---------       | -----------
+-1| order was already closed in the long past (order state = canceled, partial-canceled, filled, partial-filled)
+5| partial-canceled
+6| filled
+7| canceled
+10| cancelling
+
 
 ## Get the Order Detail of an Order
 
@@ -1376,9 +2381,7 @@ This endpoint returns the detail of one order.
 
 ### HTTP Request
 
-`GET https://api-cloud.huobi.co.kr/v1/order/orders/{order-id}`
-
-'order-id': the previously returned order id when order was created
+GET `/v1/order/orders/{order-id}`
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/v1/order/orders/59378"
@@ -1386,7 +2389,9 @@ curl "https://api-cloud.huobi.co.kr/v1/order/orders/59378"
 
 ### Request Parameters
 
-No parameter is needed for this endpoint.
+| Parameter | Required | Data Type | Description |
+| --------- | -------- | --------- | ----------- |
+| order-id  | true     | string    | Order ID    |
 
 > The above command returns JSON structured like this:
 
@@ -1407,9 +2412,7 @@ No parameter is needed for this endpoint.
     "user-id": 1000,
     "source": "api",
     "state": "filled",
-    "canceled-at": 0,
-    "exchange": "huobi",
-    "batch": ""
+    "canceled-at": 0
   }
 }
 ```
@@ -1426,14 +2429,95 @@ price               | string    | The limit price of limit order
 created-at          | int       | The timestamp in milliseconds when the order was created
 finished-at         | int       | The timestamp in milliseconds when the order was changed to a final state. This is not the time the order is matched.
 canceled-at         | int       | The timestamp in milliseconds when the order was canceled, if not canceled then has value of 0
-type                | string    | The order type, possible values are: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker
+type                | string    | The order type, possible values are: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker, buy-stop-limit, sell-stop-limit
 filled-amount       | string    | The amount which has been filled
 filled-cash-amount  | string    | The filled total in quote currency
 filled-fees         | string    | Transaction fee paid so far
 source              | string    | The source where the order was triggered, possible values: sys, web, api, app
-state               | string    | Order state: submitted, partical-filled, cancelling, filled, canceled
+state               | string    | Order state: submitted, partial-filled, filled, canceled
 exchange            | string    | Internal data
 batch               | string    | Internal data
+stop-price|string|trigger price of stop limit order
+operator|string|operation character of stop price
+
+
+
+## Get the Order Detail of an Order (based on client order ID)
+
+API Key Permission：Read
+
+This endpoint returns the detail of one order.
+
+### HTTP Request
+
+GET `/v1/order/orders/getClientOrder`
+
+```shell
+curl "https://api-cloud.huobi.co.kr/v1/order/orders/getClientOrder?clientOrderId=a0001"
+```
+
+### Request Parameters
+
+Parameter  | Data Type | Required | Default | Description
+---------  | --------- | -------- | ------- | -----------
+clientOrderID     | string    | true     | NA      | Client order ID
+
+> The above command returns JSON structured like this:
+
+```json
+{  
+  "data": {
+    "id": 59378,
+    "symbol": "ethusdt",
+    "account-id": 100009,
+    "amount": "10.1000000000",
+    "price": "100.1000000000",
+    "created-at": 1494901162595,
+    "type": "buy-limit",
+    "field-amount": "10.1000000000",
+    "field-cash-amount": "1011.0100000000",
+    "field-fees": "0.0202000000",
+    "finished-at": 1494901400468,
+    "user-id": 1000,
+    "source": "api",
+    "state": "filled",
+    "canceled-at": 0
+  }
+}
+```
+
+### Response Content
+
+Field               | Data Type | Description
+---------           | --------- | -----------
+id                  | integer   | order id
+symbol              | string    | The trading symbol to trade, e.g. btcusdt, bccbtc
+account-id          | string    | The account id which this order belongs to
+amount              | string    | The amount of base currency in this order
+price               | string    | The limit price of limit order
+created-at          | int       | The timestamp in milliseconds when the order was created
+finished-at         | int       | The timestamp in milliseconds when the order was changed to a final state. This is not the time the order is matched.
+canceled-at         | int       | The timestamp in milliseconds when the order was canceled, if not canceled then has value of 0
+type                | string    | The order type, possible values are: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker, buy-stop-limit, sell-stop-limit
+filled-amount       | string    | The amount which has been filled
+filled-cash-amount  | string    | The filled total in quote currency
+filled-fees         | string    | Transaction fee paid so far
+source              | string    | The source where the order was triggered, possible values: sys, web, api, app
+state               | string    | Order state: submitted, partial-filled, filled, canceled
+exchange            | string    | Internal data
+batch               | string    | Internal data
+stop-price|string|trigger price of stop limit order
+operator|string|operation character of stop price
+
+If the client order ID is not found, following error message will be returned:
+{
+    "status": "error",
+    "err-code": "base-record-invalid",
+    "err-msg": "record invalid",
+    "data": null
+}
+
+
 
 ## Get the Match Result of an Order
 
@@ -1443,17 +2527,17 @@ This endpoint returns the match result of an order.
 
 ### HTTP Request
 
-`GET https://api-cloud.huobi.co.kr/v1/order/orders/{order-id}/matchresult`
-
-'order-id': the previously returned order id when order was created
+GET `/v1/order/orders/{order-id}/matchresults`
 
 ```shell
-curl "https://api-cloud.huobi.co.kr/v1/order/orders/59378/matchresult"
+curl "https://api-cloud.huobi.co.kr/v1/order/orders/59378/matchresults"
 ```
 
 ### Request Parameters
 
-No parameter is needed for this endpoint.
+| Parameter | Required | Data Type | Description |
+| --------- | -------- | --------- | ----------- |
+| order-id  | true     | string    | Order ID    |
 
 > The above command returns JSON structured like this:
 
@@ -1463,13 +2547,17 @@ No parameter is needed for this endpoint.
       "id": 29553,
       "order-id": 59378,
       "match-id": 59335,
+      "trade-id": 100282808529,
       "symbol": "ethusdt",
       "type": "buy-limit",
       "source": "api",
       "price": "100.1000000000",
       "filled-amount": "9.1155000000",
       "filled-fees": "0.0182310000",
-      "created-at": 1494901400435
+      "created-at": 1494901400435,
+      "role": maker,
+      "filled-points": "0.0",
+      "fee-deduct-currency": ""
     }
   ]
 ```
@@ -1477,19 +2565,24 @@ No parameter is needed for this endpoint.
 ### Response Content
 
 <aside class="notice">The return data contains a list and each item in the list represents a match result</aside>
-
 Parameter           | Data Type | Description
 ---------           | --------- | -----------
 id                  | integer   | Internal id
 symbol              | string    | The trading symbol to trade, e.g. btcusdt, bccbtc
 order-id            | string    | The order id of this order
 match-id            | string    | The match id of this match
+trade-id            | int    | Unique trade ID (NEW)
 price               | string    | The limit price of limit order
 created-at          | int       | The timestamp in milliseconds when the match and fill is done
-type                | string    | The order type, possible values are: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker
+type                | string    | The order type, possible values are: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker, buy-stop-limit, sell-stop-limit
 filled-amount       | string    | The amount which has been filled
 filled-fees         | string    | Transaction fee paid so far
 source              | string    | The source where the order was triggered, possible values: sys, web, api, app
+role                  | string   | the role in the transaction: taker or maker
+filled-points      | string   | deduction amount (unit: in ht or hbpoint) 
+fee-deduct-currency      | string   | deduction type. if blank, the transaction fee is based on original currency; if showing value as "ht", the transaction fee is deducted by HT; if showing value as "hbpoint", the transaction fee is deducted by HB point.    
+
+
 
 ## Search Past Orders
 
@@ -1499,7 +2592,7 @@ This endpoint returns orders based on a specific searching criteria.
 
 ### HTTP Request
 
-`GET https://api-cloud.huobi.co.kr/v1/order/orders`
+GET `/v1/order/orders`
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/v1/order/orders?symbol=ethusdt&type=buy-limit&staet=filled"
@@ -1510,13 +2603,13 @@ curl "https://api-cloud.huobi.co.kr/v1/order/orders?symbol=ethusdt&type=buy-limi
 Parameter  | Data Type | Required | Default | Description                                   | Value Range
 ---------  | --------- | -------- | ------- | -----------                                   | ----------
 symbol     | string    | true     | NA      | The trading symbol to trade                   | All supported trading symbols, e.g. btcusdt, bccbtc
-types      | string    | false    | NA      | The types of order to include in the search   | buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc
-states     | string    | false    | NA      | The states of order to include in the search  | submitted, partial-filled, partial-canceled, filled, canceled
-start-date | string    | false    | -180d    | Search starts date, in format yyyy-mm-dd      | [-180d, end-date] From June 10th, the query window between start-date and end-date will be changed to 2 days. if a request submitted with invalid start-date and/or end-date, an error will be returned. |
-end-date   | string    | false    | today   | Search ends date, in format yyyy-mm-dd        | [start-date, today] From June 10th, the query window between start-date and end-date will be changed to 2 days. if a request submitted with invalid start-date and/or end-date, an error will be returned. |
+types      | string    | false    | NA      | The types of order to include in the search   | buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-stop-limit, sell-stop-limit
+states     | string    | true    | NA      | The states of order to include in the search  | submitted, partial-filled, partial-canceled, filled, canceled, created
+start-date | string    | false    | -1d    | Search starts date, in format yyyy-mm-dd      | Value range [((end-date) – 1), (end-date)], maximum query window size is 2 days, query window shift should be within past 180 days, query window shift should be within past 7 days for cancelled order (state = "canceled") |
+end-date   | string    | false    | today   | Search ends date, in format yyyy-mm-dd        |Value range [(today-179), today], maximum query window size is 2 days, query window shift should be within past 180 days, queriable range should be within past 1 day for cancelled order (state = "canceled") |
 from       | string    | false    | NA      | Search order id to begin with                 | NA
 direct     | string    | false    | both    | Search direction when 'from' is used          | next, prev
-size       | int       | false    | 100     | The number of orders to return                | [1, 1000]
+size       | int       | false    | 100     | The number of orders to return                | [1, 100]
 
 > The above command returns JSON structured like this:
 
@@ -1537,9 +2630,7 @@ size       | int       | false    | 100     | The number of orders to return    
       "user-id": 1000,
       "source": "api",
       "state": "filled",
-      "canceled-at": 0,
-      "exchange": "huobi",
-      "batch": ""
+      "canceled-at": 0
     }
   ]
 ```
@@ -1557,14 +2648,16 @@ price               | string    | The limit price of limit order
 created-at          | int       | The timestamp in milliseconds when the order was created
 canceled-at         | int       | The timestamp in milliseconds when the order was canceled, or 0 if not canceled
 canceled-at         | int       | The timestamp in milliseconds when the order was finished, or 0 if not finished
-type                | string    | The order type, possible values are: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker
+type                | string    | The order type, possible values are: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker, buy-stop-limit, sell-stop-limit
 filled-amount       | string    | The amount which has been filled
 filled-cash-amount  | string    | The filled total in quote currency
 filled-fees         | string    | Transaction fee paid so far
 source              | string    | The source where the order was triggered, possible values: sys, web, api, app
-state               | string    | submitted, partical-filled, cancelling
+state               | string    | created, submitted, partial-filled, filled, canceled, partial-canceled
 exchange            | string    | Internal data
 batch               | string    | Internal data
+stop-price|string|trigger price of stop limit order
+operator|string|operation character of stop price
 
 ### Error code for invalid start-date/end-date
 
@@ -1574,6 +2667,8 @@ batch               | string    | Internal data
 |invalid_start_date| Start date is a future date; or start date is earlier than 180 days ago.|
 |invalid_end_date| end date is a future date; or end date is earlier than 180 days ago.|
 
+
+
 ## Search Historical Orders within 48 Hours
 
 API Key Permission：Read
@@ -1582,7 +2677,7 @@ This endpoint returns orders based on a specific searching criteria.
 
 ### HTTP Request
 
-`GET https://api-cloud.huobi.co.kr/v1/order/history`
+GET `/v1/order/history`
 
 ```json
 {
@@ -1598,7 +2693,7 @@ This endpoint returns orders based on a specific searching criteria.
 
 Parameter  | Required | Data Type | Description | Default Value                                  | Value Range
 ---------  | --------- | -------- | ------- | -----------                                   | ----------
-symbol     | false  | string | The trading symbol to trade      |all      |All supported trading symbols, e.g. btcusdt, bccbtc  |
+symbol     | false  | string | The trading symbol to trade      |all      |All supported trading symbol, e.g. btcusdt, bccbtc.Refer to `GET /v1/common/symbols` |
 start-time      | false | long | Start time (included)   |The time 48 hours ago      |UTC time in millisecond |
 end-time | false | long | End time (included)  | The query time     |UTC time in millisecond |
 direct   | false | string | Direction of the query. (Note: If the total number of items in the search result is within the limitation defined in “size”, this field does not take effect.)| next     |prev, next   |
@@ -1649,8 +2744,10 @@ price                | string   | Order price
 source       | string    | Order source
 state  | string    | Order status ( filled, partial-canceled, canceled )
 symbol         | string    | Trading symbol
-type}              | string    | Order type (buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker)
-next-time               | long    | Next query “start-time” (in response of “direct” = prev), Next query “end-time” (in response of “direct” = next). Note: Only when the total number of items in the search result exceeded the limitation defined in “size”, this field exists. UTC time in millisecond
+stop-price|string|trigger price of stop limit order
+operator|string|operation character of stop price
+type}              | string    | Order type (buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker, buy-stop-limit, sell-stop-limit)
+next-time               | long    | Next query “start-time” (in response of “direct” = prev), Next query “end-time” (in response of “direct” = next). Note: Only when the total number of items in the search result exceeded the limitation defined in “size”, this field exists. UTC time in millisecond. 
 
 
 ## Search Match Results
@@ -1661,7 +2758,7 @@ This endpoint returns the match results of past and open orders based on specifi
 
 ### HTTP Request
 
-`GET https://api-cloud.huobi.co.kr/v1/order/matchresults`
+GET `/v1/order/matchresults`
 
 ```shell
 curl "https://api-cloud.huobi.co.kr/v1/order/matchresults?symbol=ethusdt"
@@ -1671,12 +2768,12 @@ curl "https://api-cloud.huobi.co.kr/v1/order/matchresults?symbol=ethusdt"
 
 Parameter  | Data Type | Required | Default | Description                                   | Value Range
 ---------  | --------- | -------- | ------- | -----------                                   | ----------
-symbol     | string    | true     | NA      | The trading symbol to trade                   | All supported trading symbols, e.g. btcusdt, bccbtc
-types      | string    | false    | NA      | The types of order to include in the search   | buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc
+symbol     | string    | true     | NA      | The trading symbol to trade                   | All supported trading symbol, e.g. btcusdt, bccbtc.Refer to `GET /v1/common/symbols`
+types      | string    | false    | all      | The types of order to include in the search   | buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker, buy-stop-limit, sell-stop-limit
 states     | string    | false    | NA      | The states of order to include in the search  | submitted, partial-filled, partial-canceled, filled, canceled
-start-date | string    | false    | -61d    | Search starts date, in format yyyy-mm-dd      |[-61, end-date] From June 10th, the query window between start-date and end-date will be changed to 2 days. if a request submitted with invalid start-date and/or end-date, an error will be returned. |
-end-date   | string    | false    | today   | Search ends date, in format yyyy-mm-dd        | [start-date, today] From June 10th, the query window between start-date and end-date will be changed to 2 days. if a request submitted with invalid start-date and/or end-date, an error will be returned. |
-from       | string    | false    | NA      | Search order id to begin with                 | NA
+start-date | string    | false    | -1d    | Search starts date, in format yyyy-mm-dd      |Value range [((end-date) – 1), (end-date)], maximum query window size is 2 days, query window shift should be within past 61 days |
+end-date   | string    | false    | today   | Search ends date, in format yyyy-mm-dd        |Value range [(today-60), today], maximum query window size is 2 days, query window shift should be within past 61 days|
+from       | string    | false    | NA      | Search internal id to begin with                 | NA
 direct     | string    | false    | both    | Search direction when 'from' is used          | next, prev
 size       | int       | false    | 100     | The number of orders to return                | [1, 100]
 
@@ -1694,7 +2791,11 @@ size       | int       | false    | 100     | The number of orders to return    
       "price": "100.1000000000",
       "filled-amount": "9.1155000000",
       "filled-fees": "0.0182310000",
-      "created-at": 1494901400435
+      "created-at": 1494901400435,
+      "trade-id": 100282808529,
+      "role": "taker",
+      "filled-points": "0.0",
+      "fee-deduct-currency": ""
     }
   ]
 ```
@@ -1702,19 +2803,22 @@ size       | int       | false    | 100     | The number of orders to return    
 ### Response Content
 
 <aside class="notice">The return data contains a list and each item in the list represents a match result</aside>
-
 Field               | Data Type | Description
 ---------           | --------- | -----------
 id                  | integer   | Internal id
 symbol              | string    | The trading symbol to trade, e.g. btcusdt, bccbtc
 order-id            | string    | The order id of this order
 match-id            | string    | The match id of this match
+trade-id            | int    | Unique trade ID (NEW)
 price               | string    | The limit price of limit order
 created-at          | int       | The timestamp in milliseconds when the match and fill is done
-type                | string    | The order type, possible values are: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker
+type                | string    | The order type, possible values are: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker, buy-stop-limit, sell-stop-limit
 filled-amount       | string    | The amount which has been filled
 filled-fees         | string    | Transaction fee paid so far
 source              | string    | The source where the order was triggered, possible values: sys, web, api, app
+role                  | string   | The role in the transaction: taker or maker.
+filled-points      | string   | deduction amount (unit: in ht or hbpoint)  
+fee-deduct-currency      | string   | deduction type: ht or hbpoint.    
 
 ### Error code for invalid start-date/end-date
 
@@ -1724,223 +2828,75 @@ source              | string    | The source where the order was triggered, poss
 |invalid_start_date| Start date is a future date; or start date is earlier than 61 days ago.|
 |invalid_end_date| end date is a future date; or end date is earlier than 61 days ago.|
 
-# ETF (HB10)
 
-Huobi's platform allows clients to create ETF holdings with their matching assets, and also allows clients to redempt ETF to comprised assets.
 
-## Creation and Redemption Configuration
+## Get Current Fee Rate Applied to The User
 
-This endpoint will return the basic information of ETF creation and redemption, as well as ETF constituents, including max amount of creation, min amount of creation, max amount of redemption, min amount of redemption, creation fee rate, redemption fee rate, eft create/redeem status.
-
-### HTTP Request
-
-- GET `/etf/swap/config`
-
-```shell
-curl "https://api-cloud.huobi.co.kr/etf/swap/config?etf_name=hb10"
-```
-
-### Request Parameter
-
-Parameter   | Data Type | Required | Description
------       |-----      |-----     |------
-etf_name    | string    | true     | The name of the ETF, currently only support hb10
-
-> Response:
-
-```json
-{
-  "code": 200,
-  "data": {
-    "purchase_min_amount": 10000,
-    "purchase_max_amount": 100000,
-    "redemption_min_amount": 10000,
-    "redemption_max_amount": 10000,
-    "purchase_fee_rate": 0.001,
-    "redemption_fee_rate": 0.002,
-    "etf_status":1,
-    "unit_price":
-    [
-      {
-        "currency": "eth",
-        "amount": 19.9
-      },
-      {
-        "currency": "btc",
-        "amount": 9.9
-      }
-    ]
-  },
-  "message": null,
-  "success": true
-}
-```
-
-### Response Content
-
-Field                 | Data Type  | Description |
------------           |------------|-----------  |
-purchase_min_amount   | integer    | Minimum creation amounts per request |
-purchase_max_amount   | integer    | Max creation amounts per request |
-redemption_min_amount | integer    | Minimum redemption amounts per request |
-redemption_max_amount | integer    | Max redemption amounts per request |
-purchase_fee_rate     | decimal    | Creation fee rate |
-redemption_fee_rate   | decimal    | Redemption fee rate |
-etf_status            | integer    | status of the ETF: Normal(1), Rebalancing Start(2), Creation and Redemption Suspended(3), Creation Suspended(4), Redemption Suspended(5)  |
-unit_price            | array      | ETF constitution in format of {amount, currency}
-
-## Order Creation/Redemption
-
-API Key Permission：Trade
-
-This endpoint allow clients to order creation or redemption of ETF.
-
-### HTTP Request
-
-- POST `/etf/swap/in`
-
-- POST `/etf/swap/out`
-
-```shell
-curl -X POST -H 'Content-Type: application/json' "https://api-cloud.huobi.co.kr/etf/swap/in" -d
-'{"etf_name": "hb10", "amount": 10000}'
-
-curl -X POST -H 'Content-Type: application/json' "https://api-cloud.huobi.co.kr/etf/swap/out" -d
-'{"etf_name": "hb10", "amount": 10000}'
-```
-
-### Request Parameter
-
-Parameter  | Required | Data Type |  Description
----------  |--------- |-----------|------------  
-etf_name   | true     | string    | ETF name, currently only support hb10
-amount     | true     | integer   | The amount to create or redemption
-
-> Response:
-
-```json
-{
-    "code": 200,
-    "data": null,
-    "message": null,
-    "success": true
-}
-```
-
-### Response Content
-
-Field      | Data Type | Description
------------|-----------|-----------
-code       | integer   | The overall status of the order, please find details in below table
-data       | object    | The data content if available
-message    | string    | The message of the order result
-success    | boolean   | If the order is successful
-
-**Response code details**
-
-Code  | Description
---    |--
-200   | Successful
-10404 | Invalid ETF name
-13403 | Insufficient asset to create ETF
-13404 | Create and redemption disabled due to system setup
-13405 | Create and redemption disabled due to configuration issue
-13406 | Invalid API call
-13410 | API authentication fails
-13500 | System error
-13601 | Create and redemption disabled during rebalance
-13603 | Create and redemption disabled due to other reason
-13604 | Create suspended
-13605 | Redemption suspended
-13606 | Amount incorrect. For the cases when creation amount or redemption amount is not in the range of min/max amount, this code will be returned.
-
-## Show Past Creation/Redemption
+This endpoint returns the current transaction fee rate applied to the user.
 
 API Key Permission：Read
 
-This endpoints allows clients to get past creation and redemption.(up to 100 records)
+```shell
+curl "https://api-cloud.huobi.co.kr/v1/fee/fee-rate/get?symbols=btcusdt,ethusdt,ltcusdt"
+```
 
 ### HTTP Request
 
-- GET `/etf/swap/list `
+GET `/v1/fee/fee-rate/get`
 
-```shell
-curl "https://api-cloud.huobi.co.kr/etf/swap/list"
-```
+### Request Parameters
 
-### Request Parameter
-
-Parameter  | Required | Data Type |  Description |
----------  |--------- |-----------|------------  |
-etf_name   | true     | string    | ETF name, currently only support hb10
-offset     | true     | integer   | The offset of the records, set to 0 for the latest records
-limit      | true     | integer   | The number of records to return, max is 100  
+Parameter | Data Type | Required | Default | Description                 | Value Range
+--------- | --------- | -------- | ------- | -----------                 | -----------
+symbols    | string    | true     | NA      | The trading symbols to query, separated by comma | Refer to `GET /v1/common/symbols`
 
 > Response:
 
 ```json
-{
-  "code": 200,
+ {
+  "status": "ok",
   "data": [
-    {
-      "id": 112222,
-      "gmt_created": 1528855872323,
-      "currency": "hb10",
-      "amount": 11.5,
-      "type": 1,
-      "status": 2,
-      "detail":
-      {
-        "used_ currency_list":
-        [
-          {
-            "currency": "btc",
-            "amount": 0.666
-          },
-          {
-            "currency": "eth",
-            "amount": 0.666
-          }
-        ],
-        "rate": 0.002,
-        "fee": 100.11,
-        "point_card_amount":1.0,
-        "obtain_ currency_list":
-        [
-          {
-            "currency": "hb10",
-            "amount": 1000
-          }
-        ]
-      }
+     {
+        "symbol": "btcusdt",
+        "maker-fee":"0.0001",
+        "taker-fee":"0.0002"
+     },
+     {
+        "symbol": "ethusdt",
+        "maker-fee":"0.002",
+        "taker-fee":"0.002"
+    },
+     {
+        "symbol": "ltcusdt",
+        "maker-fee":"0.0015",
+        "taker-fee":"0.0018"
     }
-  ],
-  "message": null,
-  "success": true
+  ]
 }
 ```
 
 ### Response Content
 
-Field       | Data Type | Description
------------ |-----------|-----------
-id          | integer   | Creation/Redemption id
-gmt_created | integer   | Operation timestamp
-currency    | string    | ETF name
-amount      | decimal   | Creation/Redmption amount
-type        | integer   | Creation(1), Redemption(2)
-status      | integer   | Operation result
-detail      | array     | Please find details below
+Field Name      | Data Type | Mandatory| Description
+--------- | --------- | -----------| -----------
+status        | string  |Y | status code
+err-code    | string   |N  | error code
+err-msg     | string |N   | error message
+data|list|Y| Fee rate list
 
-**Fields under "Detail"**
+### List
+Field Name| Datat Type| Description
+--------- | --------- | ------
+symbol| string| trading symbol
+maker-fee|  string| maker fee rate
+taker-fee|  string| taker fee rate
 
-Field                 | Data Type | Description |
------                 |-----      |-----        |
-used_currency_list    | array     | For creation this is the list and amount of underlying assets used for ETF creation. For redemption this is the amount of ETF used for redemption.
-rate                  | decimal   | Fee rate
-fee                   | decimal   | The actual fee amount
-point_card_amount     | decimal   | Discount from point card
-obtain_currency_list  | array     | For creation this is the amount for ETF created. For redemption this is the list and amount of underlying assets obtained.
+### Error Code
+Error Code| Description|  Data Type|  Remark
+--------- | --------- | ------ | ------
+base-symbol-error|  invalid symbol| string| -
+base-too-many-symbol| exceeded maximum number of symbols| string| -
+
 
 # Websocket Market Data
 
@@ -1952,6 +2908,7 @@ obtain_currency_list  | array     | For creation this is the amount for ETF crea
 
 **`wss://api-cloud.huobi.co.kr/ws`**
 
+
 ### Data Format
 
 All return data of websocket APIs are compressed with GZIP so they need to be unzipped.
@@ -1960,21 +2917,20 @@ All return data of websocket APIs are compressed with GZIP so they need to be un
 
 After connected to Huobi's Websocket server, the server will send heartbeat periodically (currently at 5s interval). The heartbeat message will have an integer in it, e.g.
 
-> {"ping": 1492420473027}
+> {"ping": 1492420473027} (market data)
 
 When client receives this heartbeat message, it should response with a matching "pong" message which has the same integer in it, e.g.
 
-> {"pong": 1492420473027}
+> {"pong": 1492420473027} (market data)
 
 <aside class="warning">After the server sent two consecutive heartbeat messages without receiving at least one matching "pong" response from a client, then right before server sends the next "ping" heartbeat, the server will disconnect this client</aside>
-
 ### Subscribe to Topic
 
 To receive data you have to send a "sub" message first.
 
 ```json
 {
-  "sub": "market.btccny.kline.1min",
+  "sub": "market.btcusdt.kline.1min",
   "id": "id1"
 }
 ```
@@ -1990,7 +2946,7 @@ After successfully subscribed, you will receive a response to confirm subscripti
 {
   "id": "id1",
   "status": "ok",
-  "subbed": "market.btccny.kline.1min",
+  "subbed": "market.btcusdt.kline.1min",
   "ts": 1489474081631
 }
 ```
@@ -1999,7 +2955,7 @@ Then, you will received message when there is update in this topic
 
 ```json
 {
-  "ch": "market.btccny.kline.1min",
+  "ch": "market.btcusdt.kline.1min",
   "ts": 1489474082831,
   "tick": {
     "id": 1489464480,
@@ -2020,7 +2976,7 @@ To unsubscribe, you need to send below message
 
 ```json
 {
-  "unsub": "market.btccny.trade.detail",
+  "unsub": "market.btcusdt.trade.detail",
   "id": "id4"
 }
 ```
@@ -2036,7 +2992,7 @@ And you will receive a message to confirm the unsubscribe
 {
   "id": "id4",
   "status": "ok",
-  "unsubbed": "market.btccny.trade.detail",
+  "unsubbed": "market.btcusdt.trade.detail",
   "ts": 1494326028889
 }
 ```
@@ -2064,8 +3020,8 @@ You will receive a response accordingly and immediately
 ```json
 {
   "status": "ok",
-  "rep": "market.btccny.kline.1min",
-  "tick": [
+  "rep": "market.btcusdt.kline.1min",
+  "data": [
     {
       "amount": 1.6206,
       "count":  3,
@@ -2111,8 +3067,8 @@ This topic sends a new candlestick whenever it is available.
 
 Parameter | Data Type | Required | Description                      | Value Range
 --------- | --------- | -------- | -----------                      | -----------
-symbol    | string    | true     | Trading symbol     | All supported trading symbols, e.g. btcusdt, bccbtc
-period     | string    | true     | Candlestick interval   | 1min, 5min, 15min, 30min, 60min, 1day, 1mon, 1week, 1year
+symbol    | string    | true     | Trading symbol     | All supported trading symbol, e.g. btcusdt, bccbtc.Refer to `GET /v1/common/symbols`
+period     | string    | true     | Candlestick interval   | 1min, 5min, 15min, 30min, 60min, 4hour, 1day, 1mon, 1week, 1year
 
 > Response
 
@@ -2158,10 +3114,9 @@ high      | float     | High price during the interval
 vol       | float     | Aggregated trading value during the interval (in quote currency)
 
 <aside class="notice">When symbol is set to "hb10" or "huobi10", amount, count, and vol will always have the value of 0</aside>
-
 ### Pull Request
 
-Pull request is supported with extra parameters to define the range.
+Pull request is supported with extra parameters to define the range. The maximum number of ticks in each response is 300.
 
 ```json
 {
@@ -2179,7 +3134,7 @@ to        | integer   | false    | 2556115200(2050-01-01T00:00:00+08:00)  | "To"
 
 ## Market Depth
 
-This topic sends the latest market depth when it is updated.
+This topic sends the latest market by price order book in snapshot mode at 1-second interval.
 
 ### Topic
 
@@ -2198,7 +3153,7 @@ This topic sends the latest market depth when it is updated.
 
 Parameter | Data Type | Required | Default Value         | Description                                       | Value Range
 --------- | --------- | -------- | -------------         | -----------                                       | -----------
-symbol    | string    | true     | NA                    | Trading symbol                   | All supported trading symbols, e.g. btcusdt, bccbtc
+symbol    | string    | true     | NA                    | Trading symbol                   | Refer to `GET /v1/common/symbols`
 type      | string    | true     | step0                 | Market depth aggregation level, details below     | step0, step1, step2, step3, step4, step5
 
 **"type" Details**
@@ -2211,6 +3166,9 @@ step2     | Aggregation level = precision*100
 step3     | Aggregation level = precision*1000
 step4     | Aggregation level = precision*10000
 step5     | Aggregation level = precision*100000
+
+While type is set as ‘step0’, the market depth data supports up to 150 levels.
+While type is set as ‘step1’, ‘step2’, ‘step3’, ‘step4’, or ‘step5’, the market depth data supports up to 20 levels.
 
 > Response
 
@@ -2227,19 +3185,19 @@ step5     | Aggregation level = precision*100000
 
 ```json
 {
-  "ch": "market.btcusdt.depth.step0",
-  "ts": 1489474082831,
+  "ch": "market.htusdt.depth.step0",
+  "ts": 1572362902027,
   "tick": {
     "bids": [
-    [9999.3900,0.0098], // [price, amount]
-    [9992.5947,0.0560]
-    // more Market Depth data here
+      [3.7721, 344.86],// [price, quote volume]
+      [3.7709, 46.66]
     ],
     "asks": [
-    [10010.9800,0.0099],
-    [10011.3900,2.0000]
-    //more data here
-    ]
+      [3.7745, 15.44],
+      [3.7746, 70.52]
+    ],
+    "version": 100434317651,
+    "ts": 1572362902012
   }
 }
 ```
@@ -2247,14 +3205,14 @@ step5     | Aggregation level = precision*100000
 ### Update Content
 
 <aside class="notice">Under 'tick' object there is a list of bids and a list of asks</aside>
-
 Field     | Data Type | Description
 --------- | --------- | -----------
 bids      | object    | The current all bids in format [price, quote volume]
 asks      | object    | The current all asks in format [price, quote volume]
+version   | integer   | Internal data
+ts        | integer   | The UNIX timestamp in milliseconds adjusted to Singapore time
 
 <aside class="notice">When symbol is set to "hb10" amount, count, and vol will always have the value of 0</aside>
-
 ### Pull Request
 
 Pull request is supported.
@@ -2266,9 +3224,72 @@ Pull request is supported.
 }
 ```
 
+## Best Bid/Offer
+
+While any of best bid, best ask, best bid size, best ask size is changing, subscriber can receive BBO (Best Bid/Offer) update in tick by tick mode.
+
+### Topic
+
+`market.$symbol.bbo`
+
+> Subscribe request
+
+```json
+{
+  "sub": "market.btcusdt.bbo",
+  "id": "id1"
+}
+```
+
+### Topic parameter
+
+Parameter | Data Type | Required | Default Value         | Description                                       | Value Range
+--------- | --------- | -------- | -------------         | -----------                                       | -----------
+symbol    | string    | true     | NA                    | Trading symbol                   | Refer to `GET /v1/common/symbols`
+
+> Response
+
+```json
+{
+  "id": "id1",
+  "status": "ok",
+  "subbed": "market.btcusdt.bbo",
+  "ts": 1489474081631
+}
+```
+
+> Update example
+
+```json
+{
+  "ch": "market.btcusdt.bbo",
+  "ts": 1489474082831,
+  "tick": {
+    "symbol": "btcusdt",
+    "quoteTime": "1489474082811",
+    "bid": "10008.31",
+    "bidSize": "0.01",
+    "ask": "10009.54",
+    "askSize": "0.3"
+  }
+}
+```
+
+### Update Content
+
+Field     | Data Type | Description
+--------- | --------- | -----------
+symbol     | string    | Trading symbol
+quoteTime      | long    | Quote time
+bid      | float    | Best bid
+bidSize      | float    | Best bid size
+ask      | float    | Best ask
+askSize      | float    | Best ask size
+
+
 ## Trade Detail
 
-This topic sends the latest completed trade.
+This topic sends the latest completed trade. It updates in tick by tick mode.
 
 ### Topic
 
@@ -2287,7 +3308,7 @@ This topic sends the latest completed trade.
 
 Parameter | Data Type | Required | Default Value         | Description                                       | Value Range
 --------- | --------- | -------- | -------------         | -----------                                       | -----------
-symbol    | string    | true     | NA                    | Trading symbol                     | All supported trading symbols, e.g. btcusdt, bccbtc
+symbol    | string    | true     | NA                    | Trading symbol                     | Refer to `GET /v1/common/symbols`
 
 > Response
 
@@ -2314,6 +3335,7 @@ symbol    | string    | true     | NA                    | Trading symbol       
                 "amount": 0.0099,
                 "ts": 1533265950234,
                 "id": 146507451359183894799,
+                "tradeId": 102043495674,
                 "price": 401.74,
                 "direction": "buy"
             }
@@ -2327,7 +3349,8 @@ symbol    | string    | true     | NA                    | Trading symbol       
 
 Field     | Data Type | Description
 --------- | --------- | -----------
-id        | integer   | Unique trade id
+id        | integer   | Unique trade id (to be obsoleted)
+tradeId|integer| Unique trade id (NEW)
 amount    | float     | Last trade volume
 price     | float     | Last trade price
 ts        | integer   | Last trade time (UNIX epoch time in millisecond)
@@ -2346,7 +3369,7 @@ Pull request (of maximum latest 300 trade records) is supported.
 
 ## Market Details
 
-This topic sends the latest market stats with 24h summary
+This topic sends the latest market stats with 24h summary. It updates in snapshot mode, in frequency of no more than 10 times per second.
 
 ### Topic
 
@@ -2365,7 +3388,7 @@ This topic sends the latest market stats with 24h summary
 
 Parameter | Data Type | Required | Default Value         | Description                                       | Value Range
 --------- | --------- | -------- | -------------         | -----------                                       | -----------
-symbol    | string    | true     | NA                    | Trading symbol                     | All supported trading symbols, e.g. btcusdt, bccbtc
+symbol    | string    | true     | NA                    | Trading symbol                     | Refer to `GET /v1/common/symbols`
 
 > Response
 
@@ -2429,22 +3452,47 @@ Pull request is supported.
 
 **`wss://api-cloud.huobi.co.kr/ws/v1`**
 
+
 ### Data Format
 
 All return data of websocket APIs are compressed with GZIP so they need to be unzipped.
 
 ### Heartbeat and Connection
 
-After connected to Huobi's Websocket server, the server will send heartbeat periodically (currently at 5s interval). The heartbeat message will have an integer in it, e.g.
+**After 2019/07/08**
 
-> {"ping": 1492420473027}
+After connected to Huobi's Websocket server, the server will send heartbeat periodically (at 20s interval). The heartbeat message will have an integer in it, e.g.
+
+> {
+    "op":"ping",
+    "ts":1492420473027
+}
 
 When client receives this heartbeat message, it should response with a matching "pong" message which has the same integer in it, e.g.
 
-> {"pong": 1492420473027}
+> {
+    "op":"pong",
+    "ts":1492420473027
+}
+
+<aside class="warning">After the server sent THREE consective heartbeat messages without receiving at least one matching "pong" response from a client, then right before server sends the next "ping" heartbeat, the server will disconnect this client</aside>
+**Prior to 2019/07/08**
+
+After connected to Huobi's Websocket server, the server will send heartbeat periodically (at 30s interval). The heartbeat message will have an integer in it, e.g.
+
+> {
+    "op":"ping",
+    "ts":1492420473027
+}
+
+When client receives this heartbeat message, it should response with a matching "pong" message which has the same integer in it, e.g.
+
+> {
+    "op":"pong",
+    "ts":1492420473027
+}
 
 <aside class="warning">After the server sent two consective heartbeat message without receiving at least one matching "pong" response from a client, then right before server sends the next "ping" heartbeat, the server will disconnect this client</aside>
-
 ### Subscribe to Topic
 
 To receive data you have to send a "sub" message first.
@@ -2516,11 +3564,21 @@ After successfully establishing a connection with the WebSocket API. There are 3
 
 The details of how to user those three topic will be explain later in this documents.
 
-**Rate limt of pull style query**
+### Rate Limit
+
+**Rate limt of Subscription for a connection**
 
 The limit is count againt per API key not per connection. When you reached the limit you will receive error with "too many request".
 
-* accounts.list: once every 25 seconds
+For a given single connection, 
+1. maximum of 50 'sub' and 50‘unsub’ in one second. 
+2. maximum of 100 sub allowed in total, and every 'unsub' would be deduct from total count of 'sub'. For example, there are 30 sub counts already, if 'unsub' once, then the total count of sub would be 29 for this given connection. When the limit of 100 'sub' reached, no more 'sub' would be allowed. 
+
+**Rate limt of pull style query (req)**
+
+The limit is count againt per API key not per connection. When you reached the limit you will receive error with "too many request".
+
+* accounts.list: once every 2 seconds
 * orders.list AND orders.detail: once every 5 seconds
 
 ### Authentication
@@ -2551,7 +3609,7 @@ Asset and Order topics require authentication. To authenticate yourself, send be
   Signature          |string |required; signature, the value is computed to make sure that the Authentication is valid and not tampered|
 
 > **Notice：**
-> - Refer to the Authentication[https://huobiapi.github.io/docs/v1/en/#authentication] section to generate the signature
+> - Refer to the Authentication[https://huobiapi.github.io/docs/spot/v1/en/#authentication] section to generate the signature
 > - The request method in signature's method is `GET`
 
 ## Subscribe to Account Updates
@@ -2582,7 +3640,6 @@ Parameter | Data Type | Required | Default Value         | Description          
 model     | string    | false    | 0                     | Whether to include frozen balance                 | 1 to include frozen balance, 0 to not
 
 <aside class="notice">You may subscribe to this topic with different model to get updates in both models</aside>
-
 > Response
 
 ```json
@@ -2651,7 +3708,7 @@ This topic publishes all order updates of the current account.
 
 Parameter | Data Type | Required | Default Value         | Description                                       | Value Range
 --------- | --------- | -------- | -------------         | -----------                                       | -----------
-symbol    | string    | true     | NA                    | Trading symbol                       | All supported trading symbols, e.g. btcusdt, bccbtc
+symbol    | string    | true     | NA                    | Trading symbol                       | All supported trading symbols, e.g. btcusdt, bccbtc.Refer to `GET /v1/common/symbols`.support wildcard "*".
 
 > Response
 
@@ -2704,9 +3761,9 @@ account-id          | string    | Account id
 order-amount        | string    | Order amount (in base currency)
 order-price         | string    | Order price
 created-at          | int       | Order creation time (UNIX epoch time in millisecond)
-order-type          | string    | Order type, possible values: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker
+order-type          | string    | Order type, possible values: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker,buy-stop-limit,sell-stop-limit
 order-source        | string    | Order source, possible values: sys, web, api, app
-order-state         | string    | Order state, possible values: submitted, partical-filled, cancelling, filled, canceled, partial-canceled
+order-state         | string    | Order state, possible values: submitted, partial-filled, filled, canceled, partial-canceled
 role                | string    | Order role in the trade: taker or maker
 price               | string    | Order execution price
 filled-amount       | string    | Order execution quantity (in base currency)
@@ -2738,7 +3795,7 @@ This topic publishes all order updates of the current account. By comparing with
 
 Parameter | Data Type | Required | Default Value         | Description                                       | Value Range
 --------- | --------- | -------- | -------------         | -----------                                       | -----------
-symbol    | string    | true     | NA                    | Trading symbol                       | All supported trading symbols, e.g. btcusdt, bccbtc
+symbol    | string    | true     | NA                    | Trading symbol                       | Refer to `GET /v1/common/symbols`. wild card (\*) is supported 
 
 
 
@@ -2770,7 +3827,9 @@ symbol    | string    | true     | NA                    | Trading symbol       
     "match-id": 94984,
     "filled-cash-amount": "8301.357280000000000000",
     "role": "taker|maker",
-    "order-state": "filled"
+    "order-state": "filled",
+    "client-order-id": "a0001",
+    "order-type": "buy-limit"
   }
 }
 ```
@@ -2782,12 +3841,14 @@ Field               | Data Type | Description
 match-id              | integer   | Match id (While order-state = submitted, canceled, partial-canceled,match-id refers to sequence number; While order-state = filled, partial-filled, match-id refers to last match ID.)
 order-id            | integer   | Order id
 symbol              | string    | Trading symbol
-order-state         | string    | Order state, possible values: submitted, partical-filled, cancelling, filled, canceled, partial-canceled
+order-state         | string    | Order state, possible values: submitted, partial-filled, filled, canceled, partial-canceled
 role                | string    | Order role in the trade: taker or maker (While order-state = submitted, canceled, partialcanceled, a default value “taker” is given to this field; While order-state = filled, partial-filled, role can be either taker or maker.)
-price               | string    | Last price (While order-state = submitted, price refers to order price; While order-state = canceled, partial-canceled, price is zero; While order-state = filled, partial-filled, price reflects the last execution price. (While role = taker, and this taker’s order matching with multiple orders on the opposite side simultaneously, price here refers to average price of the multiple trades.))
+price               | string    | Last price (While order-state = submitted, price refers to order price; While order-state = canceled, partial-canceled, price is zero; While order-state = filled, partial-filled, price reflects the last execution price.)
 filled-amount       | string    | Last execution quantity (in base currency)
 filled-cash-amount  | string    | Last execution value (in quote currency)
-unfilled-amount     | string    | Remaining order quantity (While order-state = submitted, unfilled-amount contains the original order size; While order-state = canceled OR partial-canceled, unfilled-amount contains the remaining order quantity; While order-state = filled, if order-type = buymarket, unfilled-amount could possibly contain a minimal value; if order-type <> buy-market, unfilled-amount is zero; While order-state = partial-filled AND role = taker, unfilled-amount is the remaining order quantity; While order-state = partial-filled AND role = maker, unfilled-amount is zero. Huobi will support unfilled amount under this scenario in a later enhancement. Time is to be advised in another notification.)
+unfilled-amount     | string    | Remaining order quantity (While order-state = submitted, unfilled-amount contains the original order size; While order-state = canceled OR partial-canceled, unfilled-amount contains the remaining order quantity; While order-state = filled, if order-type = buymarket, unfilled-amount could possibly contain a minimal value; if order-type <> buy-market, unfilled-amount is zero; While order-state = partial-filled AND role = taker, unfilled-amount is the remaining order quantity; While order-state = partial-filled AND role = maker, unfilled-amount is remaining order quantity.)
+client-order-id | string | Client order ID
+order-type | string | order type, including buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker,buy-stop-limit,sell-stop-limit
 
 
 ## Request Account Details
@@ -2916,14 +3977,14 @@ Search past and open orders based on searching criteria.
 Parameter  | Data Type | Required | Default | Description                                   | Value Range
 ---------  | --------- | -------- | ------- | -----------                                   | ----------
 account-id | int       | true     | NA      | Account id                        | NA
-symbol     | string    | true     | NA      | Trading symbol                | All supported trading symbols, e.g. btcusdt, bccbtc
-types      | string    | false    | NA      | Order type   | buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc
-states     | string    | false    | NA      | Order state  | submitted, partial-filled, partial-canceled, filled, canceled
+symbol     | string    | true     | NA      | Trading symbol                | Refer to `GET /v1/common/symbols`
+types      | string    | false    | NA      | Order type   | buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker, buy-stop-limit, sell-stop-limit
+states     | string    | true    | NA      | Order state  | submitted, partial-filled, partial-canceled, filled, canceled, created
 start-date | string    | false    | -61d    | Start date, in format yyyy-mm-dd      | NA
 end-date   | string    | false    | today   | End date, in format yyyy-mm-dd        | NA
 from       | string    | false    | NA      | Order id to begin with                 | NA
 direct     | string    | false    | next    | Searching direction when 'from' is given          | next, prev
-size       | int       | false    | 100     | Number of items in each return               | [1, 100]
+size       | string       | false    | 100     | Number of items in each return               | [1, 100]
 
 ### Response
 
@@ -2964,14 +4025,16 @@ account-id           |long     |account ID|
 amount               |string   |order size|
 price                |string   |order price|
 created-at           |long     |order creation time|
-type                 |string   |order type, possible values: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker|
+type                 |string   |order type, possible values: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker, buy-stop-limit, sell-stop-limit|
 filled-amount        |string   |filled amount|
 filled-cash-amount   |string   |filled value|
 filled-fees          |string   |transaction fee|
 finished-at          |string   |trade time|
 source               |string   |order source, possible values: sys, web, api, app|
-state                |string   |order state, possible values: submitted, partical-filled, cancelling, filled, canceled, partial-canceled|
+state                |string   |order state, possible values: submitted, partial-filled, filled, canceled, partial-canceled|
 cancel-at            |long     |order cancellation time|
+stop-price|string|trigger price of stop limit order|
+operator|string|opration character of stop price|
 
 
 ## Query Order by Order ID
@@ -2982,7 +4045,7 @@ Get order details by a given order ID.
 
 ### Query Topic
 
-`order.detail`
+`orders.detail`
 
 > Query request
 
@@ -3041,14 +4104,663 @@ account-id           |long     |account ID|
 amount               |string   |order size|
 price                |string   |order price|
 created-at           |long     |order creation time|
-type                 |string   |order type, possible values: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker|
+type                 |string   |order type, possible values: buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker, buy-stop-limit, sell-stop-limit|
 filled-amount        |string   |filled amount|
 filled-cash-amount   |string   |filled value|
 filled-fees          |string   |transaction fee|
 finished-at          |string   |trade time|
 source               |string   |order source, possible values: sys, web, api, app|
-state                |string   |order state, possible values: submitted, partical-filled, cancelling, filled, canceled, partial-canceled|
+state                |string   |order state, possible values: submitted, partial-filled, filled, canceled, partial-canceled|
 cancel-at            |long     |order cancellation time|
+stop-price|string|trigger price of stop limit order|
+operator|string|opration character of stop price|
 
+# Websocket Asset and Order (v2)
 
+## Genral
 
+### Access URL
+
+**Websocket Asset and Order (v2)**
+
+**`wss://api-cloud.huobi.co.kr/ws/v2`**  
+
+Note: 
+By comparing to api-cloud.huobi.co.kr, the network latency to api-aws.huobi.pro is lower, for those client's servers locating at AWS.
+
+### Message Compression
+
+Different with v1, the return data of websocket v2 are not compressed.
+
+### Heartbeat
+
+Once the Websocket connection is established, Huobi server will periodically send "ping" message at 20s interval, with an integer inside.
+
+```json
+{
+  "action": "ping",
+  "data": {
+    "ts": 1575537778295
+  }
+}
+```
+
+Once the Websocket connection is established, Huobi server will periodically send "ping" message at 20s interval, with an integer inside.
+
+```json
+{
+    "action": "ping",
+    "data": {
+          "ts": 1575537778295 // the same integer from "ping" message
+    }
+}
+```
+
+Once client's server receives "ping", it should respond "pong" message back with the same integer.
+
+### Valid Values of `action`
+
+| Valid Values | Description                                 |
+| ------------ | ------------------------------------------- |
+| sub          | Subscribe                                   |
+| req          | Request                                     |
+| ping,pong    | Heartbeat                                   |
+| push         | Push (from Huobi server to client's server) |
+
+### Rate Limit
+
+There are multiple limitations for this version:
+
+- The limitation of single connection for **valid** request (including req, sub, unsub, not including ping/pong or other invalid request) is **50 per second**. It will return "too many request" when the limit is exceeded.
+- The limitation of single API Key is **10**. It will return "too many connection" when the limit is exceeded.
+- The limitation of single IP is **100 per second**. It will return "too many request" when the limitation is exceeded.
+
+### Authentication
+
+Authentication request:
+
+```json
+{
+    "action": "req", 
+    "ch": "auth",
+    "params": { 
+        "authType":"api",
+        "accessKey": "sffd-ddfd-dfdsaf-dfdsafsd",
+        "signatureMethod": "HmacSHA256",
+        "signatureVersion": "2.1",
+        "timestamp": "2019-09-01T18:16:16",
+        "signature": "safsfdsjfljljdfsjfsjfsdfhsdkjfhklhsdlkfjhlksdfh"
+    }
+}
+
+```
+
+The response of success
+
+```json
+{
+  "action": "req",
+  "code": 200,
+  "ch": "auth",
+  "data": {}
+}
+```
+
+Authentication request field list
+
+| Field            | Mandatory | Data Type | Description                                         |
+| ---------------- | --------- | --------- | --------------------------------------------------- |
+| action           | true      | string    | Action type, valid value: "req"                     |
+| ch               | true      | string    | Channel, valid value: "auth"                        |
+| authType         | true      | string    | Authentication type, valid value: "api"             |
+| accessKey        | true      | string    | Access key                                          |
+| signatureMethod  | true      | string    | Signature method, valid value: "HmacSHA256"         |
+| signatureVersion | true      | string    | Signature version, valid value: "2.1"               |
+| timestamp        | true      | string    | Timestamp in UTC in format like 2017-05-11T16:22:06 |
+| signature        | true      | string    | Signature                                           |
+
+### Generating Signature 
+
+The signature generation method v2.1 is similar with v2.0, with only following differences:
+
+1. The request method should be "GET", to URL "/ws/v2".
+2. The involved field names in v2 signature generation are: accessKey，signatureMethod，signatureVersion，timestamp
+3. The valid value of signatureVersion is 2.1.
+
+Please refer to detailed signature generation steps from: [https://huobiapi.github.io/docs/spot/v1/cn/#c64cd15fdc]
+
+The final string involved in signature generation should be like below:
+
+```
+GET\n
+api-cloud.huobi.co.kr\n
+/ws/v2\n
+accessKey=0664b695-rfhfg2mkl3-abbf6c5d-49810&signatureMethod=HmacSHA256&signatureVersion=2.1&timestamp=2019-12-05T11%3A53%3A03
+```
+
+The final string involved in signature generation should be like below:
+
+Note: The data in JSON request doesn't require URL encode
+
+### Subscribe a Topic to Continuously Receive Updates
+
+> Sub request:
+
+```json
+{
+	"action": "sub",
+	"ch": "accounts.update"
+}
+```
+
+Once the Websocket connection is established, Websocket client could send following request to subscribe a topic:
+
+> Sub respose:
+
+```json
+{
+	"action": "sub",
+	"code": 200,
+	"ch": "accounts.update#0",
+	"data": {}
+}
+```
+
+Upon success, Websocket client should receive a response below:
+
+Below is the return code, return message and the description returend from Asset and Order WebSocket
+
+| Return Code | Return Message           | Description                                       |
+| ----------- | ------------------------ | ------------------------------------------------- |
+| 200         | Success                  | Successful                                        |
+| 100         | time out close           | The connection is timeout and closed              |
+| 400         | Bad Request              | The request is invalid                            |
+| 404         | Not Found                | The service is not found                          |
+| 429         | Too Many Requests        | Connection number exceed limit                    |
+| 500         | system error             | System internal error                             |
+| 2000        | invalid.ip               | The IP is invalid                                 |
+| 2001        | nvalid.json              | The JSON request is invalid                       |
+| 2001        | invalid.action           | Parameter action is invalid                       |
+| 2001        | invalid.symbol           | Parameter symbol is invalid                       |
+| 2001        | invalid.ch               | Parameter channel is invalid                      |
+| 2001        | missing.param.auth       | Parameter auth is missing                         |
+| 2002        | invalid.auth.state       | Authentication state is invalid                   |
+| 2002        | auth.fail                | Authentication failed                             |
+| 2003        | query.account.list.error | Account query error                               |
+| 4000        | too.many.request         | Request exceed limit                              |
+| 4000        | too.many.connection      | Connection number exceed limit for single API Key |
+
+## Subscribe Order Updates
+
+API Key Permission: Read
+
+An order update can be triggered by any of following:<br>
+
+- Conditional order triggering failure (eventType=trigger)<br>
+- Conditional order cancellation before trigger (eventType=deletion)<br>
+- Order creation (eventType=creation)<br>
+- Order matching (eventType=trade)<br>
+- Order cancellation (eventType=cancellation)<br>
+
+The field list in order update message can be various per event type, developers can design the data structure in either of two ways:<br>
+
+- Define a data structure including fields for all event types, allowing a few of them null<br>
+- Define different data structure for each event type to include specific fields, inheriting from a common data structure which has common fields
+
+### Topic
+
+` orders#${symbol}`
+
+> Subscribe request
+
+```json
+{
+	"action": "sub",
+	"ch": "orders#btcusdt"
+}
+
+```
+
+> Response
+
+```json
+{
+	"action": "sub",
+	"code": 200,
+	"ch": "orders#btcusdt",
+	"data": {}
+}
+```
+
+### Subscription Field
+
+| Field  | Data Type | Description                            |
+| ------ | --------- | -------------------------------------- |
+| symbol | string    | Trading symbol (wildcard * is allowed) |
+
+### Update Content
+
+```json
+{
+	"action":"push",
+	"ch":"orders#btcusdt",
+	"data":
+	{
+		"orderSide":"buy",
+		"lastActTime":1583853365586,
+		"clientOrderId":"abc123",
+		"orderStatus":"rejected",
+		"symbol":"btcusdt",
+		"eventType":"trigger",
+		"errCode": 2002,
+		"errMessage":"invalid.client.order.id (NT)"
+	}
+}
+```
+
+After conditional order triggering failure –
+
+| Field         | Data Type | Description                                                  |
+| ------------- | --------- | ------------------------------------------------------------ |
+| eventType     | string    | Event type, valid value: trigger (only applicable for conditional order) |
+| symbol        | string    | Trading symbol                                               |
+| clientOrderId | string    | Client order ID                                              |
+| orderSide     | string    | Order side, valid value: buy, sell                           |
+| orderStatus   | string    | Order status, valid value: rejected                          |
+| errCode       | int       | Error code for triggering failure                            |
+| errMessage    | string    | Error message for triggering failure                         |
+| lastActTime   | long      | Order trigger time                                           |
+
+```json
+{
+	"action":"push",
+	"ch":"orders#btcusdt",
+	"data":
+	{
+		"orderSide":"buy",
+		"lastActTime":1583853365586,
+		"clientOrderId":"abc123",
+		"orderStatus":"canceled",
+		"symbol":"btcusdt",
+		"eventType":"deletion"
+	}
+}
+```
+
+After conditional order being cancelled before triggering –
+
+| Field         | Data Type | Description                                                  |
+| ------------- | --------- | ------------------------------------------------------------ |
+| eventType     | string    | Event type, valid value: deletion (only applicable for conditional order) |
+| symbol        | string    | Trading symbol                                               |
+| clientOrderId | string    | Client order ID                                              |
+| orderSide     | string    | Order side, valid value: buy, sell                           |
+| orderStatus   | string    | Order status, valid value: canceled                          |
+| lastActTime   | long      | Order trigger time                                           |
+
+```json
+{
+	"action":"push",
+	"ch":"orders#btcusdt",
+	"data":
+	{
+		"orderSize":"2.000000000000000000",
+		"orderCreateTime":1583853365586,
+		"accountld":992701,
+		"orderPrice":"77.000000000000000000",
+		"type":"sell-limit",
+		"orderId":27163533,
+		"clientOrderId":"abc123",
+		"orderStatus":"submitted",
+		"symbol":"btcusdt",
+		"eventType":"creation"
+    
+	}
+}
+```
+
+After order is submitted –
+
+| Field           | Data Type | Description                                                  |
+| --------------- | --------- | ------------------------------------------------------------ |
+| eventType       | string    | Event type, valid value: creation                            |
+| symbol          | string    | Trading symbol                                               |
+| accountId       | long      | account ID                                                   |
+| orderId         | long      | Order ID                                                     |
+| clientOrderId   | string    | Client order ID (if any)                                     |
+| orderPrice      | string    | Order price                                                  |
+| orderSize       | string    | Order size (inapplicable for market buy order)               |
+| orderValue      | string    | Order value (only applicable for market buy order)           |
+| type            | string    | Order type, valid value: buy-market, sell-market, buy-limit, sell-limit, buy-limit-maker, sell-limit-maker, buy-ioc, sell-ioc |
+| orderStatus     | string    | Order status, valid value: submitted                         |
+| orderCreateTime | long      | Order creation time                                          |
+
+Note:<br>
+
+- If a stop limit order is created but not yet triggered, the topic won’t send an update.<br>
+- The topic will send creation update for taker's order before it being filled.<br>
+- Stop limit order's type is no longer as “buy-stop-limit” or “sell-stop-limit”, but changing to “buy-limit” or “sell-limit”.<br>
+
+```json
+{
+	"action":"push",
+	"ch":"orders#btcusdt",
+	"data":
+	{
+		"tradePrice":"76.000000000000000000",
+		"tradeVolume":"1.013157894736842100",
+		"tradeId":301,
+		"tradeTime":1583854188883,
+		"aggressor":true,
+		"remainAmt":"0.000000000000000400000000000000000000",
+		"orderId":27163536,
+		"type":"sell-limit",
+		"clientOrderId":"abc123",
+		"orderStatus":"filled",
+		"symbol":"btcusdt",
+		"eventType":"trade"
+	}
+}
+```
+
+After order matching –
+
+| Field         | Data Type | Description                                                  |
+| ------------- | --------- | ------------------------------------------------------------ |
+| eventType     | string    | Event type, valid value: trade                               |
+| symbol        | string    | Trading symbol                                               |
+| tradePrice    | string    | Trade price                                                  |
+| tradeVolume   | string    | Trade volume                                                 |
+| orderId       | long      | Order ID                                                     |
+| type          | string    | Order type, valid value: buy-market, sell-market, buy-limit, sell-limit, buy-limit-maker, sell-limit-maker, buy-ioc, sell-ioc |
+| clientOrderId | string    | Client order ID (if any)                                     |
+| tradeId       | long      | Trade ID                                                     |
+| tradeTime     | long      | Trade time                                                   |
+| aggressor     | bool      | Aggressor or not, valid value: true (taker), false (maker)   |
+| orderStatus   | string    | Order status, valid value: partial-filled, filled            |
+| remainAmt     | string    | Remaining amount (for buy-market order it's remaining value) |
+
+Note:<br>
+
+- Stop limit order's type is no longer as “buy-stop-limit” or “sell-stop-limit”, but changing to “buy-limit” or “sell-limit”.<br>
+- If a taker’s order matching with multiple orders at opposite side simultaneously, the multiple trades will be disseminated over separately instead of merging into one trade.<br>
+
+> Update example
+
+```json
+{
+	"action":"push",
+	"ch":"orders#btcusdt",
+	"data":
+	{
+		"lastActTime":1583853475406,
+		"remainAmt":"2.000000000000000000",
+		"orderId":27163533,
+		"type":"sell-limit",
+		"clientOrderId":"abc123",
+		"orderStatus":"canceled",
+		"symbol":"btcusdt",
+		"eventType":"cancellation"
+	}
+}
+```
+
+After order cancellation –
+
+| Field         | Data Type | Description                                                  |
+| ------------- | --------- | ------------------------------------------------------------ |
+| eventType     | string    | Event type, valid value: cancellation                        |
+| symbol        | string    | Trading symbol                                               |
+| orderId       | long      | Order ID                                                     |
+| type          | string    | Order type, valid value: buy-market, sell-market, buy-limit, sell-limit, buy-limit-maker, sell-limit-maker, buy-ioc, sell-ioc |
+| clientOrderId | string    | Client order ID (if any)                                     |
+| orderStatus   | string    | Order status, valid value: partial-canceled, canceled        |
+| remainAmt     | string    | Remaining amount	(for buy-market order it's remaining value) |
+| lastActTime   | long      | Last activity time                                           |
+
+Note:<br>
+
+- Stop limit order's type is no longer as “buy-stop-limit” or “sell-stop-limit”, but changing to “buy-limit” or “sell-limit”.<br>
+
+## Subscribe Trade Details & Order Cancellation post Clearing
+
+API Key Permission: Read
+
+Only update when order transaction or cancellation. Order transaction update is in tick by tick mode, which means, if a taker’s order matches with multiple maker’s orders, the simultaneous multiple trades will be disseminated one by one. But, the update sequence of the multiple trades, may not be exactly same with the sequence of the transactions made. Also, if an order is auto cancelled immediately just after its partial fills, for example a typical IOC order, this channel would be possibly disseminate the cancellation update first prior to the trade. <br>
+
+If user willing to receive order updates in exact same sequence with the original happening, it is recommended to subscribe order update channel orders#${symbol}.<br>
+
+### Topic
+
+`trade.clearing#${symbol}#${mode}`
+
+### Subscription Field
+
+| Field  | Data Type | Description                                                  |
+| ------ | --------- | ------------------------------------------------------------ |
+| symbol | string    | Trading symbol (wildcard * is allowed)                       |
+| mode   | int       | Subscription mode (0 – subscribe only trade event; 1 – subscribe both trade and cancellation events; default value: 0) |
+
+Note:<br>
+About optional field ‘mode’: If not filled, or filled with 0, it implicates to subscribe trade event only. If filled with 1, it implicates to subscribe both trade and cancellation events.<br>
+
+> Subscribe request
+
+```json
+{
+	"action": "sub",
+	"ch": "trade.clearing#btcusdt#0"
+}
+
+```
+
+> Response
+
+```json
+{
+	"action": "sub",
+	"code": 200,
+	"ch": "trade.clearing#btcusdt#0",
+	"data": {}
+}
+```
+
+> Update example
+
+```json
+{
+    "ch": "trade.clearing#btcusdt#0",
+    "data": {
+         "eventType": "trade",
+         "symbol": "btcusdt",
+         "orderId": 99998888,
+         "tradePrice": "9999.99",
+         "tradeVolume": "0.96",
+         "orderSide": "buy",
+         "aggressor": true,
+         "tradeId": 919219323232,
+         "tradeTime": 998787897878,
+         "transactFee": "19.88",
+         "feeDeduct ": "0",
+         "feeDeductType": "",
+         "feeCurrency": "btc",
+         "accountId": 9912791,
+         "source": "spot-api",
+         "orderPrice": "10000",
+         "orderSize": "1",
+         "clientOrderId": "a001",
+         "orderCreateTime": 998787897878,
+         "orderStatus": "partial-filled"
+    }
+}
+```
+
+### Update Contents (after order matching)
+
+| Field           | Data Type | Description                                                  |
+| --------------- | --------- | ------------------------------------------------------------ |
+| eventType       | string    | Event type (trade)                                           |
+| symbol          | string    | Trading symbol                                               |
+| orderId         | long      | Order ID                                                     |
+| tradePrice      | string    | Trade price                                                  |
+| tradeVolume     | string    | Trade volume                                                 |
+| orderSide       | string    | Order side, valid value: buy, sell                           |
+| orderType       | string    | Order type, valid value: buy-market, sell-market,buy-limit,sell-limit,buy-ioc,sell-ioc,buy-limit-maker,sell-limit-maker,buy-stop-limit,sell-stop-limit |
+| aggressor       | bool      | Aggressor or not, valid value: true, false                   |
+| tradeId         | long      | Trade ID                                                     |
+| tradeTime       | long      | Trade time, unix time in millisecond                         |
+| transactFee     | string    | Transaction fee (positive value) or Transaction rebate (negative value) |
+| feeCurrency     | string    | Currency of transaction fee or transaction fee rebate (transaction fee of buy order is based on base currency, transaction fee of sell order is based on quote currency; transaction fee rebate of buy order is based on quote currency, transaction fee rebate of sell order is based on base currency) |
+| feeDeduct       | string    | Transaction fee deduction                                    |
+| feeDeductType   | string    | Transaction fee deduction type, valid value: ht, point       |
+| accountId       | long      | Account ID                                                   |
+| source          | string    | Order source                                                 |
+| orderPrice      | string    | Order price (invalid for market order)                       |
+| orderSize       | string    | Order size (invalid for market buy order)                    |
+| orderValue      | string    | Order value (only valid for market buy order)                |
+| clientOrderId   | string    | Client order ID                                              |
+| stopPrice       | string    | Stop price (only valid for stop limit order)                 |
+| operator        | string    | Operation character (only valid for stop limit order)        |
+| orderCreateTime | long      | Order creation time                                          |
+| orderStatus     | string    | Order status, valid value: filled, partial-filled            |
+
+Notes:<br>
+
+- The calculated maker rebate value inside ‘transactFee’ would not be paid immediately.<br>
+
+### Update Contents (after order cancellation)
+
+| Field           | Data Type | Description                                                  |
+| --------------- | --------- | ------------------------------------------------------------ |
+| eventType       | string    | Event type (cancellation)                                    |
+| symbol          | string    | Trading symbol                                               |
+| orderId         | long      | Order ID                                                     |
+| orderSide       | string    | Order side, valid value: buy, sell                           |
+| orderType       | string    | Order type, valid value: buy-market, sell-market,buy-limit,sell-limit,buy-ioc,sell-ioc,buy-limit-maker,sell-limit-maker,buy-stop-limit,sell-stop-limit |
+| accountId       | long      | Account ID                                                   |
+| source          | string    | Order source                                                 |
+| orderPrice      | string    | Order price (invalid for market order)                       |
+| orderSize       | string    | Order size (invalid for market buy order)                    |
+| orderValue      | string    | Order value (only valid for market buy order)                |
+| clientOrderId   | string    | Client order ID                                              |
+| stopPrice       | string    | Stop price (only valid for stop limit order)                 |
+| operator        | string    | Operation character (only valid for stop limit order)        |
+| orderCreateTime | long      | Order creation time                                          |
+| remainAmt       | string    | Remaining order amount (if market buy order, it implicates remaining order value) |
+| orderStatus     | string    | Order status, valid value: canceled, partial-canceled        |
+
+## Subscribe Account Change
+
+API Key Permission: Read
+
+The topic updates account change details.
+
+### Topic
+
+`accounts.update#${mode}`
+
+Upon subscription field value specified, the update can be triggered by either of following events:
+
+1、Whenever account balance is changed.
+
+2、Whenever account balance or available balance is changed. (Update separately.)
+
+### Subscription Field
+
+| Field | Data Type | Description                                       |
+| ----- | --------- | ------------------------------------------------- |
+| mode  | integer   | Trigger mode, valid value: 0, 1, default value: 0 |
+
+Samples  
+1、Not specifying "mode":  
+accounts.update  
+Only update when account balance changed;  
+2、Specify "mode" as 0:  
+accounts.update#0  
+Only update when account balance changed;  
+3、Specify "mode" as 1:  
+accounts.update#1  
+Update when either account balance changed or available balance changed.  
+
+Note:
+The topic disseminates the current static value of individual accounts first, at the beginning of subscription, followed by account change updates. While disseminating the current static value of individual accounts, inside the message, field value of "changeType" and "changeTime" is null.
+
+> Subscribe request
+
+```json
+{
+	"action": "sub",
+	"ch": "accounts.update"
+}
+```
+
+> Response
+
+```json
+{
+	"action": "sub",
+	"code": 200,
+	"ch": "accounts.update#0",
+	"data": {}
+}
+```
+
+> Update example
+
+```json
+accounts.update#0：
+{
+	"action": "push",
+	"ch": "accounts.update#0",
+	"data": {
+		"currency": "btc",
+		"accountId": 123456,
+		"balance": "23.111",
+		"changeType": "transfer",
+           	"accountType":"trade",
+		"changeTime": 1568601800000
+	}
+}
+
+accounts.update#1：
+{
+	"action": "push",
+	"ch": "accounts.update#1",
+	"data": {
+		"currency": "btc",
+		"accountId": 33385,
+		"available": "2028.699426619837209087",
+		"changeType": "order.match",
+         		"accountType":"trade",
+		"changeTime": 1574393385167
+	}
+}
+{
+	"action": "push",
+	"ch": "accounts.update#1",
+	"data": {
+		"currency": "btc",
+		"accountId": 33385,
+		"balance": "2065.100267619837209301",
+		"changeType": "order.match",
+           	"accountType":"trade",
+		"changeTime": 1574393385122
+	}
+}
+```
+
+### Update Contents
+
+| Field       | Data Type | Description                                                  |
+| ----------- | --------- | ------------------------------------------------------------ |
+| currency    | string    | Currency                                                     |
+| accountId   | long      | Account ID                                                   |
+| balance     | string    | Account balance (only exists when account balance changed)   |
+| available   | string    | Available balance (only exists when available balance changed) |
+| changeType  | string    | Change type, valid value: order-place,order-match,order-refund,order-cancel,order-fee-refund,other,deposit,withdraw |
+| accountType | string    | account type, valid value: trade, frozen, loan, interest     |
+| changeTime  | long      | Change time, unix time in millisecond                        |
+
+Note:<br>
+
+- A maker rebate would be paid in batch mode for multiple trades.<br>
