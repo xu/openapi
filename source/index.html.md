@@ -4236,7 +4236,7 @@ v2.1서명은  v2.0서명과 절차가 비슷합니다, 차이점은 다음과 �
 2. 서명에 필요한 고정 파라미터를 다음으로 교체: accessKey，signatureMethod，signatureVersion，timestamp
 3. signatureVersion버전을 2.1로 업데이트
 
-v2 버전 서명 절차는 본 [링크](https://huobiapi.github.io/docs/spot/v1/cn/#c64cd15fdc) 에서 확인하십시오.
+v2 버전 서명 절차는 본 <a href='https://alphaex-api.github.io/openapi/spot/v1/kr/#6b0564d454'>링크</a>에서 확인하십시오.
 
 서명 전 마지막으로 생성한 문자열은 다음과 같습니다:
 
