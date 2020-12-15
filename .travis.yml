@@ -9,6 +9,11 @@ branches:
   only:
     - v1_cn
 
+before_install:
+  - gem update --system
+  - bundle update --bundler
+  - gem install bundler:1.17.1
+
 cache: bundler
 
 script: 
