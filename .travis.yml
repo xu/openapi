@@ -8,10 +8,10 @@ rvm:
 branches:
   only:
     - v1_cn
-
-before_install:
-  - gem update --system
-  - gem install bundler -v 1.17.1
+    
+install:
+  - gem uninstall bundler
+  - gem install bundler --version '1.17.1'
 
 cache: bundler
 
